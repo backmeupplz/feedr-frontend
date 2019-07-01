@@ -1,6 +1,6 @@
 <template lang="pug">
   .v-container.pa-4
-    p Hi!
+    p Hi there!
 </template>
 
 <script lang="ts">
