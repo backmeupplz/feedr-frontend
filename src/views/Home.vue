@@ -44,7 +44,7 @@ declare const FB: any;
 })
 export default class Home extends Vue {
   get googleClientId() {
-    return "906458427314-vrgseuf6gsroa41l88005jqko24g8shs.apps.googleusercontent.com";
+    return "775251765990-m72gca6ae1evoj438u8lg2lmnogakd2l.apps.googleusercontent.com";
   }
 
   onFacebookSignInSuccess(response: any) {

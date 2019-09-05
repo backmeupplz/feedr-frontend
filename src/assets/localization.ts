@@ -7,6 +7,13 @@ export const messages = {
       facebook: 'Зайти через Фейсбук',
       privacy: 'Политика конфиденциальности',
     },
+    errors: {
+      login: {
+        facebook: 'Could not login with Facebook',
+        google: 'Could not login with Google',
+        telegram: 'Could not login with Telegram',
+      },
+    },
     notFound: 'Страница не найдена',
     cookie: {
       message:
@@ -22,6 +29,13 @@ export const messages = {
       google: 'Login with Google',
       facebook: 'Login with Facebook',
       privacy: 'Privacy policy',
+    },
+    errors: {
+      login: {
+        facebook: 'Не получилось зайти через Фейсбук',
+        google: 'Не получилось зайти через Гугл',
+        telegram: 'Не получилось зайти через Телеграм',
+      },
     },
     notFound: 'Page not found',
     cookie: {
