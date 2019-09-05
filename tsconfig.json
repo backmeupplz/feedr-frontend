@@ -18,7 +18,7 @@
     "baseUrl": ".",
     "noImplicitAny": true,
     "typeRoots": ["./types/*", "./node_modules/@types"],
-    "types": [],
+    "types": ["node"],
     "paths": {
       "@/*": ["src/*"]
     },

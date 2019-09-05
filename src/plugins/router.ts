@@ -2,7 +2,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '../views/Home.vue'
-import PrivacyPolicy from '../views/PrivacyPolicy.vue'
+import Privacy from '../views/Privacy.vue'
+import App from '../views/App.vue'
+import NotFound from '../views/NotFound.vue'
+import { store } from './store'
 
 Vue.use(Router)
 
@@ -17,9 +20,34 @@ const router = new Router({
     {
       path: '/privacy',
       name: 'privacy',
-      component: PrivacyPolicy,
+      component: Privacy,
+    },
+    {
+      path: '/app',
+      name: 'app',
+      component: App,
+    },
+    {
+      path: '*',
+      name: 'notFound',
+      component: NotFound,
     },
   ],
+})
+
+router.beforeEach((to, _, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const user = store.state.user
+
+  if (requiresAuth && !user) {
+    next('/')
+  } else {
+    if (to.path === '/' && user) {
+      next('/app')
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

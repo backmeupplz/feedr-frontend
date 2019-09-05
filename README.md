@@ -1,4 +1,4 @@
-# frontend
+# Feedr frontend
 
 ## Project setup
 
