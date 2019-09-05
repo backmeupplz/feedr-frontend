@@ -73,7 +73,7 @@ export default class Home extends Vue {
     try {
       const user = await loginGoogle(googleUser.getAuthResponse().id_token);
       store.setUser(user);
-      this.$router.replace("cabinet");
+      this.$router.replace("app");
     } catch (err) {
       store.setSnackbar({
         message: "errors.google",
@@ -93,7 +93,7 @@ export default class Home extends Vue {
     try {
       const user = await loginTelegram(loginInfo);
       store.setUser(user);
-      this.$router.replace("cabinet");
+      this.$router.replace("app");
     } catch (err) {
       store.setSnackbar({
         message: "errors.telegram",
