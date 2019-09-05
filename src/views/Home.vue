@@ -9,7 +9,7 @@
           span(v-html='$t("home.info")')
       v-flex.pt-4
         vue-telegram-login(mode='callback'
-        telegram-login='mamkintrade_bot'
+        telegram-login='feedrbot'
         @callback='onTelegramAuth'
         radius='3'
         :userpic='false')
