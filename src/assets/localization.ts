@@ -9,9 +9,12 @@ export const messages = {
     },
     errors: {
       login: {
-        facebook: 'Could not login with Facebook',
-        google: 'Could not login with Google',
-        telegram: 'Could not login with Telegram',
+        facebook: 'Не получилось зайти через Фейсбук',
+        google: 'Не получилось зайти через Гугл',
+        telegram: 'Не получилось зайти через Телеграм',
+      },
+      bot: {
+        add: 'Не получилось добавить бота, проверьте токен',
       },
     },
     notFound: 'Страница не найдена',
@@ -21,6 +24,17 @@ export const messages = {
       button: 'Отличненько',
     },
     close: 'Закрыть',
+    save: 'Сохранить',
+    cancel: 'Отменить',
+    botList: {
+      title: 'Боты',
+      noBotsText:
+        'Еще не было добавлено ни одного бота, пожалуйста, нажмите на плюс ниже, чтобы добавить вашего первого бота.',
+    },
+    addBot: {
+      title: 'Добавить бота',
+      token: 'Токен бота',
+    },
   },
   en: {
     title: 'Feedr',
@@ -32,9 +46,12 @@ export const messages = {
     },
     errors: {
       login: {
-        facebook: 'Не получилось зайти через Фейсбук',
-        google: 'Не получилось зайти через Гугл',
-        telegram: 'Не получилось зайти через Телеграм',
+        facebook: 'Could not login with Facebook',
+        google: 'Could not login with Google',
+        telegram: 'Could not login with Telegram',
+      },
+      bot: {
+        add: 'Could not add bot, check token',
       },
     },
     notFound: 'Page not found',
@@ -43,5 +60,16 @@ export const messages = {
       button: 'Got it',
     },
     close: 'Close',
+    save: 'Save',
+    cancel: 'Cancel',
+    botList: {
+      title: 'Bots',
+      noBotsText:
+        'No bots added yet, please, use the plus button below to add your first bot.',
+    },
+    addBot: {
+      title: 'Add bot',
+      token: 'Bot token',
+    },
   },
 }

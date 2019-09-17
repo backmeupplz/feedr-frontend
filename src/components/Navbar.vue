@@ -1,5 +1,6 @@
 <template lang="pug">
   nav
+    BotsDialog(:dialog='botsDialog' :close='closeBotsDialog')
     v-app-bar(flat app)
       // Title
       router-link(:to='$store.state.user ? "/app" : "/"')
@@ -10,6 +11,13 @@
             span {{$store.state.user.name}}, {{$store.state.user.email || $store.state.user.facebookId || $store.state.user.telegramId}}
           span(v-else) {{$t('title')}}
       v-spacer
+      // Bots
+      v-btn(v-if="$store.state.user"
+      text
+      icon
+      color='grey'
+      @click='botsDialog = true')
+        v-icon(small) adb
       // Dark mode
       v-btn(text icon color='grey' @click='toggleMode')
         v-icon(small) brightness_2
@@ -35,9 +43,16 @@ import Component from "vue-class-component";
 import * as store from "../plugins/store";
 import { i18n } from "../plugins/i18n";
 import * as api from "../utils/api";
+import BotsDialog from "./BotsDialog.vue";
 
-@Component
+@Component({
+  components: {
+    BotsDialog
+  }
+})
 export default class Navbar extends Vue {
+  botsDialog = true;
+
   get locales() {
     return [{ icon: "🇺🇸", code: "en" }, { icon: "🇷🇺", code: "ru" }];
   }
@@ -49,6 +64,9 @@ export default class Navbar extends Vue {
     }
   }
 
+  closeBotsDialog() {
+    this.botsDialog = false;
+  }
   toggleMode() {
     store.setDark(!store.dark());
     (this.$vuetify.theme as any).dark = store.dark();
