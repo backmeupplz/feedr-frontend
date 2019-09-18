@@ -35,6 +35,9 @@ export const messages = {
       title: 'Добавить бота',
       token: 'Токен бота',
     },
+    deleteBot: {
+      confirm: 'Вы уверены, что хотите удалить бота {name}?',
+    },
   },
   en: {
     title: 'Feedr',
@@ -70,6 +73,9 @@ export const messages = {
     addBot: {
       title: 'Add bot',
       token: 'Bot token',
+    },
+    deleteBot: {
+      confirm: 'Are you sure you want to delete the bot {name}?',
     },
   },
 }

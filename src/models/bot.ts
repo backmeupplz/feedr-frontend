@@ -3,4 +3,6 @@ export interface Bot {
   telegramId: number
   name: string
   username: string
+
+  status: string
 }
