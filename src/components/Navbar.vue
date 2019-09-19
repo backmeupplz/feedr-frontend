@@ -51,7 +51,7 @@ import BotsDialog from "./BotsDialog.vue";
   }
 })
 export default class Navbar extends Vue {
-  botsDialog = true;
+  botsDialog = false;
 
   get locales() {
     return [{ icon: "🇺🇸", code: "en" }, { icon: "🇷🇺", code: "ru" }];

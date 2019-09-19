@@ -38,6 +38,8 @@ export const messages = {
     deleteBot: {
       confirm: 'Вы уверены, что хотите удалить бота {name}?',
     },
+    noBots:
+      'У вас еще нет ботов, пожалуйста, добавьте бота, кликнув по кнопке справа вверху.',
   },
   en: {
     title: 'Feedr',
@@ -77,5 +79,7 @@ export const messages = {
     deleteBot: {
       confirm: 'Are you sure you want to delete the bot {name}?',
     },
+    noBots:
+      'You do not have any bots yet, please, add one by clicking the button on the top right.',
   },
 }

@@ -15,8 +15,8 @@
           @click='updateList')
             v-icon refresh
         v-card-text
-          p(v-if='!bots.length && !loading') {{$t('botList.noBotsText')}}
-          v-card(v-for='bot in bots' :key='bot._id')
+          p(v-if='!$store.state.bots.length && !loading') {{$t('botList.noBotsText')}}
+          v-card(v-for='bot in $store.state.bots' :key='bot._id')
             v-card-title {{bot.name}}
             v-card-text
               p Username: @{{bot.username}}
@@ -66,7 +66,6 @@ import { i18n } from "../plugins/i18n";
   }
 })
 export default class BotsDialog extends Vue {
-  bots = [] as Bot[];
   loading = false;
 
   addBotDialog = false;
@@ -80,9 +79,12 @@ export default class BotsDialog extends Vue {
   }
 
   async updateList() {
+    if (!store.user()) {
+      return;
+    }
     this.loading = true;
     try {
-      this.bots = await api.getBots();
+      store.setBots(await api.getBots());
     } catch (err) {
       store.setSnackbarError(err.message);
     } finally {
@@ -94,7 +96,7 @@ export default class BotsDialog extends Vue {
     this.loading = true;
     try {
       await api.updateBot(bot);
-      this.bots = await api.getBots();
+      store.setBots(await api.getBots());
     } catch (err) {
       store.setSnackbarError(err.message);
     } finally {
@@ -110,7 +112,7 @@ export default class BotsDialog extends Vue {
     this.loading = true;
     try {
       await api.deleteBot(bot);
-      this.bots = await api.getBots();
+      store.setBots(await api.getBots());
     } catch (err) {
       store.setSnackbarError(err.message);
     } finally {

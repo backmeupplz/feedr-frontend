@@ -23,6 +23,7 @@ export async function loginTelegram(loginInfo: any) {
 }
 
 export async function postBot(token: string) {
+  console.log(token)
   return (await axios.post(`${base}/bot`, { token }, { headers: getHeaders() }))
     .data
 }

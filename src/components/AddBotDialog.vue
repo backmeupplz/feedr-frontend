@@ -34,7 +34,6 @@ import * as store from "../plugins/store";
   }
 })
 export default class AddBotDialog extends Vue {
-  bots = [];
   loading = false;
   token = "";
 
