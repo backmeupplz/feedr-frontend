@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './plugins/router'
+import './plugins/sockets'
 import { store } from './plugins/store'
 import { i18n } from './plugins/i18n'
 import './plugins/facebook'

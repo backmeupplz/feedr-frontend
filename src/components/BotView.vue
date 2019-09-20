@@ -4,8 +4,8 @@
       div(v-for='i in 10' :key='i')
         v-list-item
           v-list-item-content
-            v-list-title Noice
-            v-list-subtitle.caption More noice things
+            v-list-item-title Noice
+            v-list-item-subtitle More noice things
         v-divider
 </template>
 

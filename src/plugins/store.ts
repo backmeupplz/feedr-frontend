@@ -4,6 +4,10 @@ import Vuex from 'vuex'
 import { User } from '../models/user'
 import createPersistedState from 'vuex-persistedstate'
 import { Bot } from '../models/bot'
+import { Chat } from '@/models/chat'
+
+// It's the same global hack
+declare let sockets: any
 
 Vue.use(Vuex)
 
@@ -13,6 +17,7 @@ export interface State {
   language?: String
   dark: Boolean
   bots: Bot[]
+  chats: Chat[]
 }
 
 interface LocalizedError {
@@ -37,13 +42,17 @@ const storeOptions = {
     language: undefined,
     dark: false,
     bots: [],
+    chats: [],
   },
   mutations: {
     setUser(state: State, user: User) {
       state.user = user
+      sockets.send('authentication', state.user.token)
     },
     logout(state: State) {
       state.user = undefined
+      console.log('Logging out WS')
+      sockets.send('logout')
     },
     setSnackbar(state: State, snackbar: SnackbarState) {
       state.snackbar = snackbar
@@ -57,6 +66,22 @@ const storeOptions = {
     setBots(state: State, bots: Bot[]) {
       state.bots = bots
     },
+    setChats(state: State, chats: Chat[]) {
+      state.chats = chats
+    },
+    SOCKET_MESSAGE(state: State, obj: any) {
+      console.log('Received WS message', obj)
+    },
+    SOCKET_connect(state: State) {
+      console.log('Connected to WS')
+      if (state.user) {
+        console.log('Authorizing WS')
+        sockets.send('authorization', state.user.token)
+      }
+    },
+    SOCKET_disconnect() {
+      console.log('Disconnected WS')
+    },
   },
   getters: {
     user: (state: State) => state.user,
@@ -64,8 +89,13 @@ const storeOptions = {
     language: (state: State) => state.language,
     dark: (state: State) => state.dark,
     bots: (state: State) => state.bots,
+    chats: (state: State) => state.chats,
   },
-  plugins: [createPersistedState()],
+  plugins: [
+    createPersistedState({
+      paths: ['user', 'language', 'dark'],
+    }),
+  ],
 }
 
 export const store = new Vuex.Store<State>(storeOptions)
@@ -78,6 +108,7 @@ export const snackbar = () => getters.snackbar as SnackbarState
 export const language = () => getters.language as string | undefined
 export const dark = () => getters.dark as boolean
 export const bots = () => getters.bots as Bot[]
+export const chats = () => getters.chats as Chat[]
 
 // Mutations
 export const setUser = (user: User) => {
@@ -107,4 +138,7 @@ export const logout = () => {
 }
 export const setBots = (bots: Bot[]) => {
   store.commit('setBots', bots)
+}
+export const setChats = (chats: Chat[]) => {
+  store.commit('setChats', chats)
 }
