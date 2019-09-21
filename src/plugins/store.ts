@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 import { User } from '../models/user'
 import createPersistedState from 'vuex-persistedstate'
 import { Bot } from '../models/bot'
-import { Chat } from '@/models/chat'
 
 // It's the same global hack
 declare let sockets: any
@@ -17,7 +16,6 @@ export interface State {
   language?: String
   dark: Boolean
   bots: Bot[]
-  chats: Chat[]
 }
 
 interface LocalizedError {
@@ -42,7 +40,6 @@ const storeOptions = {
     language: undefined,
     dark: false,
     bots: [],
-    chats: [],
   },
   mutations: {
     setUser(state: State, user: User) {
@@ -51,7 +48,6 @@ const storeOptions = {
     },
     logout(state: State) {
       state.user = undefined
-      console.log('Logging out WS')
       sockets.send('logout')
     },
     setSnackbar(state: State, snackbar: SnackbarState) {
@@ -65,22 +61,80 @@ const storeOptions = {
     },
     setBots(state: State, bots: Bot[]) {
       state.bots = bots
-    },
-    setChats(state: State, chats: Chat[]) {
-      state.chats = chats
-    },
-    SOCKET_MESSAGE(state: State, obj: any) {
-      console.log('Received WS message', obj)
-    },
-    SOCKET_connect(state: State) {
-      console.log('Connected to WS')
+
       if (state.user) {
-        console.log('Authorizing WS')
-        sockets.send('authorization', state.user.token)
+        sockets.send('leave_all')
+        state.bots.forEach(bot => {
+          sockets.send('join', bot._id)
+        })
       }
     },
-    SOCKET_disconnect() {
-      console.log('Disconnected WS')
+    SOCKET_message(state: State, obj: any) {
+      let eventName
+      if (obj instanceof Array) {
+        eventName = obj[0]
+      } else {
+        eventName = obj
+      }
+      switch (eventName) {
+        case 'chats': {
+          const botId = obj[1]
+          const chats = obj[2]
+          for (const bot of state.bots) {
+            if (bot._id === botId) {
+              Vue.set(bot, 'chats', chats)
+              break
+            }
+          }
+          break
+        }
+        case 'messages': {
+          const botId = obj[1].bot
+          const chatId = obj[1].chat
+          const messages = obj[2]
+          for (const bot of state.bots) {
+            if (bot._id === botId) {
+              if (!bot.chats) {
+                break
+              }
+              for (const chat of bot.chats) {
+                if (chat._id === chatId) {
+                  Vue.set(chat, 'messages', messages)
+                  break
+                }
+              }
+              break
+            }
+          }
+          break
+        }
+        case 'new_message': {
+          const botId = obj[1].bot
+          const chatId = obj[1].chat
+          const message = obj[1]
+          for (const bot of state.bots) {
+            if (bot._id === botId) {
+              if (!bot.chats) {
+                break
+              }
+              for (const chat of bot.chats) {
+                if (chat._id === chatId) {
+                  Vue.set(chat, 'messages', [message, ...(chat.messages || [])])
+                  break
+                }
+              }
+              break
+            }
+          }
+        }
+        default:
+          break
+      }
+    },
+    SOCKET_connect(state: State) {
+      if (state.user) {
+        sockets.send('authorization', state.user.token)
+      }
     },
   },
   getters: {
@@ -89,7 +143,6 @@ const storeOptions = {
     language: (state: State) => state.language,
     dark: (state: State) => state.dark,
     bots: (state: State) => state.bots,
-    chats: (state: State) => state.chats,
   },
   plugins: [
     createPersistedState({
@@ -108,7 +161,6 @@ export const snackbar = () => getters.snackbar as SnackbarState
 export const language = () => getters.language as string | undefined
 export const dark = () => getters.dark as boolean
 export const bots = () => getters.bots as Bot[]
-export const chats = () => getters.chats as Chat[]
 
 // Mutations
 export const setUser = (user: User) => {
@@ -138,7 +190,4 @@ export const logout = () => {
 }
 export const setBots = (bots: Bot[]) => {
   store.commit('setBots', bots)
-}
-export const setChats = (chats: Chat[]) => {
-  store.commit('setChats', chats)
 }

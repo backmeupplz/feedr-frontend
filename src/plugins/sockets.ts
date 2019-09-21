@@ -8,7 +8,7 @@ const vuesockets = new VueSocketIO({
   connection: 'http://localhost:3000',
   vuex: {
     store: store.store,
-    actionPrefix: 'SOCKET_',
+    actionPrefix: 'ACTION_',
     mutationPrefix: 'SOCKET_',
   },
 })

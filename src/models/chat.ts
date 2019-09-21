@@ -2,8 +2,14 @@
 import { Message } from './message'
 
 export interface Chat {
+  _id: string
+
+  createdAt: string
+  updatedAt: string
+
   bot: string
   telegramId: string
   raw: any
-  messages: Message[]
+  lastMessage?: Message
+  messages?: Message[]
 }
