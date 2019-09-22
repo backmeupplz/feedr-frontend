@@ -5,11 +5,11 @@ import * as store from './store'
 
 const vuesockets = new VueSocketIO({
   debug: true,
-  connection: 'http://localhost:3000',
+  connection: process.env.VUE_APP_SOCKETS,
   vuex: {
     store: store.store,
-    actionPrefix: 'ACTION_',
-    mutationPrefix: 'SOCKET_',
+    actionPrefix: 'socket_action',
+    mutationPrefix: 'socket_',
   },
 })
 

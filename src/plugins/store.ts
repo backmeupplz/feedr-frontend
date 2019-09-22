@@ -69,69 +69,71 @@ const storeOptions = {
         })
       }
     },
-    SOCKET_message(state: State, obj: any) {
-      let eventName
-      if (obj instanceof Array) {
-        eventName = obj[0]
-      } else {
-        eventName = obj
+    socket_chats(state: State, object: any) {
+      const botId = object[1]
+      const chats = object[2]
+      for (const bot of state.bots) {
+        if (bot._id === botId) {
+          Vue.set(bot, 'chats', chats)
+          return
+        }
       }
+    },
+    socket_messages(state: State, object: any) {
+      const botId = object[1].bot
+      const chatId = object[1].chat
+      const messages = object[2]
+      for (const bot of state.bots) {
+        if (bot._id === botId) {
+          for (const chat of bot.chats || []) {
+            if (chat._id === chatId) {
+              Vue.set(chat, 'messages', messages)
+              return
+            }
+          }
+          return
+        }
+      }
+    },
+    socket_new_message(state: State, object: any) {
+      for (const bot of state.bots) {
+        if (bot._id === object.bot) {
+          if (!bot.chats) {
+            return
+          }
+          for (const chat of bot.chats || []) {
+            if (chat._id === object.chat) {
+              Vue.set(chat, 'messages', [object, ...(chat.messages || [])])
+              Vue.set(chat, 'lastMessage', object)
+              return
+            }
+          }
+          return
+        }
+      }
+    },
+    socket_new_chat(state: State, object: any) {
+      const botId = object.bot
+      for (const bot of state.bots) {
+        if (bot._id === botId) {
+          Vue.set(bot, 'chats', [object, ...(bot.chats || [])])
+        }
+      }
+    },
+    socket_message(_: State, obj: any) {
+      let eventName: string = obj instanceof Array ? obj[0] : obj
       switch (eventName) {
-        case 'chats': {
-          const botId = obj[1]
-          const chats = obj[2]
-          for (const bot of state.bots) {
-            if (bot._id === botId) {
-              Vue.set(bot, 'chats', chats)
-              break
-            }
-          }
+        case 'chats':
+          store.commit('socket_chats', obj)
           break
-        }
-        case 'messages': {
-          const botId = obj[1].bot
-          const chatId = obj[1].chat
-          const messages = obj[2]
-          for (const bot of state.bots) {
-            if (bot._id === botId) {
-              if (!bot.chats) {
-                break
-              }
-              for (const chat of bot.chats) {
-                if (chat._id === chatId) {
-                  Vue.set(chat, 'messages', messages)
-                  break
-                }
-              }
-              break
-            }
-          }
+        case 'messages':
+          store.commit('socket_messages', obj)
           break
-        }
-        case 'new_message': {
-          const botId = obj[1].bot
-          const chatId = obj[1].chat
-          const message = obj[1]
-          for (const bot of state.bots) {
-            if (bot._id === botId) {
-              if (!bot.chats) {
-                break
-              }
-              for (const chat of bot.chats) {
-                if (chat._id === chatId) {
-                  Vue.set(chat, 'messages', [message, ...(chat.messages || [])])
-                  break
-                }
-              }
-              break
-            }
-          }
-        }
         default:
           break
       }
     },
-    SOCKET_connect(state: State) {
+    socket_connect(state: State) {
       if (state.user) {
         sockets.send('authorization', state.user.token)
       }

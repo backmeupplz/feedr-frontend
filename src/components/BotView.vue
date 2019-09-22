@@ -3,7 +3,7 @@
     v-row
       v-col(cols='2')
         v-navigation-drawer(permanent)
-          div(v-if='bot.chats' v-for='chat in bot.chats' :key='chat._id')
+          div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
             v-list-item(@click='openChat(chat)')
               v-list-item-content
                 v-list-item-title {{chat.raw.first_name}}
@@ -39,6 +39,15 @@ declare const sockets: any;
 export default class NoBots extends Vue {
   chat: Chat | null = null;
   text = "";
+
+  get sortedChats() {
+    return ((this as any).bot.chats as Chat[]).sort((a, b) => {
+      return new Date(a.lastMessage!.createdAt) <
+        new Date(b.lastMessage!.createdAt)
+        ? 1
+        : -1;
+    });
+  }
 
   openChat(chat: Chat) {
     this.chat = chat;
