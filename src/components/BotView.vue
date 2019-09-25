@@ -41,7 +41,7 @@ export default class NoBots extends Vue {
   text = "";
 
   get sortedChats() {
-    return ((this as any).bot.chats as Chat[]).sort((a, b) => {
+    return ((this as any).bot.chats || [] as Chat[]).sort((a: any, b: any) => {
       return new Date(a.lastMessage!.createdAt) <
         new Date(b.lastMessage!.createdAt)
         ? 1

@@ -1,6 +1,6 @@
 import { State } from '../store'
 import Vue from 'vue'
-import { store } from '../store'
+import { store, user } from '../store'
 
 // It's the same global hack
 declare let sockets: any
@@ -9,7 +9,7 @@ const mutations = {
   socket_chats(state: State, object: any) {
     const botId = object[1]
     const chats = object[2]
-    for (const bot of state.bots) {
+    for (const bot of store.state.bots) {
       if (bot._id === botId) {
         Vue.set(bot, 'chats', chats)
         return
@@ -20,7 +20,7 @@ const mutations = {
     const botId = object[1].bot
     const chatId = object[1].chat
     const messages = object[2]
-    for (const bot of state.bots) {
+    for (const bot of store.state.bots) {
       if (bot._id === botId) {
         for (const chat of bot.chats || []) {
           if (chat._id === chatId) {
@@ -33,7 +33,7 @@ const mutations = {
     }
   },
   socket_new_message(state: State, object: any) {
-    for (const bot of state.bots) {
+    for (const bot of store.state.bots) {
       if (bot._id === object.bot) {
         if (!bot.chats) {
           return
@@ -51,7 +51,7 @@ const mutations = {
   },
   socket_new_chat(state: State, object: any) {
     const botId = object.bot
-    for (const bot of state.bots) {
+    for (const bot of store.state.bots) {
       if (bot._id === botId) {
         Vue.set(bot, 'chats', [object, ...(bot.chats || [])])
       }
@@ -71,8 +71,9 @@ const mutations = {
     }
   },
   socket_connect(state: State) {
-    if (state.user) {
-      sockets.send('authorization', state.user.token)
+    const userlol = user()
+    if (userlol) {
+      sockets.send('authorization', userlol.token)
     }
   },
 }
