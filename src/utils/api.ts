@@ -2,7 +2,7 @@
 import axios from 'axios'
 import { User } from '../models/user'
 import { Bot } from '../models/bot'
-import * as store from '@/plugins/store'
+import * as store from '@/plugins/store/store'
 
 const base = process.env.VUE_APP_API
 

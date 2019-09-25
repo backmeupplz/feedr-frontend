@@ -29,7 +29,7 @@
 import Vue from "vue";
 import axios from "axios";
 import { loginFacebook, loginTelegram, loginGoogle } from "../utils/api";
-import * as store from "../plugins/store";
+import * as store from "../plugins/store/store";
 import Component from "vue-class-component";
 import { i18n } from "../plugins/i18n";
 const { vueTelegramLogin } = require("vue-telegram-login");

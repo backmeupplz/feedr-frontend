@@ -40,7 +40,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import * as store from "../plugins/store";
+import * as store from "../plugins/store/store";
 import { i18n } from "../plugins/i18n";
 import * as api from "../utils/api";
 import BotsDialog from "./BotsDialog.vue";

@@ -1,7 +1,7 @@
 // Dependencies
 import Vue from 'vue'
 import VueSocketIO from 'vue-socket.io'
-import * as store from './store'
+import * as store from './store/store'
 
 const vuesockets = new VueSocketIO({
   debug: true,

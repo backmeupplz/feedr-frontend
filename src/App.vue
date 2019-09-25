@@ -12,7 +12,7 @@
 <script lang="ts">
 import Navbar from "./components/Navbar.vue";
 import Snackbar from "./components/Snackbar.vue";
-import * as store from "./plugins/store";
+import * as store from "./plugins/store/store";
 const CookieLaw = require("vue-cookie-law");
 
 export default {

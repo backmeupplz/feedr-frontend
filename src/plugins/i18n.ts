@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import { messages } from '../assets/localization'
-import * as store from './store'
+import * as store from './store/store'
 
 Vue.use(VueI18n)
 

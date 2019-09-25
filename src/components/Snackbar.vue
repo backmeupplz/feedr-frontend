@@ -9,7 +9,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import { i18n } from "../plugins/i18n";
-import * as store from "../plugins/store";
+import * as store from "../plugins/store/store";
 
 @Component
 export default class Snackbar extends Vue {

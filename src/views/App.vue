@@ -14,7 +14,7 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import NoBots from "../components/NoBots.vue";
 import BotView from "../components/BotView.vue";
-import * as store from "../plugins/store";
+import * as store from "../plugins/store/store";
 
 @Component({
   components: { NoBots, BotView }

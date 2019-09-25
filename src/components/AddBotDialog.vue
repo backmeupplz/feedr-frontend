@@ -25,7 +25,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 import * as api from "../utils/api";
-import * as store from "../plugins/store";
+import * as store from "../plugins/store/store";
 
 @Component({
   props: {
