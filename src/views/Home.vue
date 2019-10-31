@@ -101,8 +101,9 @@ export default class Home extends Vue {
         store.setBots(await api.getBots());
       } catch (err) {
         store.setSnackbarError(err.message);
-      }
-      this.$router.replace("app");
+      } finally {
+        this.$router.replace("app");
+      } 
     } catch (err) {
       store.setSnackbar({
         message: "errors.telegram",
