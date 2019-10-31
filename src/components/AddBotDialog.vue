@@ -41,6 +41,7 @@ export default class AddBotDialog extends Vue {
     this.loading = true;
     try {
       await api.postBot(this.token);
+      store.setBots(await api.getBots());
       (this as any).close();
     } catch (err) {
       store.setSnackbarError("errors.bot.add");
