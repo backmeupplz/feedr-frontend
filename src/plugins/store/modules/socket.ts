@@ -40,7 +40,7 @@ const mutations = {
         }
         for (const chat of bot.chats || []) {
           if (chat._id === object.chat) {
-            Vue.set(chat, 'messages', [object, ...(chat.messages || [])])
+            Vue.set(chat, 'messages', [...(chat.messages || []), object]) // for future sorting
             Vue.set(chat, 'lastMessage', object)
             return
           }
@@ -79,5 +79,5 @@ const mutations = {
 }
 
 export default {
-  mutations
-};
+  mutations,
+}
