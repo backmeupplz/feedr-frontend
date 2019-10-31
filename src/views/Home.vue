@@ -9,7 +9,7 @@
           span(v-html='$t("home.info")')
       v-flex.pt-4
         vue-telegram-login(mode='callback'
-        telegram-login='feedrbot'
+        telegram-login='alfalflaflalf_bot'
         @callback='onTelegramAuth'
         radius='3'
         :userpic='false')
@@ -30,12 +30,15 @@ import Vue from "vue";
 import axios from "axios";
 import { loginFacebook, loginTelegram, loginGoogle } from "../utils/api";
 import * as store from "../plugins/store/store";
+import * as api from "../utils/api";
 import Component from "vue-class-component";
 import { i18n } from "../plugins/i18n";
 const { vueTelegramLogin } = require("vue-telegram-login");
 
 // FB object is global, declaring here for TS
 declare const FB: any;
+// It's the same global hack
+declare let sockets: any;
 
 @Component({
   components: {
@@ -93,6 +96,12 @@ export default class Home extends Vue {
     try {
       const user = await loginTelegram(loginInfo);
       store.setUser(user);
+      sockets.send("authorization", user.token);
+      try {
+        store.setBots(await api.getBots());
+      } catch (err) {
+        store.setSnackbarError(err.message);
+      }
       this.$router.replace("app");
     } catch (err) {
       store.setSnackbar({
