@@ -38,6 +38,10 @@ export const messages = {
     deleteBot: {
       confirm: 'Вы уверены, что хотите удалить бота {name}?',
     },
+    validation: {
+      needtext: 'Сообщение не может быть пустым.',
+      tomuchtext: 'Длинна сообщения не может быть длиннее 4000 символов.',
+    },
     noBots:
       'У вас еще нет ботов, пожалуйста, добавьте бота, кликнув по кнопке справа вверху.',
   },
@@ -78,6 +82,10 @@ export const messages = {
     },
     deleteBot: {
       confirm: 'Are you sure you want to delete the bot {name}?',
+    },
+    validation: {
+      needtext: "Message can't be empty",
+      tomuchtext: "Message length can't be longer than 4000 characters",
     },
     noBots:
       'You do not have any bots yet, please, add one by clicking the button on the top right.',

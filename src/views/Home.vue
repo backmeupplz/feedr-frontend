@@ -55,7 +55,14 @@ export default class Home extends Vue {
       try {
         const user = await loginFacebook(response.authResponse.accessToken);
         store.setUser(user);
-        this.$router.replace("app");
+        sockets.send("authorization", user.token);
+        try {
+          store.setBots(await api.getBots());
+        } catch (err) {
+          store.setSnackbarError(err.message);
+        } finally {
+          this.$router.replace("app");
+        }
       } catch (err) {
         store.setSnackbar({
           message: "errors.facebook",
@@ -76,7 +83,14 @@ export default class Home extends Vue {
     try {
       const user = await loginGoogle(googleUser.getAuthResponse().id_token);
       store.setUser(user);
-      this.$router.replace("app");
+      sockets.send("authorization", user.token);
+      try {
+        store.setBots(await api.getBots());
+      } catch (err) {
+        store.setSnackbarError(err.message);
+      } finally {
+        this.$router.replace("app");
+      }
     } catch (err) {
       store.setSnackbar({
         message: "errors.google",
