@@ -12,4 +12,6 @@ export interface Chat {
   raw: any
   lastMessage?: Message
   messages?: Message[]
+
+  banned: boolean
 }
