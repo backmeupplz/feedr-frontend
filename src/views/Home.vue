@@ -65,7 +65,7 @@ export default class Home extends Vue {
         }
       } catch (err) {
         store.setSnackbar({
-          message: "errors.facebook",
+          message: "errors.login.facebook",
           color: "error",
           active: true
         });
@@ -74,7 +74,7 @@ export default class Home extends Vue {
   }
   onFacebookSignInError(error: Error) {
     store.setSnackbar({
-      message: "errors.facebook",
+      message: "errors.login.facebook",
       color: "error",
       active: true
     });
@@ -93,7 +93,7 @@ export default class Home extends Vue {
       }
     } catch (err) {
       store.setSnackbar({
-        message: "errors.google",
+        message: "errors.login.google",
         color: "error",
         active: true
       });
@@ -101,7 +101,7 @@ export default class Home extends Vue {
   }
   onGoogleSignInError(error: Error) {
     store.setSnackbar({
-      message: "errors.google",
+      message: "errors.login.google",
       color: "error",
       active: true
     });
@@ -120,7 +120,7 @@ export default class Home extends Vue {
       } 
     } catch (err) {
       store.setSnackbar({
-        message: "errors.telegram",
+        message: "errors.login.telegram",
         color: "error",
         active: true
       });

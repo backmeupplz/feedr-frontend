@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { User } from '../models/user'
 import { Bot } from '../models/bot'
+import { Chat } from '../models/chat'
 import * as store from '@/plugins/store/store'
 
 const base = process.env.VUE_APP_API
@@ -44,6 +45,26 @@ export async function deleteBot(bot: Bot) {
   return (await axios.delete(`${base}/bot/${bot._id}`, {
     headers: getHeaders(),
   })).data as Bot[]
+}
+
+export async function banChat(chat: Chat) {
+  return (await axios.put(
+    `${base}/chat/${chat._id}`,
+    { action: 'ban' },
+    {
+      headers: getHeaders(),
+    }
+  )).data as Bot[]
+}
+
+export async function unbanChat(chat: Chat) {
+  return (await axios.put(
+    `${base}/chat/${chat._id}`,
+    { action: 'unban' },
+    {
+      headers: getHeaders(),
+    }
+  )).data as Bot[]
 }
 
 function getHeaders() {

@@ -1,32 +1,33 @@
 <template lang="pug">
   v-card(flat).scrollable
     v-row
-      v-col(cols='2').scrollable.scroller
+      v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
           v-list-item(@click='openChat(chat)')
             v-list-item-content
               v-list-item-title {{chat.raw.first_name}}
               v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
           v-divider
-      v-divider(vertical)
-      v-col(cols='9').pa-0
+      v-divider(vertical v-if='!mobile')
+      v-col(cols='12' sm="8" md="9" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0': $vuetify.breakpoint.smAndUp}")
+        v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile")
+          v-list(nav)
+              v-list-item-title Список чатов:
+              v-list-item-group(active-class="text--accent-8")
+                div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
+                  v-list-item(@click='openChat(chat); chatnav = !chatnav')
+                      v-list-item-title {{chat.raw.first_name}}
+                          v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
         v-card(outlined tile)
           v-app-bar(elevation="0")
-                  v-tooltip(bottom v-if="chat")
-                    template(v-slot:activator='{ on }')
-                      span(v-on='on') {{chat.raw.first_name}}
-                    span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
-                  v-toolbar-title(v-else) Nothing
-                  v-spacer
-                  v-menu(left bottom)
-                      template(v-slot:activator="{ on }")
-                          v-btn(icon v-on="on")
-                              v-icon mdi-dots-vertical
-                      v-list
-                          v-list-item(@click="() => {}")
-                              v-list-item-title Заблокировать
-                          v-list-item(@click="() => {}")
-                              v-list-item-title Разблокировать
+            v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
+            v-tooltip(bottom v-if="chat")
+              template(v-slot:activator='{ on }')
+                span(v-on='on') {{chat.raw.first_name}}
+              span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
+            v-toolbar-title(v-else) Nothing
+            v-spacer
+            ChatMenu(v-bind:chat="chat")
         p(v-if='!chat') Please, select chat
         div(v-else)
           ChatComponent(v-bind:messages="sortedMessages" v-bind:bot="bot")
@@ -49,6 +50,7 @@ import { i18n } from "../plugins/i18n";
 import { Chat } from "../models/chat";
 import moment from "moment";
 import ChatComponent from "./Chat.vue";
+import ChatMenu from "./ChatMenu.vue";
 // Global hack here
 declare const sockets: any;
 
@@ -56,12 +58,13 @@ declare const sockets: any;
   props: {
     bot: Object
   },
-  components: { ChatComponent }
+  components: { ChatComponent, ChatMenu }
 })
 export default class NoBots extends Vue {
   chat: Chat | null = null;
   text = "";
   validsend = false;
+  chatnav = false;
 
   get sortedChats() {
     return ((this as any).bot.chats || ([] as Chat[])).sort(
@@ -96,6 +99,10 @@ export default class NoBots extends Vue {
       bot: (this as any).bot._id,
       chat: chat._id
     });
+  }
+
+  get mobile() {
+    return this.$vuetify.breakpoint.xsOnly;
   }
 
   formatDate(date: number) {
