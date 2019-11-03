@@ -7,6 +7,9 @@ export const messages = {
       facebook: 'Зайти через Фейсбук',
       privacy: 'Политика конфиденциальности',
     },
+    message: {
+      unsupported: 'Это сообщение пока не поддерживается :(',
+    },
     errors: {
       login: {
         facebook: 'Не получилось зайти через Фейсбук',
@@ -59,6 +62,9 @@ export const messages = {
       google: 'Login with Google',
       facebook: 'Login with Facebook',
       privacy: 'Privacy policy',
+    },
+    message: {
+      unsupported: 'This message is not yet supported :(',
     },
     errors: {
       login: {

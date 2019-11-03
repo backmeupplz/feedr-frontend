@@ -1,4 +1,4 @@
-import { State } from '../store'
+import { State, bots } from '../store'
 import Vue from 'vue'
 import { store, user } from '../store'
 
@@ -71,9 +71,12 @@ const mutations = {
     }
   },
   socket_connect(state: State) {
-    const userlol = user()
-    if (userlol) {
-      sockets.send('authorization', userlol.token)
+    const client = user()
+    if (client) {
+      sockets.send('authorization', client.token)
+      bots().forEach(bot => {
+        sockets.send('join', bot._id)
+      })
     }
   },
 }

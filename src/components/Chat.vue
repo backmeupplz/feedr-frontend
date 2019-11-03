@@ -1,28 +1,10 @@
 <template lang="pug">
     v-col(cols='12').columner
-            div(v-for='message in messages' :key='message._id')
+            div(v-for='(message, i) in messages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, bot)')
               v-row(v-if='bot.telegramId === message.raw.from.id' justify='end' class='pa-4')
-                v-card.message
-                  v-list-item(three-line)
-                    v-list-item-content
-                      div(class="overline mb-2") {{message.raw.from.first_name}}
-                      v-list-item-title(class="mb-3").message-text {{message.raw.text}}
-                      v-list-item-subtitle(class="text-right") 
-                        v-tooltip(bottom)
-                          template(v-slot:activator='{ on }')
-                            span(v-on='on') {{formatDate(message.raw.date)}}
-                          span {{formatDateTooltip(message.raw.date)}}
+                MessageComponent(v-bind:message="message")
               v-row(v-if='bot.telegramId !== message.raw.from.id' justify='start' class='pa-4') 
-                v-card.message
-                  v-list-item(three-line)
-                    v-list-item-content
-                      div(class="overline mb-2") {{message.raw.from.first_name}}
-                      v-list-item-title(class="mb-3").message-text {{message.raw.text}}
-                      v-list-item-subtitle(class="text-right")
-                        v-tooltip(bottom)
-                          template(v-slot:activator='{ on }')
-                            span(v-on='on') {{formatDate(message.raw.date)}}
-                          span {{formatDateTooltip(message.raw.date)}}
+                MessageComponent(v-bind:message="message")
 </template>
 
 
@@ -35,30 +17,95 @@ import { Bot } from "../models/bot";
 import * as store from "../plugins/store/store";
 import { i18n } from "../plugins/i18n";
 import { Chat } from "../models/chat";
+import MessageComponent from "./Message.vue";
 import moment from "moment";
+import { Message } from "../models/message";
 // Global hack here
 declare const sockets: any;
 
 @Component({
+  components: { MessageComponent },
   props: {
     bot: Object,
     messages: Array
-  },
-  updated() {
-    var elem = this.$el;
-    elem.scrollTop = elem.scrollHeight;
   }
 })
 export default class ChatComponent extends Vue {
   chat: Chat | null = null;
   text = "";
+  messageUpdating = true;
+  noMoreMessages = false;
+  scroll = true;
 
-  formatDate(date: number) {
-    return moment(date * 1000).format("HH:mm:ss");
+  setUpdating() {
+    this.messageUpdating = false;
   }
 
-  formatDateTooltip(date: number) {
-    return moment(date * 1000).format("YYYY-MM-DD HH:mm:ss");
+  setScroll() {
+    this.scroll = true;
+  }
+
+  updated() {
+    this.$nextTick(() => {
+      this.messageUpdating = true;
+      this.noMoreMessages = false;
+      if (this.scroll) {
+        let elem = this.$el;
+        elem.scrollTop = 100000;
+      }
+      setTimeout(this.setUpdating, 100);
+    });
+  }
+
+  async visibilityChanged(
+    isVisible: Boolean,
+    entry: any,
+    sectionIndex: number,
+    message: Message,
+    bot: Bot
+  ) {
+    if (!isVisible) {
+      return;
+    }
+    if (this.noMoreMessages || this.messageUpdating) {
+      return;
+    }
+    if (sectionIndex == 0) {
+      this.loadMessages(message, bot);
+    }
+  }
+
+  async loadMessages(lastmessage: Message, curbot: Bot) {
+    if (this.messageUpdating) {
+      return;
+    }
+    try {
+      this.messageUpdating = true;
+      const fetchedMessages = await api.getMessages(lastmessage);
+      if (fetchedMessages.length <= 1) {
+        return (this.noMoreMessages = true);
+      }
+      for (const bot of store.bots()) {
+        if (bot._id === curbot._id) {
+          for (const curchat of bot.chats || []) {
+            if (lastmessage.chat === curchat._id) {
+              Vue.set(curchat, "messages", [
+                ...fetchedMessages,
+                ...(curchat.messages || [])
+              ]);
+              return;
+            }
+          }
+          return;
+        }
+      }
+    } catch (err) {
+      store.setSnackbarError("errors.loadMessages");
+    } finally {
+      this.messageUpdating = false;
+      this.scroll = false;
+      setTimeout(this.setScroll, 200);
+    }
   }
 
   send() {
@@ -80,15 +127,5 @@ export default class ChatComponent extends Vue {
   height: calc(100vh - 297px);
   overflow-y: auto;
   overflow-x: hidden;
-}
-.message {
-  max-width: 50% !important;
-  display: inline-block !important;
-}
-.message-text {
-  white-space: normal !important;
-  -moz-user-select: text !important;
-  -khtml-user-select: text !important;
-  user-select: text !important;
 }
 </style>

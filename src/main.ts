@@ -8,7 +8,9 @@ import { i18n } from './plugins/i18n'
 import './plugins/facebook'
 import './plugins/google'
 import vuetify from './plugins/vuetify'
+import VueObserveVisibility from 'vue-observe-visibility'
 
+Vue.use(VueObserveVisibility)
 Vue.config.productionTip = true
 
 new Vue({
