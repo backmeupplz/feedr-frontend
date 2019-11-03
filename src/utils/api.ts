@@ -3,6 +3,7 @@ import axios from 'axios'
 import { User } from '../models/user'
 import { Bot } from '../models/bot'
 import { Chat } from '../models/chat'
+import { Message } from '../models/message'
 import * as store from '@/plugins/store/store'
 
 const base = process.env.VUE_APP_API
@@ -55,6 +56,12 @@ export async function banChat(chat: Chat) {
       headers: getHeaders(),
     }
   )).data as Bot[]
+}
+
+export async function getMessages(message: Message) {
+  return (await axios.get(`${base}/message/${message._id}`, {
+    headers: getHeaders(),
+  })).data as Message[]
 }
 
 export async function unbanChat(chat: Chat) {

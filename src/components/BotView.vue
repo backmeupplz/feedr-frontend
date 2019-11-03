@@ -87,9 +87,7 @@ export default class NoBots extends Vue {
   }
 
   get sortedMessages() {
-    return ((this as any).chat.messages || []).sort((a: any, b: any) => {
-      return new Date(a.raw.date * 1000) > new Date(b.raw.date * 1000) ? 1 : -1;
-    });
+    return (this as any).chat.messages || [];
   }
 
   openChat(chat: Chat) {
