@@ -6,6 +6,7 @@ v-card.message
             div(class="caption mb-2 blue--text" v-else) Forwarded from: {{forwardedMessageName(message)}}
             TelegramTextMessage(v-if="message.raw.text" v-bind:text="message.raw.text")
             TelegramPhotoMessage(v-else-if="message.raw.photo" v-bind:message="message")
+            TelegramVideoMessage(v-else-if="message.raw.video || message.raw.video_note" v-bind:message="message")
             TelegramUnSupportedMessage(v-else v-bind:message="message")
             v-list-item-subtitle(class="text-right")
                 v-tooltip(bottom)
@@ -20,8 +21,9 @@ import Component from "vue-class-component";
 import * as store from "../plugins/store/store";
 import { Message } from "../models/message";
 import TelegramTextMessage from "./messages/telegram/Text.vue";
-import TelegramUnSupportedMessage from "./messages/telegram/UnSupported.vue";
-import TelegramPhotoMessage from "./messages/telegram/Photo.vue";
+import TelegramUnSupportedMessage from "./messages/telegram/UnSupported.vue"; // Text message type
+import TelegramPhotoMessage from "./messages/telegram/Photo.vue"; // Photo message type
+import TelegramVideoMessage from "./messages/telegram/Video.vue"; // Video and Telescope message types
 import { i18n } from "../plugins/i18n";
 import * as api from "../utils/api";
 import moment from "moment";
@@ -31,7 +33,8 @@ import moment from "moment";
   components: {
     TelegramTextMessage,
     TelegramUnSupportedMessage,
-    TelegramPhotoMessage
+    TelegramPhotoMessage,
+    TelegramVideoMessage
   }
 })
 export default class ChatMenu extends Vue {

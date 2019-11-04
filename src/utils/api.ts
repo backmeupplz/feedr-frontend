@@ -61,7 +61,7 @@ export async function banChat(chat: Chat) {
 export async function getFilesLink(message: Message) {
   return (await axios.get(`${base}/message/${message._id}`, {
     headers: getHeaders(),
-  })).data as string
+  })).data as any
 }
 
 export async function unbanChat(chat: Chat) {

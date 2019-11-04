@@ -22,6 +22,7 @@ export const messages = {
       },
       media: {
         loading: 'Ошибка загрузки медиа',
+        tobig: 'Telegram API Error: Размер файла слишком большой (>20mb).',
       },
       bot: {
         add: 'Не получилось добавить бота, проверьте токен',
@@ -84,6 +85,8 @@ export const messages = {
       },
       media: {
         loading: 'Media loading error',
+        tobig:
+          'Telegram API Error: File size to big for download (>20mb). Sorry.',
       },
       bot: {
         add: 'Could not add bot, check token',
