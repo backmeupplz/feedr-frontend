@@ -1,6 +1,6 @@
 <template lang="pug">
     v-col(cols='12').columner
-            div(v-for='(message, i) in messages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, bot)')
+            div(v-for='(message, i) in messages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
               v-row(v-if='bot.telegramId === message.raw.from.id' justify='end' class='pa-4')
                 MessageComponent(v-bind:message="message")
               v-row(v-if='bot.telegramId !== message.raw.from.id' justify='start' class='pa-4') 
@@ -27,6 +27,7 @@ declare const sockets: any;
   components: { MessageComponent },
   props: {
     bot: Object,
+    curchat: Object,
     messages: Array
   }
 })
@@ -34,7 +35,6 @@ export default class ChatComponent extends Vue {
   chat: Chat | null = null;
   text = "";
   messageUpdating = true;
-  noMoreMessages = false;
   scroll = true;
 
   setUpdating() {
@@ -48,12 +48,12 @@ export default class ChatComponent extends Vue {
   updated() {
     this.$nextTick(() => {
       this.messageUpdating = true;
-      this.noMoreMessages = false;
+      store.setNoMoreMessages(false);
       if (this.scroll) {
         let elem = this.$el;
         elem.scrollTop = 100000;
       }
-      setTimeout(this.setUpdating, 100);
+      setTimeout(this.setUpdating, 1);
     });
   }
 
@@ -62,43 +62,31 @@ export default class ChatComponent extends Vue {
     entry: any,
     sectionIndex: number,
     message: Message,
+    chat: Chat,
     bot: Bot
   ) {
     if (!isVisible) {
       return;
     }
-    if (this.noMoreMessages || this.messageUpdating) {
+    if (this.messageUpdating || store.nomoremessages()) {
       return;
     }
     if (sectionIndex == 0) {
-      this.loadMessages(message, bot);
+      this.loadMessages(message, chat, bot);
     }
   }
 
-  async loadMessages(lastmessage: Message, curbot: Bot) {
+  async loadMessages(lastmessage: Message, curchat: Chat, bot: Bot) {
     if (this.messageUpdating) {
       return;
     }
     try {
       this.messageUpdating = true;
-      const fetchedMessages = await api.getMessages(lastmessage);
-      if (fetchedMessages.length <= 1) {
-        return (this.noMoreMessages = true);
-      }
-      for (const bot of store.bots()) {
-        if (bot._id === curbot._id) {
-          for (const curchat of bot.chats || []) {
-            if (lastmessage.chat === curchat._id) {
-              Vue.set(curchat, "messages", [
-                ...fetchedMessages,
-                ...(curchat.messages || [])
-              ]);
-              return;
-            }
-          }
-          return;
-        }
-      }
+      sockets.send("request_messages", {
+        bot: bot._id,
+        chat: curchat._id,
+        id: lastmessage._id
+      });
     } catch (err) {
       store.setSnackbarError("errors.loadMessages");
     } finally {

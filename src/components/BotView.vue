@@ -30,7 +30,7 @@
             ChatMenu(v-bind:chat="chat")
         p(v-if='!chat') Please, select chat
         div(v-else)
-          ChatComponent(v-bind:messages="sortedMessages" v-bind:bot="bot")
+          ChatComponent(v-bind:messages="sortedMessages" v-bind:bot="bot" v-bind:curchat="chat")
           v-form(v-model="validsend" onSubmit="return false;")
             v-container(justify-center)
               v-text-field(v-model='text' :rules="sendRules" @keypress.enter="send")

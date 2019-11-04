@@ -17,6 +17,7 @@ export interface State {
   language?: String
   dark: Boolean
   bots: Bot[]
+  nomoremessages: Boolean
 }
 
 interface LocalizedError {
@@ -41,6 +42,7 @@ const storeOptions = {
     language: undefined,
     dark: false,
     bots: [],
+    nomoremessages: false,
   },
   mutations: {
     setUser(state: State, user: User) {
@@ -70,7 +72,9 @@ const storeOptions = {
         })
       }
     },
-    
+    setNoMoreMessages(state: State, nomoremessages: Boolean) {
+      state.nomoremessages = nomoremessages
+    },
   },
   getters: {
     user: (state: State) => state.user,
@@ -78,6 +82,7 @@ const storeOptions = {
     language: (state: State) => state.language,
     dark: (state: State) => state.dark,
     bots: (state: State) => state.bots,
+    nomoremessages: (state: State) => state.nomoremessages,
   },
   plugins: [
     createPersistedState({
@@ -85,8 +90,8 @@ const storeOptions = {
     }),
   ],
   modules: {
-    socket
-  }
+    socket,
+  },
 }
 
 export const store = new Vuex.Store<State>(storeOptions)
@@ -99,6 +104,7 @@ export const snackbar = () => getters.snackbar as SnackbarState
 export const language = () => getters.language as string | undefined
 export const dark = () => getters.dark as boolean
 export const bots = () => getters.bots as Bot[]
+export const nomoremessages = () => getters.nomoremessages as boolean
 
 // Mutations
 export const setUser = (user: User) => {
@@ -128,4 +134,7 @@ export const logout = () => {
 }
 export const setBots = (bots: Bot[]) => {
   store.commit('setBots', bots)
+}
+export const setNoMoreMessages = (nomoremessages: Boolean) => {
+  store.commit('setNoMoreMessages', nomoremessages)
 }
