@@ -20,9 +20,15 @@ export const messages = {
         ban: 'Не получилось забанить этого пользователя, ошибка API',
         unban: 'Не получилось разбанить этого пользователя, ошибка API',
       },
+      media: {
+        loading: 'Ошибка загрузки медиа',
+      },
       bot: {
         add: 'Не получилось добавить бота, проверьте токен',
       },
+    },
+    media: {
+      load: 'Открыть',
     },
     notFound: 'Страница не найдена',
     chatsList: 'Выберите чат:',
@@ -76,9 +82,15 @@ export const messages = {
         ban: 'Could not ban this user, API error',
         unban: 'Could not unban this user, API error',
       },
+      media: {
+        loading: 'Media loading error',
+      },
       bot: {
         add: 'Could not add bot, check token',
       },
+    },
+    media: {
+      load: 'Load',
     },
     notFound: 'Page not found',
     chatsList: 'Select chat:',

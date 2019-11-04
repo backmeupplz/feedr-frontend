@@ -6999,7 +6999,7 @@ void-elements@^2.0.1:
   resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
-vue-class-component@^7.0.1, vue-class-component@^7.0.2:
+vue-class-component@^7.0.1, vue-class-component@^7.0.2, vue-class-component@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/vue-class-component/-/vue-class-component-7.1.0.tgz#b33efcb10e17236d684f70b1e96f1946ec793e87"
   integrity sha512-G9152NzUkz0i0xTfhk0Afc8vzdXxDR1pfN4dTwE72cskkgJtdXfrKBkMfGvDuxUh35U500g5Ve4xL8PEGdWeHg==
@@ -7010,6 +7010,15 @@ vue-cookie-law@^1.10.0:
   integrity sha512-5bj4TfZyGEDD71gQ2QoQQoJnxGzbIJh44KwCVXT7OO3/Cofk0PuJy9jZgoXQjiozF9nJg+lVZTfoAFjY9YPe3g==
   dependencies:
     tiny-cookie "^2.1.1"
+
+vue-easy-lightbox@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/vue-easy-lightbox/-/vue-easy-lightbox-0.7.0.tgz#c9bf3e16429a48be4ea3545a4bd87f47395358a5"
+  integrity sha512-WhaBWdaqbrTf8IVJN0ix9BddfuScUTGV1Fi1LHqg/X7AuXzn4iR+DrIbtPS2NzyazDwMf1nUzVy+HoOxcsIljQ==
+  dependencies:
+    vue "^2.6.10"
+    vue-class-component "^7.1.0"
+    vue-property-decorator "^8.2.2"
 
 vue-facebook-signin-button@^1.0.1:
   version "1.0.1"

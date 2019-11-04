@@ -58,10 +58,10 @@ export async function banChat(chat: Chat) {
   )).data as Bot[]
 }
 
-export async function getMessages(message: Message) {
+export async function getFilesLink(message: Message) {
   return (await axios.get(`${base}/message/${message._id}`, {
     headers: getHeaders(),
-  })).data as Message[]
+  })).data as string
 }
 
 export async function unbanChat(chat: Chat) {

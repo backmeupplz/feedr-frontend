@@ -9,7 +9,9 @@ import './plugins/facebook'
 import './plugins/google'
 import vuetify from './plugins/vuetify'
 import VueObserveVisibility from 'vue-observe-visibility'
+import Lightbox from 'vue-easy-lightbox'
 
+Vue.use(Lightbox)
 Vue.use(VueObserveVisibility)
 Vue.config.productionTip = true
 

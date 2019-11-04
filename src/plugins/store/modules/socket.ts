@@ -20,11 +20,20 @@ const mutations = {
     const botId = object[1].bot
     const chatId = object[1].chat
     const messages = object[2]
+    const paginated = object[3]
     for (const bot of store.state.bots) {
       if (bot._id === botId) {
         for (const chat of bot.chats || []) {
           if (chat._id === chatId) {
-            Vue.set(chat, 'messages', messages)
+            if (!paginated) {
+              Vue.set(chat, 'messages', messages)
+            } else {
+              if (messages.length < 1) {
+                store.state.nomoremessages = true
+                return
+              }
+              Vue.set(chat, 'messages', [...messages, ...(chat.messages || [])])
+            }
             return
           }
         }

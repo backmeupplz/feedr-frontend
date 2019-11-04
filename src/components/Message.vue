@@ -5,6 +5,7 @@ v-card.message
             div(class="overline mb-2" v-if="!forwardedMessage(message)") {{message.raw.from.first_name}}
             div(class="caption mb-2 blue--text" v-else) Forwarded from: {{forwardedMessageName(message)}}
             TelegramTextMessage(v-if="message.raw.text" v-bind:text="message.raw.text")
+            TelegramPhotoMessage(v-else-if="message.raw.photo" v-bind:message="message")
             TelegramUnSupportedMessage(v-else v-bind:message="message")
             v-list-item-subtitle(class="text-right")
                 v-tooltip(bottom)
@@ -20,13 +21,18 @@ import * as store from "../plugins/store/store";
 import { Message } from "../models/message";
 import TelegramTextMessage from "./messages/telegram/Text.vue";
 import TelegramUnSupportedMessage from "./messages/telegram/UnSupported.vue";
+import TelegramPhotoMessage from "./messages/telegram/Photo.vue";
 import { i18n } from "../plugins/i18n";
 import * as api from "../utils/api";
 import moment from "moment";
 
 @Component({
   props: ["message"],
-  components: { TelegramTextMessage, TelegramUnSupportedMessage }
+  components: {
+    TelegramTextMessage,
+    TelegramUnSupportedMessage,
+    TelegramPhotoMessage
+  }
 })
 export default class ChatMenu extends Vue {
   formatDate(date: number) {
