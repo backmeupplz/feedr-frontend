@@ -4,9 +4,17 @@ v-card.message
         v-list-item-content
             div(class="overline mb-2" v-if="!forwardedMessage(message)") {{message.raw.from.first_name}}
             div(class="caption mb-2 blue--text" v-else) Forwarded from: {{forwardedMessageName(message)}}
+            // Just text
             TelegramTextMessage(v-if="message.raw.text" v-bind:text="message.raw.text")
+            // Photo
             TelegramPhotoMessage(v-else-if="message.raw.photo" v-bind:message="message")
+            // Video and Telescope Video
             TelegramVideoMessage(v-else-if="message.raw.video || message.raw.video_note" v-bind:message="message")
+            // Location and Venue
+            TelegramLocationMessage(v-else-if="message.raw.location" v-bind:message="message.raw")
+            // Polls
+            TelegramPollMessage(v-else-if="message.raw.poll" v-bind:message="message.raw")
+            // Unsupported Messages
             TelegramUnSupportedMessage(v-else v-bind:message="message")
             v-list-item-subtitle(class="text-right")
                 v-tooltip(bottom)
@@ -24,6 +32,8 @@ import TelegramTextMessage from "./messages/telegram/Text.vue";
 import TelegramUnSupportedMessage from "./messages/telegram/UnSupported.vue"; // Text message type
 import TelegramPhotoMessage from "./messages/telegram/Photo.vue"; // Photo message type
 import TelegramVideoMessage from "./messages/telegram/Video.vue"; // Video and Telescope message types
+import TelegramLocationMessage from "./messages/telegram/Location.vue"; // Location and Venue messages types
+import TelegramPollMessage from "./messages/telegram/Poll.vue"; // Poll message type
 import { i18n } from "../plugins/i18n";
 import * as api from "../utils/api";
 import moment from "moment";
@@ -34,7 +44,9 @@ import moment from "moment";
     TelegramTextMessage,
     TelegramUnSupportedMessage,
     TelegramPhotoMessage,
-    TelegramVideoMessage
+    TelegramVideoMessage,
+    TelegramLocationMessage,
+    TelegramPollMessage
   }
 })
 export default class ChatMenu extends Vue {

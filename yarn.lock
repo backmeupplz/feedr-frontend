@@ -7056,6 +7056,11 @@ vue-observe-visibility@^0.4.6:
   resolved "https://registry.yarnpkg.com/vue-observe-visibility/-/vue-observe-visibility-0.4.6.tgz#878cb8ebcf3078e40807af29774e97105ebd519e"
   integrity sha512-xo0CEVdkjSjhJoDdLSvoZoQrw/H2BlzB5jrCBKGZNXN2zdZgMuZ9BKrxXDjNP2AxlcCoKc8OahI3F3r3JGLv2Q==
 
+vue-poll@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/vue-poll/-/vue-poll-0.1.8.tgz#1ad914ea0791ce94e97c99b8196fe1c4e3bc1c43"
+  integrity sha512-iT/ng+fZeZThwxOfRnMXqYgQDvoYQqF5W2/gUrfsKN8/gfVcxzBm6UGU6IhF+hOh/HNWyaQHkZDD6lLDoIMNKw==
+
 vue-property-decorator@^8.2.2:
   version "8.2.2"
   resolved "https://registry.yarnpkg.com/vue-property-decorator/-/vue-property-decorator-8.2.2.tgz#ac895e9508ee1bf86e3a28568d94d842c2c8e42f"
