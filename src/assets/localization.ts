@@ -22,6 +22,7 @@ export const messages = {
       },
       media: {
         loading: 'Ошибка загрузки медиа',
+        tobig: 'Telegram API Error: Размер файла слишком большой (>20mb).',
       },
       bot: {
         add: 'Не получилось добавить бота, проверьте токен',
@@ -32,6 +33,7 @@ export const messages = {
     },
     notFound: 'Страница не найдена',
     chatsList: 'Выберите чат:',
+    place: 'Место',
     cookie: {
       message:
         'Этот вебсайт использует печеньки для предоставления лучшего сервиса',
@@ -84,6 +86,8 @@ export const messages = {
       },
       media: {
         loading: 'Media loading error',
+        tobig:
+          'Telegram API Error: File size to big for download (>20mb). Sorry.',
       },
       bot: {
         add: 'Could not add bot, check token',
@@ -94,6 +98,7 @@ export const messages = {
     },
     notFound: 'Page not found',
     chatsList: 'Select chat:',
+    place: 'Place',
     cookie: {
       message: 'This website uses cookies to provise you with better service',
       button: 'Got it',

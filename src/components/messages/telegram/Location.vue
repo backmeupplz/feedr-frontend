@@ -1,0 +1,25 @@
+<template lang="pug">
+v-list-item-title(class="mb-3").message-text
+    div(v-if="message.venue") {{$t('place')}}: {{message.venue.title}}
+    v-container
+        v-row(justify="start")
+            v-btn(outlined color="indigo" @click="openMap(message.location.latitude, message.location.longitude)") {{$t('place')}}
+                v-icon(right) mdi-crosshairs-gps 
+</template>
+
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
+
+@Component({
+  props: ["message"]
+})
+export default class TelegramLocationMessage extends Vue {
+  openMap(latitude: number, longitude: number) {
+    window.open(
+      `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`,
+      "_blank"
+    );
+  }
+}
+</script>
