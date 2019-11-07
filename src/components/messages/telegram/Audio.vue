@@ -105,7 +105,7 @@ export default class TelegramAudioMessage extends Vue {
     }
   }
 
-  _handleLoaded(e) {
+  _handleLoaded(e: any) {
     this.totalDuration = Number(this.$refs.audioController.duration);
   }
 
@@ -142,7 +142,7 @@ export default class TelegramAudioMessage extends Vue {
     return audio.mime_type;
   }
 
-  setPosition(time) {
+  setPosition(time: any) {
     this.$refs.audioController.currentTime = time;
   }
 
