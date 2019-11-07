@@ -1,8 +1,8 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    div(v-if="message.raw.audio && message.raw.audio.title") {{`${message.raw.audio.performer} —  ${message.raw.audio.title}`}}
+    div(v-if="message.raw.audio && message.raw.audio.title") {{title}}
     v-container(fluid)
-        v-row(v-if="!loaded" :justify="mobile()").row_nowrap
+        v-row(v-if="!loaded" :justify="mobile").row_nowrap
           v-col
             v-btn(outlined color="indigo" :loading="loading" @click="loadAudio") Слушать
               v-icon(right) mdi-music
@@ -36,6 +36,14 @@ export default class TelegramAudioMessage extends Vue {
   paused = true;
   totalDuration = 0;
   currtime = 0;
+
+  get title() {
+    const msg = this.$props.message.raw.audio;
+    if (msg.performer) {
+      return `${msg.performer} — ${msg.title}`;
+    }
+    return `${msg.title}`;
+  }
 
   async loadAudio() {
     this.loading = true;
@@ -146,7 +154,7 @@ export default class TelegramAudioMessage extends Vue {
     this.$refs.audioController.currentTime = time;
   }
 
-  mobile() {
+  get mobile() {
     if (this.$vuetify.breakpoint.xsOnly) {
       return "center";
     }
