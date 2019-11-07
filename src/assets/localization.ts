@@ -34,6 +34,7 @@ export const messages = {
     notFound: 'Страница не найдена',
     chatsList: 'Выберите чат:',
     place: 'Место',
+    location: 'Карта',
     cookie: {
       message:
         'Этот вебсайт использует печеньки для предоставления лучшего сервиса',
@@ -99,6 +100,7 @@ export const messages = {
     notFound: 'Page not found',
     chatsList: 'Select chat:',
     place: 'Place',
+    location: 'Map',
     cookie: {
       message: 'This website uses cookies to provise you with better service',
       button: 'Got it',

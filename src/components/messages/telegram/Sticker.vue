@@ -1,11 +1,12 @@
 <template lang="pug">
 v-list-item-title.message-text 
     div(v-if="message.raw.caption") {{message.raw.caption}}
-    v-container
+    v-container(fluid)
         v-row(justify="start")
-            v-btn(outlined color="indigo" :loading="loading" @click="loadPhoto") {{$t("media.load")}}
-              v-icon(right) mdi-file-image-outline
-    vue-easy-lightbox(:visible="opened", :imgs="[link]" @hide="hide")
+            v-btn(outlined color="indigo" :loading="loading" @click="loadSticker" v-if="!opened") {{$t("media.load")}}
+                v-icon(right) mdi-sticker-emoji
+        v-row
+            v-img(:src="link" v-if="opened" contain width="256px" height="256px")
 </template>
 
 <script lang="ts">
@@ -13,19 +14,16 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import * as api from "../../../utils/api";
 import * as store from "../../../plugins/store/store";
+
 @Component({
   props: ["message"]
 })
-export default class TelegramPhotoMessage extends Vue {
+export default class TelegramStickerMessage extends Vue {
   link = "";
   loading = false;
   opened = false;
 
-  hide() {
-    this.opened = false;
-  }
-
-  async loadPhoto() {
+  async loadSticker() {
     this.loading = true;
     try {
       this.link = await api.getFilesLink(this.$props.message);

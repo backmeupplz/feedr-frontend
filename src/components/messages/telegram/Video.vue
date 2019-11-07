@@ -4,13 +4,15 @@ v-list-item-title.message-text
     v-container
         v-row(justify="start")
             v-btn(outlined color="indigo" :loading="loading" @click="loadVideo") {{$t("media.load")}}
+              v-icon(right) mdi-video-outline
         v-dialog(v-model="opened" fullscreen hide-overlay)
           v-card
             v-toolbar(dark color="primary")
               v-btn(icon dark @click="opened = false")
                 v-icon mdi-close
               v-toolbar-title(v-if="message.raw.video") Telegram Video
-              v-toolbar-title(v-else="message.raw.video_note") Telegram Telescope Video
+              v-toolbar-title(v-else-if="message.raw.video_note") Telegram Telescope Video
+              v-toolbar-title(v-else) Telegram Animation
             video(controls ref="videoplayer").player
               source(:src="link" type="video/mp4")
 </template>
