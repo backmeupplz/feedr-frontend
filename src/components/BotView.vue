@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(flat).scrollable
+  v-card(flat :style="heightStyle")#adad
     v-row
       v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
@@ -30,10 +30,10 @@
             ChatMenu(v-bind:chat="chat")
         p(v-if='!chat') Please, select chat
         div(v-else)
-          ChatComponent(v-bind:messages="sortedMessages" v-bind:bot="bot" v-bind:curchat="chat")
-          v-form(v-model="validsend" onSubmit="return false;")
+          ChatComponent(v-bind:bot="bot" v-bind:curchat="chat")
+          v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;")
             v-container(justify-center)
-              v-text-field(v-model='text' :rules="sendRules" @keypress.enter="send")
+              v-text-field(v-model='text' ref="inputMsg" :rules="sendRules" @keypress.enter="send")
                 template(v-slot:append)
                   v-btn(icon text @click='send' :disabled="!validsend")
                     v-icon send
@@ -60,11 +60,16 @@ declare const sockets: any;
   },
   components: { ChatComponent, ChatMenu }
 })
-export default class NoBots extends Vue {
+export default class BotView extends Vue {
   chat: Chat | null = null;
   text = "";
   validsend = false;
   chatnav = false;
+
+  $refs!: Vue["$refs"] & {
+    msgSendForm: any;
+    inputMsg: any;
+  };
 
   get sortedChats() {
     return ((this as any).bot.chats || ([] as Chat[])).sort(
@@ -79,15 +84,16 @@ export default class NoBots extends Vue {
     );
   }
 
+  get heightStyle() {
+    let height = window.innerHeight - 112;
+    return { height: height + "px" };
+  }
+
   get sendRules() {
     return [
       (v: any) => !!v || i18n.t("validation.needtext"),
-      (v: any) => v.length <= 4000 || i18n.t("validation.tomuchtext")
+      (v: any) => (v && v.length) <= 4000 || i18n.t("validation.tomuchtext")
     ];
-  }
-
-  get sortedMessages() {
-    return (this as any).chat.messages || [];
   }
 
   openChat(chat: Chat) {
@@ -120,7 +126,8 @@ export default class NoBots extends Vue {
       chat: this.chat._id,
       message: this.text
     });
-    this.text = "";
+    this.$refs.msgSendForm.reset();
+    this.$refs.inputMsg.blur();
   }
 }
 </script>

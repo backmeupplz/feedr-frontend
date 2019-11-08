@@ -41,7 +41,7 @@ const mutations = {
       }
     }
   },
-  socket_new_message(state: State, object: any) {
+  async socket_new_message(state: State, object: any) {
     for (const bot of store.state.bots) {
       if (bot._id === object.bot) {
         if (!bot.chats) {
@@ -49,6 +49,14 @@ const mutations = {
         }
         for (const chat of bot.chats || []) {
           if (chat._id === object.chat) {
+            if (!chat.messages) {
+              sockets.send('request_messages', {
+                bot: bot._id,
+                chat: chat._id,
+              })
+              Vue.set(chat, 'lastMessage', object)
+              return
+            }
             Vue.set(chat, 'messages', [...(chat.messages || []), object])
             Vue.set(chat, 'lastMessage', object)
             return
