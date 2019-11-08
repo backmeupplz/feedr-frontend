@@ -37,9 +37,23 @@ export async function getBots() {
 }
 
 export async function updateBot(bot: Bot) {
-  return (await axios.put(`${base}/bot/${bot._id}`, undefined, {
-    headers: getHeaders(),
-  })).data as Bot[]
+  return (await axios.put(
+    `${base}/bot/${bot._id}`,
+    { action: 'update' },
+    {
+      headers: getHeaders(),
+    }
+  )).data as Bot[]
+}
+
+export async function BotChangeGreetings(botId: string, greetings: string) {
+  return (await axios.put(
+    `${base}/bot/${botId}`,
+    { action: 'changeGreetings', greetingMessage: greetings },
+    {
+      headers: getHeaders(),
+    }
+  )).data as Bot[]
 }
 
 export async function deleteBot(bot: Bot) {

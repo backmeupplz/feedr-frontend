@@ -6,6 +6,7 @@ export interface Bot {
   telegramId: number
   name: string
   username: string
+  greetingMessage: string
 
   chats?: Chat[]
 
