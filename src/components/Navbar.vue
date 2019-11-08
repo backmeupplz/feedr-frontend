@@ -64,6 +64,10 @@ export default class Navbar extends Vue {
     }
   }
 
+  mounted() {
+    (this.$vuetify.theme as any).dark = store.dark();
+  }
+
   closeBotsDialog() {
     this.botsDialog = false;
   }
