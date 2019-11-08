@@ -26,6 +26,7 @@ const router = new Router({
       path: '/app',
       name: 'app',
       component: App,
+      meta: { requiresAuth: true },
     },
     {
       path: '*',
