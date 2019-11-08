@@ -102,7 +102,7 @@ export const messages = {
     place: 'Place',
     location: 'Map',
     cookie: {
-      message: 'This website uses cookies to provise you with better service',
+      message: 'This website uses cookies to provide you with better service',
       button: 'Got it',
     },
     close: 'Close',
