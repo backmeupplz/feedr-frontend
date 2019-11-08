@@ -49,10 +49,11 @@ export default class AddBotDialog extends Vue {
       store.setBots(await api.getBots());
       (this as any).close();
     } catch (err) {
-      if (!err.response.data) {
+      if (err && err.response && err.response.data) {
+        store.setSnackbarError(err.response.data);
+      } else {
         store.setSnackbarError("errors.bot.add");
       }
-      store.setSnackbarError(err.response.data);
     } finally {
       this.loading = false;
     }
