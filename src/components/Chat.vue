@@ -79,7 +79,7 @@ export default class ChatComponent extends Vue {
   }
 
   get heightStyle() {
-    let height = document.body.clientHeight - 312;
+    let height = document.documentElement.clientHeight - 320;
     return { height: height + "px !important;"} 
   };
   
