@@ -85,7 +85,7 @@ export default class BotView extends Vue {
   }
 
   get heightStyle() {
-    let height = document.body.clientHeight - 112;
+    let height = document.documentElement.clientHeight - 120;
     return { height: height + "px !important;" };
   }
 
@@ -134,7 +134,7 @@ export default class BotView extends Vue {
 
 <style>
 .scrollable {
-  height: calc(100vh - 112px);
+  height: calc(100vh - 120px);
 }
 .scroller {
   overflow-y: auto;
