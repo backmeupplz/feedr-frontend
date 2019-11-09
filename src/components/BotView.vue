@@ -85,7 +85,7 @@ export default class BotView extends Vue {
   }
 
   get heightStyle() {
-    let height = window.innerHeight - 112;
+    let height = document.body.clientHeight - 112;
     return { height: height + "px !important;" };
   }
 
