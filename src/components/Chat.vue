@@ -126,7 +126,7 @@ export default class ChatComponent extends Vue {
 
 <style lang="scss">
 .columner {
-  height: calc(100vh - 312px);
+  height: calc(100vh - 320px);
   overflow-y: auto;
   overflow-x: hidden;
 }
