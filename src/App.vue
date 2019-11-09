@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app(:dark='$store.state.dark' style="height:100%" :class='$store.state.dark ? "grey darken-4" : "grey lighten-4"')
+  v-app(:dark='$store.state.dark' style="height:100vh" :class='$store.state.dark ? "grey darken-4" : "grey lighten-4"')
     cookie-law(theme='blood-orange'
     :buttonText='$t("cookie.button")'
     :message='$t("cookie.message")')
