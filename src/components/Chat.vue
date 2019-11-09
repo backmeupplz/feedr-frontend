@@ -79,7 +79,7 @@ export default class ChatComponent extends Vue {
   }
 
   get heightStyle() {
-    let height = document.documentElement.clientHeight - 380;
+    let height = document.documentElement.clientHeight - 400;
     return { height: height + "px !important;"} 
   };
   
@@ -126,7 +126,7 @@ export default class ChatComponent extends Vue {
 
 <style lang="scss">
 .columner {
-  height: calc(100vh - 380px);
+  height: calc(100vh - 400px);
   overflow-y: auto;
   overflow-x: hidden;
 }
