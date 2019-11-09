@@ -1,6 +1,6 @@
 <template lang="pug">
     v-col(cols='12').columner
-            div(v-for='(message, i) in messages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
+            div(v-for='(message, i) in sortedMessages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
               v-row(v-if='bot.telegramId === message.raw.from.id' justify='end' class='pa-4')
                 MessageComponent(v-bind:message="message")
               v-row(v-if='bot.telegramId !== message.raw.from.id' justify='start' class='pa-4') 
@@ -32,7 +32,6 @@ declare const sockets: any;
   }
 })
 export default class ChatComponent extends Vue {
-  chat: Chat | null = null;
   text = "";
   messageUpdating = true;
   scroll = true;
@@ -55,6 +54,28 @@ export default class ChatComponent extends Vue {
       }
       setTimeout(this.setUpdating, 1);
     });
+  }
+
+  get sortedMessages() {
+    for (const bot of store.bots()) {
+      if (bot._id === this.$props.bot._id) {
+        if (!bot.chats) {
+          return [];
+        }
+        for (const chat of bot.chats || []) {
+          if (chat._id === this.$props.curchat._id) {
+            if (!chat.messages) {
+              sockets.send("request_messages", {
+                bot: bot._id,
+                chat: chat._id
+              });
+              return [];
+            }
+            return chat.messages || [];
+          }
+        }
+      }
+    }
   }
 
   async visibilityChanged(
@@ -94,18 +115,6 @@ export default class ChatComponent extends Vue {
       this.scroll = false;
       setTimeout(this.setScroll, 200);
     }
-  }
-
-  send() {
-    if (!this.chat) {
-      return;
-    }
-    sockets.send("send_message", {
-      bot: (this as any).bot._id,
-      chat: this.chat._id,
-      message: this.text
-    });
-    this.text = "";
   }
 }
 </script>

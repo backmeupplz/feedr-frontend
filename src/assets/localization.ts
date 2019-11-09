@@ -26,6 +26,7 @@ export const messages = {
       },
       bot: {
         add: 'Не получилось добавить бота, проверьте токен',
+        edit: 'Не получилось отредактировать бота',
       },
     },
     media: {
@@ -52,6 +53,10 @@ export const messages = {
       title: 'Добавить бота',
       token: 'Токен бота',
     },
+    editBot: {
+      title: 'Редактировать приветствие',
+      greeting: 'Приветствие',
+    },
     deleteBot: {
       confirm: 'Вы уверены, что хотите удалить бота {name}?',
     },
@@ -60,6 +65,9 @@ export const messages = {
       tomuchtext: 'Длинна сообщения не может быть длиннее 4000 символов.',
       tokenformat:
         'Формат токена должен быть вида 12345678:AasdkasdWAKDa-wdLWsd',
+      greetings: {
+        toomanychars: 'Слишком много символов (>2000)',
+      },
     },
     noBots:
       'У вас еще нет ботов, пожалуйста, добавьте бота, кликнув по кнопке справа вверху.',
@@ -92,6 +100,7 @@ export const messages = {
       },
       bot: {
         add: 'Could not add bot, check token',
+        edit: 'Could not edit bot',
       },
     },
     media: {
@@ -117,6 +126,10 @@ export const messages = {
       title: 'Add bot',
       token: 'Bot token',
     },
+    editBot: {
+      title: 'Edit greetings message',
+      greeting: 'Greetings message',
+    },
     deleteBot: {
       confirm: 'Are you sure you want to delete the bot {name}?',
     },
@@ -124,6 +137,9 @@ export const messages = {
       needtext: "This field can't be empty",
       tomuchtext: "Message length can't be longer than 4000 characters",
       tokenformat: 'Token format should be 12345678:AasdkasdWAKDa-wdLWsd',
+      greetings: {
+        toomanychars: 'Too many characters (>2000)',
+      },
     },
     noBots:
       'You do not have any bots yet, please, add one by clicking the button on the top right.',
