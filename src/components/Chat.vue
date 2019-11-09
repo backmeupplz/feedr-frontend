@@ -80,7 +80,7 @@ export default class ChatComponent extends Vue {
 
   get heightStyle() {
     let height = window.innerHeight - 297;
-    return { height: height + "px !important;"
+    return { height: height + "px !important;"} 
   };
   
   async visibilityChanged(
