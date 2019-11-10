@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(flat :style="heightStyle")#adad
+  v-card(flat height="100vh")#adad
     v-row
       v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
@@ -29,7 +29,7 @@
             v-spacer
             ChatMenu(v-bind:chat="chat")
         p(v-if='!chat') Please, select chat
-        div(v-else)
+        div(:style="wrapperHeight" v-else)
           ChatComponent(v-bind:bot="bot" v-bind:curchat="chat")
           v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;")
             v-container(justify-center)
@@ -65,6 +65,7 @@ export default class BotView extends Vue {
   text = "";
   validsend = false;
   chatnav = false;
+  winheight = 0;
 
   $refs!: Vue["$refs"] & {
     msgSendForm: any;
@@ -85,7 +86,23 @@ export default class BotView extends Vue {
   }
 
   get heightStyle() {
-    let height = window.innerHeight - 112;
+    let height = this.winheight - 120;
+    return { height: height + "px" };
+  }
+
+  WindowHeight(data: any) {
+    this.winheight = data.target.innerHeight;
+  }
+
+  mounted() {
+    this.winheight = window.innerHeight;
+    this.$nextTick(function() {
+      window.addEventListener("resize", this.WindowHeight);
+    });
+  }
+
+  get wrapperHeight() {
+    let height = this.winheight - 120 - 186;
     return { height: height + "px" };
   }
 
