@@ -7,8 +7,18 @@ export const messages = {
       facebook: 'Зайти через Фейсбук',
       privacy: 'Политика конфиденциальности',
     },
+    bot: {
+      status: 'Статус',
+      owner: 'Владелец',
+      greetings: 'Приветствие',
+    },
     message: {
       unsupported: 'Это сообщение пока не поддерживается :(',
+    },
+    chat: {
+      ban: 'Заблокировать',
+      banned: 'Заблокирован',
+      unban: 'Разблокировать',
     },
     errors: {
       login: {
@@ -27,6 +37,8 @@ export const messages = {
       bot: {
         add: 'Не получилось добавить бота, проверьте токен',
         edit: 'Не получилось отредактировать бота',
+        inviteAdmin: 'Не получилось пригласить администратора в бота',
+        getAdmins: 'Не получилось получить список администраторов',
       },
     },
     media: {
@@ -36,6 +48,8 @@ export const messages = {
     chatsList: 'Выберите чат:',
     place: 'Место',
     location: 'Карта',
+    accept: 'Принять',
+    reject: 'Отклонить',
     cookie: {
       message:
         'Этот вебсайт использует печеньки для предоставления лучшего сервиса',
@@ -43,12 +57,18 @@ export const messages = {
     },
     close: 'Закрыть',
     save: 'Сохранить',
+    yes: 'Да',
+    no: 'Нет',
+    invite: 'Пригласить',
+    InviteMessage:
+      'Вы были приглашены {inviter} стать администратором бота {bot}',
     cancel: 'Отменить',
     botList: {
       title: 'Боты',
       noBotsText:
         'Еще не было добавлено ни одного бота, пожалуйста, нажмите на плюс ниже, чтобы добавить вашего первого бота.',
     },
+    chatlist: 'Список чатов',
     addBot: {
       title: 'Добавить бота',
       token: 'Токен бота',
@@ -57,11 +77,29 @@ export const messages = {
       title: 'Редактировать приветствие',
       greeting: 'Приветствие',
     },
+    admin: {
+      status: 'Статус',
+      name: 'Имя',
+      actions: 'Действия',
+      admin: 'Администратор',
+      invited: 'Приглашен',
+      admins: 'Администраторы',
+      type: 'Тип аккаунта',
+      invite: 'Пригласить администратора',
+      confirm: 'Вы уверены, что хотите удалить администратора {name} из бота?',
+      noadmins: 'Нет администраторов',
+    },
     deleteBot: {
       confirm: 'Вы уверены, что хотите удалить бота {name}?',
     },
+    rejectBot: {
+      confirm:
+        'Вы уверены, что хотите отказаться от администрирования бота {name}?',
+    },
     validation: {
       needtext: 'Это поле не может быть пустым.',
+      notemail: 'Это не E-mail',
+      notnumber: 'Это поле должно быть числом',
       tomuchtext: 'Длинна сообщения не может быть длиннее 4000 символов.',
       tokenformat:
         'Формат токена должен быть вида 12345678:AasdkasdWAKDa-wdLWsd',
@@ -80,8 +118,18 @@ export const messages = {
       facebook: 'Login with Facebook',
       privacy: 'Privacy policy',
     },
+    bot: {
+      status: 'Status',
+      owner: 'Owner',
+      greetings: 'Greetings message',
+    },
     message: {
       unsupported: 'This message is not yet supported :(',
+    },
+    chat: {
+      ban: 'Ban',
+      banned: 'Banned',
+      unban: 'Unban',
     },
     errors: {
       login: {
@@ -101,6 +149,8 @@ export const messages = {
       bot: {
         add: 'Could not add bot, check token',
         edit: 'Could not edit bot',
+        inviteAdmin: 'Could not invite admin to bot',
+        getAdmins: 'Could not get list of admins',
       },
     },
     media: {
@@ -110,18 +160,26 @@ export const messages = {
     chatsList: 'Select chat:',
     place: 'Place',
     location: 'Map',
+    accept: 'Accept',
+    reject: 'Reject',
     cookie: {
       message: 'This website uses cookies to provide you with better service',
       button: 'Got it',
     },
     close: 'Close',
     save: 'Save',
+    yes: 'Yes',
+    no: 'No',
+    invite: 'Invite',
+    InviteMessage:
+      'You have been invited by {inviter} to become the administrator of {bot}',
     cancel: 'Cancel',
     botList: {
       title: 'Bots',
       noBotsText:
         'No bots added yet, please, use the plus button below to add your first bot.',
     },
+    chatlist: 'Chats',
     addBot: {
       title: 'Add bot',
       token: 'Bot token',
@@ -130,11 +188,28 @@ export const messages = {
       title: 'Edit greetings message',
       greeting: 'Greetings message',
     },
+    admin: {
+      status: 'Status',
+      name: 'Name',
+      actions: 'Actions',
+      admin: 'Administrator',
+      invited: 'Invited',
+      admins: 'Administrators',
+      type: 'Type of account',
+      invite: 'Invite the administrator',
+      confirm: 'Are you sure you want to delete {name} administrator from bot?',
+      noadmins: 'No administrators',
+    },
     deleteBot: {
       confirm: 'Are you sure you want to delete the bot {name}?',
     },
+    rejectBot: {
+      confirm: 'Are you sure you want refuse to administer the bot {name}?',
+    },
     validation: {
       needtext: "This field can't be empty",
+      notemail: 'This is not E-mail',
+      notnumber: 'This field should be number',
       tomuchtext: "Message length can't be longer than 4000 characters",
       tokenformat: 'Token format should be 12345678:AasdkasdWAKDa-wdLWsd',
       greetings: {

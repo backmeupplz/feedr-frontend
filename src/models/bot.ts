@@ -7,6 +7,7 @@ export interface Bot {
   name: string
   username: string
   greetingMessage: string
+  administrated?: boolean
 
   chats?: Chat[]
 

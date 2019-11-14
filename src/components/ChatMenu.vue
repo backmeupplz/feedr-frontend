@@ -5,9 +5,9 @@ v-menu(left bottom v-if="chat")
                     v-icon mdi-dots-vertical
             v-list
                 v-list-item(@click="unban(chat);" v-if="chat && chat.banned")
-                    v-list-item-title Разблокировать
+                    v-list-item-title {{$t('chat.unban')}}
                 v-list-item(@click="ban(chat);" v-else="chat")
-                    v-list-item-title Заблокировать
+                    v-list-item-title {{$t('chat.ban')}}
 </template>
 
 <script lang="ts">
