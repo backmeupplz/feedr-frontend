@@ -17,7 +17,14 @@ export interface State {
   language?: String
   dark: Boolean
   bots: Bot[]
+  invites: Invite[]
   nomoremessages: Boolean
+}
+
+interface Invite {
+  inviter: string
+  inviteID: string
+  bot: string
 }
 
 interface LocalizedError {
@@ -42,6 +49,7 @@ const storeOptions = {
     language: undefined,
     dark: false,
     bots: [],
+    invites: [],
     nomoremessages: false,
   },
   mutations: {
@@ -62,8 +70,9 @@ const storeOptions = {
     setDark(state: State, dark: Boolean) {
       state.dark = dark
     },
-    setBots(state: State, bots: Bot[]) {
-      state.bots = bots
+    setBots(state: State, bots: any) {
+      state.bots = bots.bots
+      state.invites = bots.invites
 
       if (state.user) {
         sockets.send('leave_all')
@@ -82,6 +91,7 @@ const storeOptions = {
     language: (state: State) => state.language,
     dark: (state: State) => state.dark,
     bots: (state: State) => state.bots,
+    invites: (state: State) => state.invites,
     nomoremessages: (state: State) => state.nomoremessages,
   },
   plugins: [
@@ -104,6 +114,7 @@ export const snackbar = () => getters.snackbar as SnackbarState
 export const language = () => getters.language as string | undefined
 export const dark = () => getters.dark as boolean
 export const bots = () => getters.bots as Bot[]
+export const invites = () => getters.invites as Invite[]
 export const nomoremessages = () => getters.nomoremessages as boolean
 
 // Mutations

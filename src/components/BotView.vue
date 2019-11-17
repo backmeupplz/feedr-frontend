@@ -12,7 +12,7 @@
       v-col(cols='12' sm="8" md="9" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0': $vuetify.breakpoint.smAndUp}")
         v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile")
           v-list(nav)
-              v-list-item-title Список чатов:
+              v-list-item-title {{$t('chatlist')}}:
               v-list-item-group(active-class="text--accent-8")
                 div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
                   v-list-item(@click='openChat(chat); chatnav = !chatnav')
@@ -27,6 +27,7 @@
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
             v-toolbar-title(v-else) Nothing
             v-spacer
+            v-chip(v-if="chat && chat.banned" color="red" text-color="white") {{$t('chat.banned')}}
             ChatMenu(v-bind:chat="chat")
         p(v-if='!chat') Please, select chat
         div(:style="wrapperHeight" v-else)
