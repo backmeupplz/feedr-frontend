@@ -7,7 +7,7 @@
       v-card
         v-card-title {{$t('editBot.title')}}
         v-card-text
-            .body-1 Текущее сообщение: {{greetingMessage}}
+            .body-1 {{$t('currentMessage')}}: {{greetingMessage}}
             v-textarea(:label='$t("editBot.greeting")' 
             :rules="greetingRules"
             multiline
