@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(flat height="100vh")#adad
+  v-card(flat height="100vh")
     v-row
       v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
@@ -103,14 +103,14 @@ export default class BotView extends Vue {
   }
 
   get wrapperHeight() {
-    let height = this.winheight - 120 - 186;
+    let height = this.winheight - 120 - 160;
     return { height: height + "px" };
   }
 
   get sendRules() {
     return [
-      (v: any) => !!v || i18n.t("validation.needtext"),
-      (v: any) => (v && v.length) <= 4000 || i18n.t("validation.tomuchtext")
+      (v: any) => !!v || '',
+      (v: any) => ((v && v.length) <= 4000 || !v) || i18n.t("validation.tomuchtext")
     ];
   }
 

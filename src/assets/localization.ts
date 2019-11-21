@@ -62,6 +62,7 @@ export const messages = {
     invite: 'Пригласить',
     InviteMessage:
       'Вы были приглашены {inviter} стать администратором бота {bot}',
+    currentMessage: 'Текущее сообщение',
     cancel: 'Отменить',
     botList: {
       title: 'Боты',
@@ -173,6 +174,7 @@ export const messages = {
     invite: 'Invite',
     InviteMessage:
       'You have been invited by {inviter} to become the administrator of {bot}',
+    currentMessage: 'Current message',
     cancel: 'Cancel',
     botList: {
       title: 'Bots',
