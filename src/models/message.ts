@@ -5,6 +5,8 @@ export interface Message {
   updatedAt: string
 
   chat: string
-  telegramId: number
-  raw: any
+  telegramId?: number
+  raw?: any
+  type: string
+  frombot: boolean
 }

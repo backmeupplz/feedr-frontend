@@ -8,10 +8,12 @@ export interface Chat {
   updatedAt: string
 
   bot: string
-  telegramId: string
-  raw: any
+  telegramId?: string
+  viberId?: string
+  raw?: any
   lastMessage?: Message
   messages?: Message[]
+  type: string
 
   banned: boolean
 }

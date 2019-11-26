@@ -5,7 +5,7 @@
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
           v-list-item(@click='openChat(chat)')
             v-list-item-content
-              v-list-item-title {{chat.raw.first_name}}
+              v-list-item-title {{chat.raw.first_name || chat.raw.name}}
               v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
           v-divider
       v-divider(vertical v-if='!mobile')
@@ -16,19 +16,19 @@
               v-list-item-group(active-class="text--accent-8")
                 div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
                   v-list-item(@click='openChat(chat); chatnav = !chatnav')
-                      v-list-item-title {{chat.raw.first_name}}
+                      v-list-item-title {{chat.raw.first_name || chat.raw.name}}
                           v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
         v-card(outlined tile)
           v-app-bar(elevation="0")
             v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
             v-tooltip(bottom v-if="chat")
               template(v-slot:activator='{ on }')
-                span(v-on='on') {{chat.raw.first_name}}
+                span(v-on='on') {{chat.raw.first_name || chat.raw.name}}
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
             v-toolbar-title(v-else) Nothing
             v-spacer
-            v-chip(v-if="chat && chat.banned" color="red" text-color="white") {{$t('chat.banned')}}
-            ChatMenu(v-bind:chat="chat")
+            v-chip(v-if="selectedChat && selectedChat.banned" color="red" text-color="white") {{$t('chat.banned')}}
+            ChatMenu(v-bind:chat="selectedChat")
         p(v-if='!chat') Please, select chat
         div(:style="wrapperHeight" v-else)
           ChatComponent(v-bind:bot="bot" v-bind:curchat="chat")
@@ -41,37 +41,37 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import AddBotDialog from "./AddBotDialog.vue";
-import * as api from "../utils/api";
-import { Bot } from "../models/bot";
-import * as store from "../plugins/store/store";
-import { i18n } from "../plugins/i18n";
-import { Chat } from "../models/chat";
-import moment from "moment";
-import ChatComponent from "./Chat.vue";
-import ChatMenu from "./ChatMenu.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import AddBotDialog from './AddBotDialog.vue'
+import * as api from '../utils/api'
+import { Bot } from '../models/bot'
+import * as store from '../plugins/store/store'
+import { i18n } from '../plugins/i18n'
+import { Chat } from '../models/chat'
+import moment from 'moment'
+import ChatComponent from './Chat.vue'
+import ChatMenu from './ChatMenu.vue'
 // Global hack here
-declare const sockets: any;
+declare const sockets: any
 
 @Component({
   props: {
-    bot: Object
+    bot: Object,
   },
-  components: { ChatComponent, ChatMenu }
+  components: { ChatComponent, ChatMenu },
 })
 export default class BotView extends Vue {
-  chat: Chat | null = null;
-  text = "";
-  validsend = false;
-  chatnav = false;
-  winheight = 0;
+  chat: Chat | null = null
+  text = ''
+  validsend = false
+  chatnav = false
+  winheight = 0
 
-  $refs!: Vue["$refs"] & {
-    msgSendForm: any;
-    inputMsg: any;
-  };
+  $refs!: Vue['$refs'] & {
+    msgSendForm: any
+    inputMsg: any
+  }
 
   get sortedChats() {
     return ((this as any).bot.chats || ([] as Chat[])).sort(
@@ -80,72 +80,87 @@ export default class BotView extends Vue {
           return new Date(a.lastMessage!.createdAt) <
             new Date(b.lastMessage!.createdAt)
             ? 1
-            : -1;
+            : -1
         }
-      }
-    );
+      },
+    )
   }
 
   get heightStyle() {
-    let height = this.winheight - 120;
-    return { height: height + "px" };
+    let height = this.winheight - 120
+    return { height: height + 'px' }
   }
 
   WindowHeight(data: any) {
-    this.winheight = data.target.innerHeight;
+    this.winheight = data.target.innerHeight
   }
 
   mounted() {
-    this.winheight = window.innerHeight;
+    this.winheight = window.innerHeight
     this.$nextTick(function() {
-      window.addEventListener("resize", this.WindowHeight);
-    });
+      window.addEventListener('resize', this.WindowHeight)
+    })
   }
 
   get wrapperHeight() {
-    let height = this.winheight - 120 - 160;
-    return { height: height + "px" };
+    let height = this.winheight - 120 - 160
+    return { height: height + 'px' }
   }
 
   get sendRules() {
     return [
       (v: any) => !!v || '',
-      (v: any) => ((v && v.length) <= 4000 || !v) || i18n.t("validation.tomuchtext")
-    ];
+      (v: any) =>
+        (v && v.length) <= 4000 || !v || i18n.t('validation.tomuchtext'),
+    ]
+  }
+
+  get selectedChat() {
+    for (const bot of store.bots()) {
+      if (this.chat && bot._id === this.chat.bot && bot.chats) {
+        const chats = bot.chats.map(botchat => {
+          if (this.chat && botchat._id === this.chat._id) {
+            return botchat
+          }
+        })
+        return chats[0]
+      }
+    }
   }
 
   openChat(chat: Chat) {
-    this.chat = chat;
-    Vue.set(this.chat, "messages", []);
-    sockets.send("request_messages", {
+    this.chat = chat
+    Vue.set(this.chat, 'messages', [])
+    sockets.send('request_messages', {
       bot: (this as any).bot._id,
-      chat: chat._id
-    });
+      chat: chat._id,
+    })
   }
 
   get mobile() {
-    return this.$vuetify.breakpoint.xsOnly;
+    return this.$vuetify.breakpoint.xsOnly
   }
 
   formatDate(date: number) {
-    return moment(date * 1000).format("HH:mm:ss");
+    return moment(date * 1000).format('HH:mm:ss')
   }
 
   formatDateTooltip(date: number) {
-    return moment(date * 1000).format("YYYY-MM-DD HH:mm:ss");
+    return moment(date * 1000).format('YYYY-MM-DD HH:mm:ss')
   }
 
   send() {
     if (!this.chat || !this.text) {
-      return;
+      return
     }
-    sockets.send("send_message", {
+    sockets.send('send_message', {
       bot: (this as any).bot._id,
       chat: this.chat._id,
-      message: this.text
-    });
-    this.$refs.msgSendForm.reset();
-    this.$refs.inputMsg.blur();
+      message: this.text,
+      type: this.chat.type,
+    })
+    this.$refs.msgSendForm.reset()
+    this.$refs.inputMsg.blur()
   }
 }
 </script>

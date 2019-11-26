@@ -35,9 +35,10 @@ export async function loginTelegram(loginInfo: any) {
   return (await axios.post(`${base}/login/telegram`, loginInfo)).data as User
 }
 
-export async function postBot(token: string) {
-  return (await axios.post(`${base}/bot`, { token }, { headers: getHeaders() }))
-    .data
+export async function postBot(token: string, type: string) {
+  return (
+    await axios.post(`${base}/bot`, { token, type }, { headers: getHeaders() })
+  ).data
 }
 
 export async function BotInviteAdmin(
