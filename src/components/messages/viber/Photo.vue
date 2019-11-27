@@ -1,5 +1,6 @@
 <template lang="pug">
 v-list-item-title.message-text 
+    div(v-if="message.raw.text") {{message.raw.text}}
     v-container
         v-row(justify="start")
             v-btn(outlined color="indigo" @click="loadPhoto" v-if="!hided") {{$t("media.load")}}
