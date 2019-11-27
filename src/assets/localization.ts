@@ -10,6 +10,7 @@ export const messages = {
     bot: {
       status: 'Статус',
       owner: 'Владелец',
+      type: 'Тип',
       greetings: 'Приветствие',
     },
     message: {
@@ -47,7 +48,10 @@ export const messages = {
     notFound: 'Страница не найдена',
     chatsList: 'Выберите чат:',
     place: 'Место',
+    type: 'Тип',
+    avatar: 'Аватар',
     location: 'Карта',
+    oldlink: 'К сожалению, ссылка на файл истекла. Ограничение Viber API.',
     accept: 'Принять',
     reject: 'Отклонить',
     cookie: {
@@ -104,6 +108,7 @@ export const messages = {
       tomuchtext: 'Длинна сообщения не может быть длиннее 4000 символов.',
       tokenformat:
         'Формат токена должен быть вида 12345678:AasdkasdWAKDa-wdLWsd',
+      vibertokenformat: 'Формат токена должен быть вида AbC231-DeF453-GJ675',
       greetings: {
         toomanychars: 'Слишком много символов (>2000)',
       },
@@ -122,6 +127,7 @@ export const messages = {
     bot: {
       status: 'Status',
       owner: 'Owner',
+      type: 'Type',
       greetings: 'Greetings message',
     },
     message: {
@@ -160,7 +166,10 @@ export const messages = {
     notFound: 'Page not found',
     chatsList: 'Select chat:',
     place: 'Place',
+    type: 'Type',
+    avatar: 'Avatar',
     location: 'Map',
+    oldlink: 'Sorry, link to this media has expired. Viber API restriction',
     accept: 'Accept',
     reject: 'Reject',
     cookie: {
@@ -214,6 +223,7 @@ export const messages = {
       notnumber: 'This field should be number',
       tomuchtext: "Message length can't be longer than 4000 characters",
       tokenformat: 'Token format should be 12345678:AasdkasdWAKDa-wdLWsd',
+      vibertokenformat: 'Token format should be AbC231-DeF453-GJ675',
       greetings: {
         toomanychars: 'Too many characters (>2000)',
       },

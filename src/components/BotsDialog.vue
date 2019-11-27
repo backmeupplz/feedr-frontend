@@ -24,9 +24,13 @@
           v-card(v-for='bot in $store.state.bots' :key='bot._id').botCard
             v-card-title {{bot.name}}
             v-card-text
-              p Username: @{{bot.username}}
-              p TelegramID: {{bot.telegramId}}
               p FeedrID: {{bot._id}}
+              div(v-if="bot.botType === 'telegram'")
+                p Username: @{{bot.username}}
+                p TelegramID: {{bot.telegramId}}
+              p {{$t('type')}}: {{bot.botType}}
+              div(v-if="bot.botType === 'viber'")
+                p {{$t('avatar')}}: {{bot.viberAvatar}}
               p {{$t('bot.status')}}: {{bot.status}}
               p {{$t('bot.greetings')}}: {{bot.greetingMessage}}
               p {{$t('bot.owner')}}: {{ownershipStatus(bot)}}
