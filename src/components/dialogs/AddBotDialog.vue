@@ -44,12 +44,14 @@ import { i18n } from '../../plugins/i18n'
     close: Function,
   },
   watch: {
+    botType: 'validateForm',
+    token: 'validateForm',
     dialog: async function(val) {
       console.log(val)
       if (val) {
         ;(this as any).botType = 'Telegram'
         ;(this as any).token = ''
-        ;(this as any).$refs.formAddBot.resetValidation()
+        setTimeout((this as any).reset, 101)
       }
     },
   },
@@ -79,6 +81,21 @@ export default class AddBotDialog extends Vue {
     } finally {
       this.loading = false
     }
+  }
+
+  reset() {
+    this.$refs.formAddBot.resetValidation()
+  }
+
+  validateForm() {
+    setTimeout(this.revalidateForm, 100)
+  }
+
+  revalidateForm() {
+    if (!this.$refs.formAddBot) {
+      return
+    }
+    this.$refs.formAddBot.validate()
   }
 
   get tokenRules() {
