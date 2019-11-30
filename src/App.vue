@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-app(:dark='$store.state.dark' :class='$store.state.dark ? "grey darken-4" : "grey lighten-4"')
+  v-app(:dark='$store.state.dark' style="height:100vh" :class='$store.state.dark ? "grey darken-4" : "grey lighten-4"')
     cookie-law(theme='blood-orange'
     :buttonText='$t("cookie.button")'
     :message='$t("cookie.message")')
@@ -21,9 +21,9 @@ export default {
 </script>
 
 <style lang="scss">
-body {
+html, body{
   position: fixed !important;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 </style>

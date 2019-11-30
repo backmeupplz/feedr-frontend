@@ -1,5 +1,5 @@
 <template lang="pug">
-    v-col(cols='12').columner
+    v-col(cols='12' :style="heightStyle").columner
             div(v-for='(message, i) in sortedMessages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
               v-row(v-if='frombot(bot, message)' justify='end' class='pa-4')
                 MessageComponent(v-bind:message="message")
@@ -93,6 +93,11 @@ export default class ChatComponent extends Vue {
     }
   }
 
+  get heightStyle() {
+    let height = document.documentElement.clientHeight - 400;
+    return { height: height + "px !important;"} 
+  };
+  
   async visibilityChanged(
     isVisible: Boolean,
     entry: any,
