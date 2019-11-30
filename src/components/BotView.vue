@@ -1,35 +1,34 @@
 <template lang="pug">
   v-card(flat height="100vh")
-    v-row
+    v-row.pr-1
       v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
         div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
-          v-list-item(@click='openChat(chat)')
+          v-list-item(@click='openChat(chat)' active-class="active" :class="{'v-list-item--active': chatActivated(chat)}" )
             v-list-item-content
-              v-list-item-title {{chat.raw.first_name || chat.raw.name}}
-              v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
+              v-list-item-title {{getChatName(chat)}}
+              v-list-item-subtitle(v-if='chat.lastMessage') {{chat.lastMessage.raw.text || $t('chat.attachment')}}
           v-divider
-      v-divider(vertical v-if='!mobile')
-      v-col(cols='12' sm="8" md="9" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0': $vuetify.breakpoint.smAndUp}")
+      v-col(cols='12' sm="9" md="10" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0 pr-4 chatview': $vuetify.breakpoint.smAndUp}")
         v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile")
           v-list(nav)
               v-list-item-title {{$t('chatlist')}}:
               v-list-item-group(active-class="text--accent-8")
                 div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
-                  v-list-item(@click='openChat(chat); chatnav = !chatnav')
-                      v-list-item-title {{chat.raw.first_name || chat.raw.name}}
-                          v-list-item-subtitle(v-if='chat.lastMessage') {{JSON.stringify(chat.lastMessage.raw.text)}}
+                  v-list-item(@click='openChat(chat); chatnav = !chatnav'  active-class="active" :class="{'v-list-item--active': chatActivated(chat, selectedChat)}") 
+                      v-list-item-title {{getChatName(chat)}}
+                          v-list-item-subtitle(v-if='chat.lastMessage') {{chat.lastMessage.raw.text || $t('chat.attachment')}}
         v-card(outlined tile)
           v-app-bar(elevation="0")
             v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
             v-tooltip(bottom v-if="chat")
               template(v-slot:activator='{ on }')
-                span(v-on='on') {{chat.raw.first_name || chat.raw.name}}
+                span(v-on='on') {{getChatName(chat)}}
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
             v-toolbar-title(v-else) Nothing
             v-spacer
             v-chip(v-if="selectedChat && selectedChat.banned" color="red" text-color="white") {{$t('chat.banned')}}
             ChatMenu(v-bind:chat="selectedChat")
-        p(v-if='!chat') Please, select chat
+        p(v-if='!chat').pa-4 {{$t('chat.select')}}
         div(:style="wrapperHeight" v-else)
           ChatComponent(v-bind:bot="bot" v-bind:curchat="chat")
           v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;")
@@ -72,7 +71,22 @@ export default class BotView extends Vue {
     msgSendForm: any
     inputMsg: any
   }
-
+  getChatName(chat: Chat) {
+    if (chat.raw.name) {
+      return chat.raw.name
+    }
+    let name = ''
+    if (chat.raw.first_name) {
+      name = chat.raw.first_name
+    }
+    if (chat.raw.last_name) {
+      name = `${name} ${chat.raw.last_name}`
+    }
+    if (!name) {
+      return i18n.t('chat.noname')
+    }
+    return name
+  }
   get sortedChats() {
     return ((this as any).bot.chats || ([] as Chat[])).sort(
       (a: any, b: any) => {
@@ -84,6 +98,16 @@ export default class BotView extends Vue {
         }
       },
     )
+  }
+
+  chatActivated(chat: Chat) {
+    if (!chat) {
+      return false
+    }
+    if (this.chat && this.chat === chat) {
+      return true
+    }
+    return false
   }
 
   get heightStyle() {
@@ -172,5 +196,8 @@ export default class BotView extends Vue {
 .scroller {
   overflow-y: auto;
   overflow-x: hidden;
+}
+.chatview {
+  border-left: 1px solid #e0e0e0;
 }
 </style>

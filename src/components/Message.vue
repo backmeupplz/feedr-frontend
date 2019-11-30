@@ -149,9 +149,6 @@ export default class ChatMenu extends Vue {
   display: inline-block !important;
 }
 .message-text {
-  white-space: normal !important;
-  -moz-user-select: text !important;
-  -khtml-user-select: text !important;
-  user-select: text !important;
+  white-space: break-spaces !important;
 }
 </style>
