@@ -147,7 +147,7 @@ export default class BotView extends Vue {
             return botchat
           }
         })
-        return chat
+        return chat[0]
       }
     }
   }
