@@ -20,6 +20,9 @@ export const messages = {
       ban: 'Заблокировать',
       banned: 'Заблокирован',
       unban: 'Разблокировать',
+      noname: 'Нет имени',
+      attachment: 'Вложение',
+      select: 'Пожалуйста, выберите чат',
     },
     errors: {
       login: {
@@ -137,6 +140,9 @@ export const messages = {
       ban: 'Ban',
       banned: 'Banned',
       unban: 'Unban',
+      noname: 'No name',
+      attachment: 'Attachment',
+      select: 'Please, select chat',
     },
     errors: {
       login: {
