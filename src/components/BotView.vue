@@ -142,12 +142,12 @@ export default class BotView extends Vue {
   get selectedChat() {
     for (const bot of store.bots()) {
       if (this.chat && bot._id === this.chat.bot && bot.chats) {
-        const chats = bot.chats.map(botchat => {
+        const chat = bot.chats.filter(botchat => {
           if (this.chat && botchat._id === this.chat._id) {
             return botchat
           }
         })
-        return chats[0]
+        return chat
       }
     }
   }
