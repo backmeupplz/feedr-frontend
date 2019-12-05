@@ -91,11 +91,23 @@ export async function AcceptInvite(invite: string) {
 }
 
 export async function getBots() {
-  return (
-    await axios.get(`${base}/bot`, {
-      headers: getHeaders(),
+  try {
+    store.setBotsLoading(true)
+    const response = (
+      await axios.get(`${base}/bot`, {
+        headers: getHeaders(),
+      })
+    ).data as any
+    store.setBotsLoading(false)
+    return response
+  } catch (e) {
+    store.setBotsLoading(true)
+    store.setSnackbar({
+      message: e,
+      color: 'error',
+      active: true,
     })
-  ).data as any
+  }
 }
 
 export async function updateBot(bot: Bot) {

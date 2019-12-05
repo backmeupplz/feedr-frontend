@@ -4,7 +4,7 @@ v-list-item-title.message-text
     v-container(fluid)
         v-row(v-if="!loaded" :justify="mobile").row_nowrap
           v-col
-            v-btn(outlined color="indigo" :loading="loading" @click="loadAudio") Слушать
+            v-btn(outlined color="indigo" :loading="loading" @click="loadAudio") {{$t('media.play')}}
               v-icon(right) mdi-music
         v-row(dense)
           v-col(md="auto").col_nogrow
@@ -18,147 +18,146 @@ v-list-item-title.message-text
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import * as api from "../../../utils/api";
-import * as store from "../../../plugins/store/store";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import * as api from '../../../utils/api'
+import * as store from '../../../plugins/store/store'
 
 @Component({
-  props: ["message"]
+  props: ['message'],
 })
 export default class TelegramAudioMessage extends Vue {
-  $refs!: Vue["$refs"] & {
-    audioController: any;
-  };
-  link = "";
-  loading = false;
-  loaded = false;
-  paused = true;
-  totalDuration = 0;
-  currtime = 0;
+  $refs!: Vue['$refs'] & {
+    audioController: any
+  }
+  link = ''
+  loading = false
+  loaded = false
+  paused = true
+  totalDuration = 0
+  currtime = 0
 
   get title() {
-    const msg = this.$props.message.raw.audio;
+    const msg = this.$props.message.raw.audio
     if (msg.performer) {
-      return `${msg.performer} — ${msg.title}`;
+      return `${msg.performer} — ${msg.title}`
     }
-    return `${msg.title}`;
+    return `${msg.title}`
   }
 
   async loadAudio() {
-    this.loading = true;
+    this.loading = true
     try {
-      let fetched = await api.getFilesLink(this.$props.message);
+      let fetched = await api.getFilesLink(this.$props.message)
       switch (fetched.status) {
-        case "ok":
-          this.link = fetched.url;
-          this.loaded = true;
-          break;
-        case "tobig":
+        case 'ok':
+          this.link = fetched.url
+          this.loaded = true
+          break
+        case 'tobig':
           store.setSnackbar({
-            message: "errors.media.tobig",
-            color: "error",
-            active: true
-          });
-          break;
+            message: 'errors.media.tobig',
+            color: 'error',
+            active: true,
+          })
+          break
           defult: store.setSnackbar({
-            message: "errors.media.loading",
-            color: "error",
-            active: true
-          });
+            message: 'errors.media.loading',
+            color: 'error',
+            active: true,
+          })
       }
     } catch {
       store.setSnackbar({
-        message: "errors.media.loading",
-        color: "error",
-        active: true
-      });
+        message: 'errors.media.loading',
+        color: 'error',
+        active: true,
+      })
     } finally {
-      this.loading = false;
+      this.loading = false
     }
   }
 
   get label() {
     if (this.$vuetify.breakpoint.width < 340) {
-      return false;
+      return false
     }
-    let minutes = Math.floor(this.totalDuration / 60) as any;
-    let seconds = Math.floor(this.totalDuration % 60) as any;
+    let minutes = Math.floor(this.totalDuration / 60) as any
+    let seconds = Math.floor(this.totalDuration % 60) as any
 
     if (seconds < 10) {
-      seconds = "0" + String(seconds);
+      seconds = '0' + String(seconds)
     }
 
     if (minutes < 10) {
-      minutes = "0" + String(minutes);
+      minutes = '0' + String(minutes)
     }
 
-    let curmin = Math.floor(this.currtime / 60) as any;
-    let cursecs = Math.floor(this.currtime % 60) as any;
+    let curmin = Math.floor(this.currtime / 60) as any
+    let cursecs = Math.floor(this.currtime % 60) as any
 
     if (cursecs < 10) {
-      cursecs = "0" + String(cursecs);
+      cursecs = '0' + String(cursecs)
     }
 
     if (curmin < 10) {
-      curmin = "0" + String(curmin);
+      curmin = '0' + String(curmin)
     }
 
-    return `${curmin}:${cursecs}/${minutes}:${seconds}`;
+    return `${curmin}:${cursecs}/${minutes}:${seconds}`
   }
 
   _handlePlayPause(e: any) {
-    if (e.type === "pause") {
-      this.paused = true;
+    if (e.type === 'pause') {
+      this.paused = true
     }
   }
 
   _handleLoaded(e: any) {
-    this.totalDuration = Number(this.$refs.audioController.duration);
+    this.totalDuration = Number(this.$refs.audioController.duration)
   }
 
   _handlePlayingUI(e: any) {
-    this.currtime = this.$refs.audioController.currentTime;
+    this.currtime = this.$refs.audioController.currentTime
   }
 
   mounted() {
-    this.$refs.audioController.addEventListener("pause", this._handlePlayPause);
-    this.$refs.audioController.addEventListener("play", this._handlePlayPause);
+    this.$refs.audioController.addEventListener('pause', this._handlePlayPause)
+    this.$refs.audioController.addEventListener('play', this._handlePlayPause)
     this.$refs.audioController.addEventListener(
-      "timeupdate",
-      this._handlePlayingUI
-    );
+      'timeupdate',
+      this._handlePlayingUI,
+    )
     this.$refs.audioController.addEventListener(
-      "loadeddata",
-      this._handleLoaded
-    );
+      'loadeddata',
+      this._handleLoaded,
+    )
   }
 
   changeAudio() {
-    const player = this.$refs.audioController;
+    const player = this.$refs.audioController
     if (player.paused) {
-      this.paused = false;
-      player.play();
+      this.paused = false
+      player.play()
     } else {
-      player.pause();
+      player.pause()
     }
   }
 
   types() {
-    const audio =
-      this.$props.message.raw.audio || this.$props.message.raw.voice;
-    return audio.mime_type;
+    const audio = this.$props.message.raw.audio || this.$props.message.raw.voice
+    return audio.mime_type
   }
 
   setPosition(time: any) {
-    this.$refs.audioController.currentTime = time;
+    this.$refs.audioController.currentTime = time
   }
 
   get mobile() {
     if (this.$vuetify.breakpoint.xsOnly) {
-      return "center";
+      return 'center'
     }
-    return "start";
+    return 'start'
   }
 }
 </script>

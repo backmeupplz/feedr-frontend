@@ -47,7 +47,6 @@ import { i18n } from '../../plugins/i18n'
     botType: 'validateForm',
     token: 'validateForm',
     dialog: async function(val) {
-      console.log(val)
       if (val) {
         ;(this as any).botType = 'Telegram'
         ;(this as any).token = ''

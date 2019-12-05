@@ -11,16 +11,6 @@
             span {{$store.state.user.name}}, {{$store.state.user.email || $store.state.user.facebookId || $store.state.user.telegramId}}
           span(v-else) {{$t('title')}}
       v-spacer
-      // Bots
-      v-btn(v-if="$store.state.user"
-      text
-      icon
-      color='grey'
-      @click='botsDialog = true')
-        v-icon(small) adb
-      // Dark mode
-      v-btn(text icon color='grey' @click='toggleMode')
-        v-icon(small) brightness_2
       // Language picker
       v-menu(offset-y)
         template(v-slot:activator='{ on }')
@@ -28,61 +18,75 @@
         v-list
           v-list-item(v-for='locale in locales' @click='changeLanguage(locale.code)' :key="locale.code")
             v-list-item-title {{locale.icon}}
-      // Logout
-      v-btn(v-if="$store.state.user"
-      text
-      icon
-      color='grey'
-      @click='logout')
-        v-icon(small) exit_to_app
+      v-menu(offset-y)
+        template(v-slot:activator='{ on }')
+          v-btn(text icon color='grey' v-on='on') 
+            v-icon mdi-dots-vertical
+        v-list
+          // Bots
+          v-list-item(@click='botsDialog = true' v-if="$store.state.user")
+            v-list-item-title {{$t('navbar.bots')}}
+          // Dark mode
+          v-list-item(@click='toggleMode')
+            v-list-item-title {{currentTheme}}
+          // Logout
+          v-list-item(@click='logout')
+            v-list-item-title {{$t('navbar.logout')}}
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import * as store from "../plugins/store/store";
-import { i18n } from "../plugins/i18n";
-import * as api from "../utils/api";
-import BotsDialog from "./BotsDialog.vue";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import * as store from '../plugins/store/store'
+import { i18n } from '../plugins/i18n'
+import * as api from '../utils/api'
+import BotsDialog from './BotsDialog.vue'
 
 @Component({
   components: {
-    BotsDialog
-  }
+    BotsDialog,
+  },
 })
 export default class Navbar extends Vue {
-  botsDialog = false;
+  botsDialog = false
 
   get locales() {
-    return [{ icon: "🇺🇸", code: "en" }, { icon: "🇷🇺", code: "ru" }];
+    return [{ icon: '🇺🇸', code: 'en' }, { icon: '🇷🇺', code: 'ru' }]
   }
   get currentLocale() {
     for (const locale of this.locales) {
       if (locale.code === i18n.locale) {
-        return locale;
+        return locale
       }
     }
   }
 
+  get currentTheme() {
+    if (store.dark()) {
+      return `${i18n.t('themes.dark')}: ${i18n.t('themes.on')}`
+    }
+    return `${i18n.t('themes.dark')}: ${i18n.t('themes.off')}`
+  }
+
   mounted() {
-    (this.$vuetify.theme as any).dark = store.dark();
+    ;(this.$vuetify.theme as any).dark = store.dark()
   }
 
   closeBotsDialog() {
-    this.botsDialog = false;
+    this.botsDialog = false
   }
   toggleMode() {
-    store.setDark(!store.dark());
-    (this.$vuetify.theme as any).dark = store.dark();
+    store.setDark(!store.dark())
+    ;(this.$vuetify.theme as any).dark = store.dark()
   }
   changeLanguage(locale: string) {
-    i18n.locale = locale;
-    store.setLanguage(locale);
-    document.title = i18n.t("title") as string;
+    i18n.locale = locale
+    store.setLanguage(locale)
+    document.title = i18n.t('title') as string
   }
   logout() {
-    store.logout();
-    this.$router.replace("/");
+    store.logout()
+    this.$router.replace('/')
   }
 }
 </script>

@@ -25,8 +25,8 @@
             v-card-title {{bot.name}}
             v-card-text
               p FeedrID: {{bot._id}}
+              p Username: @{{bot.username}}
               div(v-if="bot.botType === 'telegram'")
-                p Username: @{{bot.username}}
                 p TelegramID: {{bot.telegramId}}
               p {{$t('type')}}: {{bot.botType}}
               div(v-if="bot.botType === 'viber'")

@@ -4,6 +4,7 @@ export interface User {
   facebookId?: string
   telegramId?: string
   vkId?: string
+  feed?: boolean
 
   token?: string
 }

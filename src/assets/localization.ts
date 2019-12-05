@@ -23,6 +23,8 @@ export const messages = {
       noname: 'Нет имени',
       attachment: 'Вложение',
       select: 'Пожалуйста, выберите чат',
+      invite:
+        'Ни один пользователь не начал чат с этим ботом. Пожалуйста, сообщите своим пользователям, что бот доступен по адресу',
     },
     errors: {
       login: {
@@ -33,6 +35,8 @@ export const messages = {
       chat: {
         ban: 'Не получилось забанить этого пользователя, ошибка API',
         unban: 'Не получилось разбанить этого пользователя, ошибка API',
+        not_found: 'Чат не найден',
+        no_access: 'Нет доступа к чату',
       },
       media: {
         loading: 'Ошибка загрузки медиа',
@@ -43,10 +47,12 @@ export const messages = {
         edit: 'Не получилось отредактировать бота',
         inviteAdmin: 'Не получилось пригласить администратора в бота',
         getAdmins: 'Не получилось получить список администраторов',
+        message_rejected: 'Не удалось отправить сообщение',
       },
     },
     media: {
       load: 'Открыть',
+      play: 'Слушать',
     },
     notFound: 'Страница не найдена',
     chatsList: 'Выберите чат:',
@@ -118,6 +124,20 @@ export const messages = {
     },
     noBots:
       'У вас еще нет ботов, пожалуйста, добавьте бота, кликнув по кнопке справа вверху.',
+    navbar: {
+      bots: 'Боты',
+      logout: 'Выйти',
+    },
+    themes: {
+      dark: 'Темная тема',
+      on: 'Вкл',
+      off: 'Выкл',
+    },
+    text: {
+      copy: 'Копировать ссылку',
+      copied: 'Ссылка скопирована',
+    },
+    you: 'Вы',
   },
   en: {
     title: 'Feedr',
@@ -143,6 +163,8 @@ export const messages = {
       noname: 'No name',
       attachment: 'Attachment',
       select: 'Please, select chat',
+      invite:
+        'No users have initiated the chat with this bot. Please, let your users know that the bot is reachable at',
     },
     errors: {
       login: {
@@ -153,6 +175,8 @@ export const messages = {
       chat: {
         ban: 'Could not ban this user, API error',
         unban: 'Could not unban this user, API error',
+        not_found: 'Chat not found',
+        no_access: "You don't have access to this chat",
       },
       media: {
         loading: 'Media loading error',
@@ -164,10 +188,12 @@ export const messages = {
         edit: 'Could not edit bot',
         inviteAdmin: 'Could not invite admin to bot',
         getAdmins: 'Could not get list of admins',
+        message_rejected: 'Failed to send message',
       },
     },
     media: {
       load: 'Load',
+      play: 'Play',
     },
     notFound: 'Page not found',
     chatsList: 'Select chat:',
@@ -236,5 +262,19 @@ export const messages = {
     },
     noBots:
       'You do not have any bots yet, please, add one by clicking the button on the top right.',
+    navbar: {
+      logout: 'Logout',
+      bots: 'Bots',
+    },
+    themes: {
+      dark: 'Dark theme',
+      on: 'On',
+      off: 'Off',
+    },
+    text: {
+      copy: 'Copy link',
+      copied: 'Link was copied',
+    },
+    you: 'You',
   },
 }

@@ -23,6 +23,8 @@ v-card.message
               TelegramContactMessage(v-else-if="message.raw.contact" :message="message")
               // Audio and Voice
               TelegramAudioMessage(v-else-if="message.raw.audio || message.raw.voice" :message="message")
+              // Game
+              TelegramGameMessage(v-else-if="message.raw.game" :game="message.raw.game")
               // Unsupported Messages
               UnSupportedMessage(v-else :message="message")
             div(v-else="viber")
@@ -68,6 +70,7 @@ import TelegramStickerMessage from './messages/telegram/Sticker.vue' // Sticker 
 import TelegramDocumentMessage from './messages/telegram/Document.vue' // Document message type
 import TelegramContactMessage from './messages/telegram/Contact.vue' // Contact message type
 import TelegramAudioMessage from './messages/telegram/Audio.vue' // Audio message type
+import TelegramGameMessage from './messages/telegram/Game.vue' // Game message type
 // VIBER
 import ViberLocationMessage from './messages/viber/Location.vue' // Location message type
 import ViberPhotoMessage from './messages/viber/Photo.vue' // Photo message type
@@ -93,6 +96,7 @@ import moment from 'moment'
     TelegramContactMessage,
     TelegramAudioMessage,
     TelegramPollMessage,
+    TelegramGameMessage,
     ViberLocationMessage,
     ViberPhotoMessage,
     ViberContactMessage,
@@ -150,5 +154,7 @@ export default class ChatMenu extends Vue {
 }
 .message-text {
   white-space: break-spaces !important;
+  overflow-wrap: anywhere !important;
+  user-select: text !important;
 }
 </style>

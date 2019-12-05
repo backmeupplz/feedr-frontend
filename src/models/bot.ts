@@ -12,6 +12,10 @@ export interface Bot {
   administrated?: boolean
 
   chats?: Chat[]
+  selected_chat?: Chat
+  no_more_chats?: boolean
+  chatsloading?: boolean
+  oldestLoadedChat?: Chat
 
   status: string
 }

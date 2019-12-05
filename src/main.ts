@@ -15,10 +15,12 @@ Vue.use(Lightbox)
 Vue.use(VueObserveVisibility)
 Vue.config.productionTip = true
 
-new Vue({
+const vm = new Vue({
   router,
   store,
   i18n,
   vuetify,
   render: h => h(App),
 }).$mount('#app')
+
+export default vm
