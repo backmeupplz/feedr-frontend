@@ -117,7 +117,7 @@ export default class Home extends Vue {
         store.setSnackbarError(err.message);
       } finally {
         this.$router.replace("app");
-      }
+      } 
     } catch (err) {
       store.setSnackbar({
         message: "errors.login.telegram",
