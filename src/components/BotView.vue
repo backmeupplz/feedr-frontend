@@ -1,22 +1,32 @@
 <template lang="pug">
   v-card(flat height="100vh")
     v-row.pr-1
-      v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller
-        div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
-          v-list-item(@click='openChat(chat)' active-class="active" :class="{'v-list-item--active': chatActivated(chat)}" )
+      v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller.border__top
+        div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
+          v-list-item(@click='openChat(chat)' @click.prevent="setMessageSendFocus" active-class="active" :class="{'v-list-item--active': chatActivated(chat)}" )
             v-list-item-content
               v-list-item-title {{getChatName(chat)}}
-              v-list-item-subtitle(v-if='chat.lastMessage') {{chat.lastMessage.raw.text || $t('chat.attachment')}}
+              v-list-item-subtitle(v-if='chat.lastMessage')
+                i {{frombot(curbot, chat.lastMessage)}}
+                |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
+            v-list-item-action(v-if='chat.lastMessage')
+              v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
           v-divider
       v-col(cols='12' sm="9" md="10" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0 pr-4 chatview': $vuetify.breakpoint.smAndUp}")
-        v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile")
-          v-list(nav)
-              v-list-item-title {{$t('chatlist')}}:
-              v-list-item-group(active-class="text--accent-8")
-                div(v-if='bot.chats' v-for='chat in sortedChats' :key='chat._id')
-                  v-list-item(@click='openChat(chat); chatnav = !chatnav'  active-class="active" :class="{'v-list-item--active': chatActivated(chat, selectedChat)}") 
-                      v-list-item-title {{getChatName(chat)}}
-                          v-list-item-subtitle(v-if='chat.lastMessage') {{chat.lastMessage.raw.text || $t('chat.attachment')}}
+        v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile" :style="listStyle")
+          v-list(nav two-line)
+            v-list-item-title {{$t('chatlist')}}:
+            v-list-item-group(active-class="text--accent-8")
+              div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
+                v-list-item(@click='openChat(chat); chatnav = !chatnav' @click.prevent="setMessageSendFocus" active-class="active" :class="{'v-list-item--active': chatActivated(chat, selectedChat)}") 
+                  v-list-item-content
+                    v-list-item-title {{getChatName(chat)}}
+                    v-list-item-subtitle(v-if='chat.lastMessage') 
+                      i {{frombot(curbot, chat.lastMessage)}}
+                      |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
+                  v-list-item-action(v-if='chat.lastMessage')
+                    v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
+
         v-card(outlined tile)
           v-app-bar(elevation="0")
             v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
@@ -24,14 +34,19 @@
               template(v-slot:activator='{ on }')
                 span(v-on='on') {{getChatName(chat)}}
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
-            v-toolbar-title(v-else) Nothing
             v-spacer
             v-chip(v-if="selectedChat && selectedChat.banned" color="red" text-color="white") {{$t('chat.banned')}}
             ChatMenu(v-bind:chat="selectedChat")
-        p(v-if='!chat').pa-4 {{$t('chat.select')}}
-        div(:style="wrapperHeight" v-else)
-          ChatComponent(v-bind:bot="bot" v-bind:curchat="chat")
-          v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;")
+          v-progress-linear(indeterminate v-if="chatloading")
+        .headline.pa-4.text-center(v-if='!chat && curbot && curbot.chats && curbot.chats.length') {{$t('chat.select')}}
+        .headline.pa-4.text-center(v-else-if='!chat && curbot && curbot.chats && !curbot.chats.length') {{$t('chat.invite')}} 
+          a(v-if="bot.botType ==='telegram'" :href="'https://t.me/' + curbot.username" target="_blank")   
+            |@{{curbot.username}}
+          div(v-else)
+            |@{{curbot.username}}
+        div(:style="wrapperHeight" v-else).border__right
+          ChatComponent(v-bind:bot="bot" v-bind:curchat="selectedChat")
+          v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;").border__right
             v-container(justify-center)
               v-text-field(v-model='text' ref="inputMsg" :rules="sendRules" @keypress.enter="send")
                 template(v-slot:append)
@@ -71,6 +86,48 @@ export default class BotView extends Vue {
     msgSendForm: any
     inputMsg: any
   }
+
+  visibilityChanged(isVisible: Boolean, entry: any, i: number, chat: Chat) {
+    let curbot = this.curbot as any
+    for (const bot of store.bots()) {
+      if (bot && bot._id == curbot._id) {
+        curbot = bot
+      }
+    }
+    if (
+      !isVisible ||
+      curbot.no_more_chats ||
+      curbot.chatsloading ||
+      !curbot.oldestLoadedChat
+    ) {
+      return
+    }
+    const chats = curbot.chats.length || 0
+    const qty = i + 1
+    if (qty === chats) {
+      Vue.set(curbot, 'chatsloading', true)
+      sockets.send('request_chats', {
+        bot: curbot._id,
+        id: curbot.oldestLoadedChat._id,
+      })
+    }
+  }
+
+  frombot(bot: any, message: any) {
+    if (bot.botType === 'telegram') {
+      if (bot.telegramId === message.raw.from.id) {
+        return `${i18n.t('you')}: `
+      }
+      return ''
+    }
+    if (bot.botType === 'viber') {
+      if (message.frombot) {
+        return `${i18n.t('you')}: `
+      }
+      return ''
+    }
+  }
+
   getChatName(chat: Chat) {
     if (chat.raw.name) {
       return chat.raw.name
@@ -86,6 +143,35 @@ export default class BotView extends Vue {
       return i18n.t('chat.noname')
     }
     return name
+  }
+
+  get selectedChat() {
+    for (const bot of store.bots()) {
+      if (bot && bot._id === this.$props.bot._id && bot.selected_chat) {
+        this.openChat(bot.selected_chat)
+        return bot.selected_chat
+      } else if (
+        bot &&
+        bot._id === this.$props.bot._id &&
+        !bot.selected_chat &&
+        this.chat
+      ) {
+        this.openChat(this.chat)
+        return bot.selected_chat
+      }
+    }
+  }
+
+  get curbot() {
+    for (const bot of store.bots()) {
+      if (bot && bot._id == this.$props.bot._id) {
+        return bot
+      }
+    }
+  }
+
+  get chatloading() {
+    return store.chatLoading()
   }
   get sortedChats() {
     return ((this as any).bot.chats || ([] as Chat[])).sort(
@@ -104,7 +190,7 @@ export default class BotView extends Vue {
     if (!chat) {
       return false
     }
-    if (this.chat && this.chat === chat) {
+    if (this.selectedChat && this.selectedChat === chat) {
       return true
     }
     return false
@@ -112,6 +198,11 @@ export default class BotView extends Vue {
 
   get heightStyle() {
     let height = this.winheight - 120
+    return { height: height + 'px' }
+  }
+
+  get listStyle() {
+    let height = this.winheight - 100
     return { height: height + 'px' }
   }
 
@@ -139,26 +230,32 @@ export default class BotView extends Vue {
     ]
   }
 
-  get selectedChat() {
+  openChat(chat: Chat) {
+    store.setChatLoading(true)
+    this.chat = chat
     for (const bot of store.bots()) {
-      if (this.chat && bot._id === this.chat.bot && bot.chats) {
-        const chat = bot.chats.filter(botchat => {
-          if (this.chat && botchat._id === this.chat._id) {
-            return botchat
-          }
-        })
-        return chat[0]
+      if (bot && bot._id === this.$props.bot._id) {
+        Vue.set(bot, 'selected_chat', chat)
       }
     }
-  }
-
-  openChat(chat: Chat) {
-    this.chat = chat
     Vue.set(this.chat, 'messages', [])
     sockets.send('request_messages', {
       bot: (this as any).bot._id,
       chat: chat._id,
     })
+  }
+
+  setMessageSendFocus() {
+    if (this.$refs.inputMsg) {
+      this.$refs.msgSendForm.reset()
+      this.$refs.inputMsg.focus()
+    } else {
+      let that = this
+      setTimeout(function() {
+        that.$refs.msgSendForm.reset()
+        that.$refs.inputMsg.focus()
+      }, 150)
+    }
   }
 
   get mobile() {
@@ -167,6 +264,10 @@ export default class BotView extends Vue {
 
   formatDate(date: number) {
     return moment(date * 1000).format('HH:mm:ss')
+  }
+
+  formatDateHM(date: number) {
+    return moment(date).format('HH:mm')
   }
 
   formatDateTooltip(date: number) {
@@ -184,7 +285,6 @@ export default class BotView extends Vue {
       type: this.chat.type,
     })
     this.$refs.msgSendForm.reset()
-    this.$refs.inputMsg.blur()
   }
 }
 </script>
@@ -197,7 +297,32 @@ export default class BotView extends Vue {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.chatview {
+
+/* .border__top */
+.theme--light .border__top {
+  border-top: 1px solid #e0e0e0;
+}
+.theme--dark .border__top {
+  border-top: 1px solid #595959;
+}
+/* .border__right */
+.theme--light .border__right {
+  border-right: 1px solid #e0e0e0;
+}
+.theme--dark .border__right {
+  border-right: 1px solid #595959;
+}
+/* .chatview */
+.theme--light .chatview {
   border-left: 1px solid #e0e0e0;
+}
+
+.theme--dark .chatview {
+  border-left: 1px solid #595959;
+}
+
+.theme--dark.v-btn.indigo--text {
+  color: #e0e0e0 !important;
+  caret-color: #e0e0e0 !important;
 }
 </style>

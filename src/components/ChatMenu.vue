@@ -1,13 +1,15 @@
 <template lang="pug">
 v-menu(left bottom v-if="chat")
             template(v-slot:activator="{ on }")
-                v-btn(icon v-on="on")
+                v-btn(icon color='grey' v-on="on")
                     v-icon mdi-dots-vertical
             v-list
                 v-list-item(@click="unban(chat);" v-if="chat && chat.banned")
-                    v-list-item-title {{$t('chat.unban')}}
+                  v-list-item-title {{$t('chat.unban')}}
                 v-list-item(@click="ban(chat);" v-else-if="chat")
-                    v-list-item-title {{$t('chat.ban')}}
+                  v-list-item-title {{$t('chat.ban')}}
+                v-list-item(@click="copy(chat);" v-if="chat")
+                  v-list-item-title Копировать ссылку
 </template>
 
 <script lang="ts">
@@ -47,6 +49,58 @@ export default class ChatMenu extends Vue {
         active: true,
       })
     }
+  }
+
+  copy(chat: Chat) {
+    const textarea = document.createElement('textarea')
+    let value = `https://feedr.chat/app/chat/${chat._id}`
+
+    textarea.value = value
+    textarea.setAttribute('readonly', '')
+    textarea.style.cssText =
+      'position:fixed;pointer-events:none;z-index:-9999;opacity:0;'
+
+    document.body.appendChild(textarea)
+
+    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+      const editable = textarea.contentEditable
+      const readOnly = textarea.readOnly
+
+      textarea.contentEditable = 'true'
+      textarea.readOnly = true
+
+      const range = document.createRange()
+
+      range.selectNodeContents(textarea)
+
+      const selection = window.getSelection() as any
+
+      selection.removeAllRanges()
+      selection.addRange(range)
+      textarea.setSelectionRange(0, 999999)
+
+      textarea.contentEditable = editable
+      textarea.readOnly = readOnly
+    } else {
+      textarea.select()
+    }
+
+    let success = false
+
+    try {
+      success = document.execCommand('copy')
+      store.setSnackbar({
+        message: 'text.copied',
+        color: 'success',
+        active: true,
+      })
+    } catch (err) {
+      console.warn(err)
+    }
+
+    document.body.removeChild(textarea)
+
+    return success
   }
 
   async unban(chat: Chat) {

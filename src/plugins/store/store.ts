@@ -19,6 +19,11 @@ export interface State {
   bots: Bot[]
   invites: Invite[]
   nomoremessages: Boolean
+  loading: {
+    chatloading: Boolean
+    botsloading: Boolean
+  }
+  botTab: Number
 }
 
 interface Invite {
@@ -51,6 +56,11 @@ const storeOptions = {
     bots: [],
     invites: [],
     nomoremessages: false,
+    loading: {
+      chatloading: false,
+      botsloading: false,
+    },
+    botTab: 0,
   },
   mutations: {
     setUser(state: State, user: User) {
@@ -70,6 +80,12 @@ const storeOptions = {
     setDark(state: State, dark: Boolean) {
       state.dark = dark
     },
+    setChatLoading(state: State, chatloading: Boolean) {
+      state.loading.chatloading = chatloading
+    },
+    setBotsLoading(state: State, botsloading: Boolean) {
+      state.loading.botsloading = botsloading
+    },
     setBots(state: State, bots: any) {
       state.bots = bots.bots
       state.invites = bots.invites
@@ -84,15 +100,21 @@ const storeOptions = {
     setNoMoreMessages(state: State, nomoremessages: Boolean) {
       state.nomoremessages = nomoremessages
     },
+    setBotTab(state: State, tab: Number) {
+      state.botTab = tab
+    },
   },
   getters: {
     user: (state: State) => state.user,
     snackbar: (state: State) => state.snackbar,
     language: (state: State) => state.language,
     dark: (state: State) => state.dark,
+    chatloading: (state: State) => state.loading.chatloading,
+    botsloading: (state: State) => state.loading.botsloading,
     bots: (state: State) => state.bots,
     invites: (state: State) => state.invites,
     nomoremessages: (state: State) => state.nomoremessages,
+    bottab: (state: State) => state.botTab,
   },
   plugins: [
     createPersistedState({
@@ -113,9 +135,12 @@ export const user = () => getters.user as User | undefined
 export const snackbar = () => getters.snackbar as SnackbarState
 export const language = () => getters.language as string | undefined
 export const dark = () => getters.dark as boolean
+export const chatLoading = () => getters.chatloading as boolean
+export const botsloading = () => getters.botsloading as boolean
 export const bots = () => getters.bots as Bot[]
 export const invites = () => getters.invites as Invite[]
 export const nomoremessages = () => getters.nomoremessages as boolean
+export const botTab = () => getters.bottab as number
 
 // Mutations
 export const setUser = (user: User) => {
@@ -140,6 +165,12 @@ export const setLanguage = (language: String) => {
 export const setDark = (dark: Boolean) => {
   store.commit('setDark', dark)
 }
+export const setChatLoading = (loading: Boolean) => {
+  store.commit('setChatLoading', loading)
+}
+export const setBotsLoading = (loading: Boolean) => {
+  store.commit('setBotsLoading', loading)
+}
 export const logout = () => {
   store.commit('logout')
 }
@@ -148,4 +179,8 @@ export const setBots = (bots: Bot[]) => {
 }
 export const setNoMoreMessages = (nomoremessages: Boolean) => {
   store.commit('setNoMoreMessages', nomoremessages)
+}
+
+export const setBotTab = (tab: Number) => {
+  store.commit('setBotTab', tab)
 }

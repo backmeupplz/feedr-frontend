@@ -1,8 +1,9 @@
 <template lang="pug">
   div
-    NoBots(v-if='!$store.state.bots.length')
+    v-progress-linear(indeterminate v-if="BotsLoading")
+    NoBots(v-if='!$store.state.bots.length && !BotsLoading')
     div(v-else)
-      v-tabs(v-model='tab')
+      v-tabs(v-model='tab' show-arrows)
         v-tab(v-for='bot in $store.state.bots' :key='bot._id') {{bot.name}}&nbsp;
           v-icon(x-small v-if="bot.botType === 'viber'") mdi-phone-in-talk
           v-icon(x-small v-else) mdi-telegram
@@ -22,6 +23,16 @@ import * as store from '../plugins/store/store'
   components: { NoBots, BotView },
 })
 export default class Superpower extends Vue {
-  tab = 0
+  get tab() {
+    return store.botTab()
+  }
+
+  set tab(value) {
+    store.setBotTab(value)
+  }
+
+  get BotsLoading() {
+    return store.botsloading()
+  }
 }
 </script>
