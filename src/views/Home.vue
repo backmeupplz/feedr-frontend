@@ -47,7 +47,7 @@ declare let sockets: any;
 })
 export default class Home extends Vue {
   get googleClientId() {
-    return "775251765990-m72gca6ae1evoj438u8lg2lmnogakd2l.apps.googleusercontent.com";
+    return "302048926858-k211pbhb02t32gc1osqbh2q3sv3u5h9g.apps.googleusercontent.com";
   }
 
   onFacebookSignInSuccess(response: any) {
@@ -117,7 +117,7 @@ export default class Home extends Vue {
         store.setSnackbarError(err.message);
       } finally {
         this.$router.replace("app");
-      } 
+      }
     } catch (err) {
       store.setSnackbar({
         message: "errors.login.telegram",
