@@ -86,7 +86,16 @@ const storeOptions = {
     setBotsLoading(state: State, botsloading: Boolean) {
       state.loading.botsloading = botsloading
     },
-    setBots(state: State, bots: any) {
+    async setBots(state: State, bots: any) {
+      if (bots.bots) {
+        await Promise.all(
+          bots.bots.map((bot: any) => {
+            bot.chats = []
+            return bot
+          }),
+        )
+      }
+
       state.bots = bots.bots
       state.invites = bots.invites
 

@@ -29,7 +29,10 @@ const mutations = {
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           Vue.set(bot, 'chatsloading', false)
-          Vue.set(bot, 'chats', [...(bot.chats || []), ...newchats])
+          if (!bot.chats) {
+            return
+          }
+          bot.chats.push(newchats as any)
           return
         }
         const newchats = await Promise.all(
@@ -42,8 +45,10 @@ const mutations = {
         )
         Vue.set(bot, 'oldestLoadedChat', oldestChat)
         Vue.set(bot, 'chatsloading', false)
-        Vue.set(bot, 'chats', [...(bot.chats || []), ...newchats])
-        console.log('SOCKET' + new Date())
+        if (!bot.chats) {
+          return
+        }
+        bot.chats.push(newchats as any)
       }
     }
   },
@@ -76,7 +81,10 @@ const mutations = {
       chat.requested = true
       for (const bot of store.state.bots) {
         if (bot._id === chat.bot) {
-          Vue.set(bot, 'chats', [...(bot.chats || []), chat])
+          if (!bot.chats) {
+            return
+          }
+          bot.chats.push(chat as any)
           Vue.set(bot, 'selected_chat', chat)
         }
       }
@@ -144,16 +152,12 @@ const mutations = {
         if (!bot.chats) {
           return
         }
-        const newchats = await Promise.all(
-          bot.chats.map(oldchat => {
-            if (oldchat._id === chat._id) {
-              chat.messages = oldchat.messages || []
-              oldchat = chat
-            }
-            return oldchat
-          }),
-        )
-        Vue.set(bot, 'chats', newchats)
+        for (const i in bot.chats) {
+          if (bot.chats[Number(i)]._id === chat._id) {
+            chat.messages = bot.chats[i].messages
+            bot.chats.splice(Number(i), 1, chat)
+          }
+        }
         return
       }
     }
@@ -232,7 +236,7 @@ const mutations = {
           filter = false
         }
         if (!filter || filter.length < 1) {
-          Vue.set(bot, 'chats', [object, ...(bot.chats || [])])
+          ;(bot as any).chats.push(object)
         }
       }
     }
