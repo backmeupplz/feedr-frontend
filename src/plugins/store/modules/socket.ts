@@ -43,6 +43,7 @@ const mutations = {
         Vue.set(bot, 'oldestLoadedChat', oldestChat)
         Vue.set(bot, 'chatsloading', false)
         Vue.set(bot, 'chats', [...(bot.chats || []), ...newchats])
+        console.log('SOCKET' + new Date())
       }
     }
   },
@@ -136,6 +137,36 @@ const mutations = {
     }
     return
   },
+  async socket_updated_chat(state: State, object: any) {
+    const chat = object
+    for (const bot of store.state.bots) {
+      if (bot._id === chat.bot) {
+        if (!bot.chats) {
+          return
+        }
+        const newchats = await Promise.all(
+          bot.chats.map(oldchat => {
+            if (oldchat._id === chat._id) {
+              chat.messages = oldchat.messages || []
+              oldchat = chat
+            }
+            return oldchat
+          }),
+        )
+        Vue.set(bot, 'chats', newchats)
+        return
+      }
+    }
+  },
+  async socket_bot_counter(state: State, object: any) {
+    const updatedbot = object as any
+    for (const bot of store.state.bots) {
+      if (bot._id === updatedbot.id) {
+        Vue.set(bot, 'unread', updatedbot.unread)
+        return
+      }
+    }
+  },
   socket_messages(state: State, object: any) {
     const botId = object[1].bot
     const chatId = object[1].chat
@@ -191,10 +222,15 @@ const mutations = {
     const botId = object.bot
     for (const bot of store.state.bots) {
       if (bot._id === botId) {
-        const filter = bot.chats?.filter(chat => {
-          return chat === object
-        }) as any
-        await Promise.all(filter)
+        let filter: any
+        if (bot.chats) {
+          filter = bot.chats.filter(chat => {
+            return chat === object
+          }) as any
+          await Promise.all(filter)
+        } else {
+          filter = false
+        }
         if (!filter || filter.length < 1) {
           Vue.set(bot, 'chats', [object, ...(bot.chats || [])])
         }

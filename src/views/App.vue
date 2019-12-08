@@ -7,6 +7,8 @@
         v-tab(v-for='bot in $store.state.bots' :key='bot._id') {{bot.name}}&nbsp;
           v-icon(x-small v-if="bot.botType === 'viber'") mdi-phone-in-talk
           v-icon(x-small v-else) mdi-telegram
+          |&nbsp;
+          .count-badge.count-badge--botTab(v-if="bot.unread") {{bot.unread}}
       v-tabs-items(v-model='tab')
         v-tab-item(v-for='(bot, i) in $store.state.bots' :key='bot._id' :value='i')
           BotView(:bot='bot')
@@ -36,3 +38,49 @@ export default class Superpower extends Vue {
   }
 }
 </script>
+
+<style>
+/* .count-badge */
+.theme--dark .count-badge {
+  align-items: center;
+  border-radius: 11px;
+  color: #ffffff !important;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 13px !important;
+  font-weight: 900;
+  height: 22px;
+  justify-content: center;
+  line-height: normal;
+  min-width: 22px;
+  padding: 0 4px;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+  background-color: #856fb8;
+}
+
+.count-badge {
+  align-items: center;
+  border-radius: 11px;
+  color: #ffffff !important;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  font-size: 13px !important;
+  font-weight: 900;
+  height: 22px;
+  justify-content: center;
+  line-height: normal;
+  min-width: 22px;
+  padding: 0 4px;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+
+  background-color: #40a7e3;
+}
+
+.count-badge--botTab {
+  position: relative !important;
+  top: -9px;
+}
+</style>

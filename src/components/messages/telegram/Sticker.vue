@@ -1,6 +1,5 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    div(v-if="message.raw.caption") {{message.raw.caption}}
     v-container(fluid)
         v-row(justify="start")
             v-btn(outlined color="indigo" :loading="loading" @click="loadSticker" v-if="!opened") {{$t("media.load")}}
@@ -10,32 +9,32 @@ v-list-item-title.message-text
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import * as api from "../../../utils/api";
-import * as store from "../../../plugins/store/store";
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import * as api from '../../../utils/api'
+import * as store from '../../../plugins/store/store'
 
 @Component({
-  props: ["message"]
+  props: ['message'],
 })
 export default class TelegramStickerMessage extends Vue {
-  link = "";
-  loading = false;
-  opened = false;
+  link = ''
+  loading = false
+  opened = false
 
   async loadSticker() {
-    this.loading = true;
+    this.loading = true
     try {
-      this.link = await api.getFilesLink(this.$props.message);
-      this.opened = true;
+      this.link = await api.getFilesLink(this.$props.message)
+      this.opened = true
     } catch {
       store.setSnackbar({
-        message: "errors.media.loading",
-        color: "error",
-        active: true
-      });
+        message: 'errors.media.loading',
+        color: 'error',
+        active: true,
+      })
     } finally {
-      this.loading = false;
+      this.loading = false
     }
   }
 }

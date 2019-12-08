@@ -123,7 +123,10 @@ export default class TelegramAudioMessage extends Vue {
 
   mounted() {
     this.$refs.audioController.addEventListener('pause', this._handlePlayPause)
-    this.$refs.audioController.addEventListener('play', this._handlePlayPause)
+    this.$refs.audioController.addEventListener(
+      'playing',
+      this._handlePlayPause,
+    )
     this.$refs.audioController.addEventListener(
       'timeupdate',
       this._handlePlayingUI,
