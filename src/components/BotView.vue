@@ -39,7 +39,7 @@
             ChatMenu(v-bind:chat="selectedChat")
           v-progress-linear(indeterminate v-if="chatloading")
         .headline.pa-4.text-center(v-if='!chat && curbot && curbot.chats && curbot.chats.length') {{$t('chat.select')}}
-        .headline.pa-4.text-center(v-else-if='!chat && curbot && !curbot.chats') {{$t('chat.invite')}} 
+        .headline.pa-4.text-center(v-else-if='!chat && curbot && !curbot.chats.length') {{$t('chat.invite')}} 
           a(v-if="bot.botType ==='telegram'" :href="'https://t.me/' + curbot.username" target="_blank")   
             |@{{curbot.username}}
           div(v-else)
@@ -151,12 +151,6 @@ export default class BotView extends Vue {
         this.openChat(bot.selected_chat)
         for (const chats of (bot as any).chats) {
           if (chats._id === bot.selected_chat._id) {
-            if (bot.selected_chat.unread) {
-              sockets.send('read_chat', {
-                botId: bot.selected_chat.bot,
-                chatId: bot.selected_chat._id,
-              })
-            }
             return chats
           }
         }
@@ -242,15 +236,21 @@ export default class BotView extends Vue {
 
   openChat(chat: Chat) {
     if (this.chat && this.chat._id !== chat._id) {
-      Vue.set(this.chat, 'messages', undefined)
+      Vue.set(this.chat, 'messages', [])
     }
     this.chat = chat
+    if (this.chat.unread) {
+      sockets.send('read_chat', {
+        botId: this.chat.bot,
+        chatId: this.chat._id,
+      })
+    }
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id) {
         Vue.set(bot, 'selected_chat', chat)
       }
     }
-    if (!this.chat.messages) {
+    if (!this.chat.messages && !store.chatLoading()) {
       store.setChatLoading(true)
       Vue.set(this.chat, 'messages', [])
       sockets.send('request_messages', {
