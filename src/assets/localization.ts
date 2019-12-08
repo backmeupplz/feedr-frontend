@@ -21,6 +21,7 @@ export const messages = {
       banned: 'Заблокирован',
       unban: 'Разблокировать',
       noname: 'Нет имени',
+      profile: 'Профиль',
       attachment: 'Вложение',
       select: 'Пожалуйста, выберите чат',
       invite:
@@ -138,6 +139,14 @@ export const messages = {
       copied: 'Ссылка скопирована',
     },
     you: 'Вы',
+    forwarded_message: {
+      user_hidden:
+        'Этот пользователь запретил доступ к информации о его аккаунте в пересланных сообщениях',
+      channel_private: 'Этот канал приватный',
+      group_private: 'Эта группа приватная',
+      no_username: 'У этого пользователя нет юзернейма',
+      forwarded_from: 'Переслано от:',
+    },
   },
   en: {
     title: 'Feedr',
@@ -161,6 +170,7 @@ export const messages = {
       banned: 'Banned',
       unban: 'Unban',
       noname: 'No name',
+      profile: 'Profile',
       attachment: 'Attachment',
       select: 'Please, select chat',
       invite:
@@ -276,5 +286,13 @@ export const messages = {
       copied: 'Link was copied',
     },
     you: 'You',
+    forwarded_message: {
+      user_hidden:
+        'This user disallow adding a link to his account in forwarded messages',
+      channel_private: 'This channel is private',
+      group_private: 'This group is private',
+      no_username: "This user doesn't have a username",
+      forwarded_from: 'Forwarded from:',
+    },
   },
 }

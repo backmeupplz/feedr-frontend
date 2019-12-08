@@ -3,10 +3,28 @@ v-card.message
     v-list-item(three-line)
         v-list-item-content
             div(class="overline mb-2" v-if="!forwardedMessage(message)") {{(message.raw.from && message.raw.from.first_name) || (message.raw.name)}}
-            div(class="caption mb-2 blue--text" v-else) Forwarded from: {{forwardedMessageName(message)}}
+            v-dialog(v-model="modalForwarded" persistent width="500" v-else)
+              template(v-slot:activator="{on}")
+                div(class="caption mb-2 blue--text" style="cursor: pointer;" @click.stop="modalForwarded = true") {{$t('forwarded_message.forwarded_from')}} {{forwardedMessageName(message)}}
+              v-card
+                v-card-title {{forwardedMessageName(message)}} 
+                v-card-text(v-if="message.raw.forward_from_chat && message.raw.forward_from_chat.username") 
+                  |Username: 
+                  a(target="_blank" :href="`https://t.me/${message.raw.forward_from_chat.username}`")
+                    |@{{message.raw.forward_from_chat.username}}
+                v-card-text(v-else-if="message.raw.forward_from && message.raw.forward_from.username") 
+                  |Username: 
+                  a(target="_blank" :href="`https://t.me/${message.raw.forward_from.username}`")
+                    |@{{message.raw.forward_from.username}}
+                v-card-text(v-else) {{forwardedMessageUsernameExceptions(message)}}
+                v-card-actions
+                  v-spacer
+                  v-btn(color='blue'
+                  text 
+                  @click='modalForwarded = false') {{$t('close')}}
             div(v-if="telegram")
               // Simple text
-              TextMessage(v-if="message.raw.text" :text="message.raw.text")
+              TextMessage(v-if="message.raw.text" :message="message")
               // Photo
               TelegramPhotoMessage(v-else-if="message.raw.photo" :message="message")
               // Video, Telescope Video and Animation
@@ -106,6 +124,8 @@ import moment from 'moment'
   },
 })
 export default class ChatMenu extends Vue {
+  modalForwarded = false
+
   get telegram() {
     return this.$props.message.type === 'telegram'
   }
@@ -133,10 +153,34 @@ export default class ChatMenu extends Vue {
     return false
   }
 
+  forwardedMessageUsernameExceptions(message: Message) {
+    if (message.raw.forward_sender_name) {
+      return i18n.t('forwarded_message.user_hidden')
+    } else if (
+      message.raw.forward_from_chat &&
+      message.raw.forward_from_chat.type === 'channel'
+    ) {
+      return i18n.t('forwarded_message.channel_private')
+    } else if (
+      message.raw.forward_from_chat &&
+      (message.raw.forward_from_chat.type === 'group' ||
+        message.raw.forward_from.chat.type === 'supergroup')
+    ) {
+      return i18n.t('forwarded_message.group_private')
+    } else if (
+      message.raw.forward_from_chat &&
+      message.raw.forward_from_chat.type === 'private'
+    ) {
+      return i18n.t('forwarded_message.no_username')
+    }
+    return 'Username uncaught parsing error'
+  }
+
   forwardedMessageName(message: Message) {
     const msg = message.raw
     if (msg.forward_from) {
-      return msg.forward_from.first_name
+      const last_name = msg.forward_from.last_name || ''
+      return msg.forward_from.first_name + ' ' + last_name
     } else if (msg.forward_from_chat) {
       return msg.forward_from_chat.title
     } else if (msg.forward_sender_name) {

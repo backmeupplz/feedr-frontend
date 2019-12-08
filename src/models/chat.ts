@@ -15,6 +15,7 @@ export interface Chat {
   messages?: Message[]
   requested?: boolean
   type: string
+  unread: number
 
   banned: boolean
 }

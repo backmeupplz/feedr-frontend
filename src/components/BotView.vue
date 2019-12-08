@@ -9,8 +9,9 @@
               v-list-item-subtitle(v-if='chat.lastMessage')
                 i {{frombot(curbot, chat.lastMessage)}}
                 |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
-            v-list-item-action(v-if='chat.lastMessage')
-              v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
+            v-list-item-action()
+              v-list-item-action-text(v-if='chat.lastMessage' v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
+              v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
           v-divider
       v-col(cols='12' sm="9" md="10" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0 pr-4 chatview': $vuetify.breakpoint.smAndUp}")
         v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile" :style="listStyle")
@@ -26,7 +27,7 @@
                       |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
                   v-list-item-action(v-if='chat.lastMessage')
                     v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
-
+                    v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
         v-card(outlined tile)
           v-app-bar(elevation="0")
             v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
@@ -35,16 +36,15 @@
                 span(v-on='on') {{getChatName(chat)}}
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
             v-spacer
-            v-chip(v-if="selectedChat && selectedChat.banned" color="red" text-color="white") {{$t('chat.banned')}}
             ChatMenu(v-bind:chat="selectedChat")
           v-progress-linear(indeterminate v-if="chatloading")
         .headline.pa-4.text-center(v-if='!chat && curbot && curbot.chats && curbot.chats.length') {{$t('chat.select')}}
-        .headline.pa-4.text-center(v-else-if='!chat && curbot && curbot.chats && !curbot.chats.length') {{$t('chat.invite')}} 
+        .headline.pa-4.text-center(v-else-if='!chat && curbot && !curbot.chats') {{$t('chat.invite')}} 
           a(v-if="bot.botType ==='telegram'" :href="'https://t.me/' + curbot.username" target="_blank")   
             |@{{curbot.username}}
           div(v-else)
             |@{{curbot.username}}
-        div(:style="wrapperHeight" v-else).border__right
+        div(:style="wrapperHeight" v-else).border__right.border__left
           ChatComponent(v-bind:bot="bot" v-bind:curchat="selectedChat")
           v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;").border__right
             v-container(justify-center)
@@ -149,7 +149,17 @@ export default class BotView extends Vue {
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id && bot.selected_chat) {
         this.openChat(bot.selected_chat)
-        return bot.selected_chat
+        for (const chats of (bot as any).chats) {
+          if (chats._id === bot.selected_chat._id) {
+            if (bot.selected_chat.unread) {
+              sockets.send('read_chat', {
+                botId: bot.selected_chat.bot,
+                chatId: bot.selected_chat._id,
+              })
+            }
+            return chats
+          }
+        }
       } else if (
         bot &&
         bot._id === this.$props.bot._id &&
@@ -190,7 +200,7 @@ export default class BotView extends Vue {
     if (!chat) {
       return false
     }
-    if (this.selectedChat && this.selectedChat === chat) {
+    if (this.selectedChat && this.selectedChat._id === chat._id) {
       return true
     }
     return false
@@ -231,18 +241,23 @@ export default class BotView extends Vue {
   }
 
   openChat(chat: Chat) {
-    store.setChatLoading(true)
+    if (this.chat && this.chat._id !== chat._id) {
+      Vue.set(this.chat, 'messages', undefined)
+    }
     this.chat = chat
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id) {
         Vue.set(bot, 'selected_chat', chat)
       }
     }
-    Vue.set(this.chat, 'messages', [])
-    sockets.send('request_messages', {
-      bot: (this as any).bot._id,
-      chat: chat._id,
-    })
+    if (!this.chat.messages) {
+      store.setChatLoading(true)
+      Vue.set(this.chat, 'messages', [])
+      sockets.send('request_messages', {
+        bot: (this as any).bot._id,
+        chat: chat._id,
+      })
+    }
   }
 
   setMessageSendFocus() {
@@ -312,6 +327,13 @@ export default class BotView extends Vue {
 .theme--dark .border__right {
   border-right: 1px solid #595959;
 }
+/* .border__left */
+.theme--light .border__left {
+  border-left: 1px solid #e0e0e0;
+}
+.theme--dark .border__left {
+  border-left: 1px solid #595959;
+}
 /* .chatview */
 .theme--light .chatview {
   border-left: 1px solid #e0e0e0;
@@ -320,7 +342,7 @@ export default class BotView extends Vue {
 .theme--dark .chatview {
   border-left: 1px solid #595959;
 }
-
+/* .indigo--text */
 .theme--dark.v-btn.indigo--text {
   color: #e0e0e0 !important;
   caret-color: #e0e0e0 !important;

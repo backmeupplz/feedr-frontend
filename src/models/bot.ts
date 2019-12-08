@@ -16,6 +16,7 @@ export interface Bot {
   no_more_chats?: boolean
   chatsloading?: boolean
   oldestLoadedChat?: Chat
+  unread: number
 
   status: string
 }
