@@ -32,7 +32,7 @@ const mutations = {
           if (!bot.chats) {
             return
           }
-          bot.chats.push(newchats as any)
+          bot.chats.push(...(newchats as any))
           return
         }
         const newchats = await Promise.all(
@@ -48,7 +48,7 @@ const mutations = {
         if (!bot.chats) {
           return
         }
-        bot.chats.push(newchats as any)
+        bot.chats.push(...(newchats as any))
       }
     }
   },
