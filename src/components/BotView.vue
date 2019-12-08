@@ -178,16 +178,31 @@ export default class BotView extends Vue {
     return store.chatLoading()
   }
   get sortedChats() {
-    return ((this as any).curbot.chats || ([] as Chat[])).sort(
-      (a: any, b: any) => {
-        if (a.lastMessage && b.lastMessage) {
-          return new Date(a.lastMessage!.createdAt) <
-            new Date(b.lastMessage!.createdAt)
-            ? 1
-            : -1
+    for (const bot of store.bots()) {
+      if (bot && bot._id === this.$props.bot._id) {
+        if (bot.chats) {
+          return bot.chats.sort((a: Chat, b: Chat) => {
+            if (a.lastMessage && b.lastMessage) {
+              return new Date(a.lastMessage!.createdAt) <
+                new Date(b.lastMessage!.createdAt)
+                ? 1
+                : -1
+            } else if (a.lastMessage && !b.lastMessage) {
+              return new Date(a.lastMessage!.createdAt) < new Date(b.updatedAt)
+                ? 1
+                : -1
+            } else if (!a.lastMessage && b.lastMessage) {
+              return new Date(a.updatedAt) < new Date(b.lastMessage!.createdAt)
+                ? 1
+                : -1
+            } else if (!a.lastMessage && !b.lastMessage) {
+              return new Date(a.updatedAt) < new Date(b.updatedAt) ? 1 : -1
+            }
+            return 0
+          })
         }
-      },
-    )
+      }
+    }
   }
 
   chatActivated(chat: Chat) {
