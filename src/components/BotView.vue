@@ -178,7 +178,7 @@ export default class BotView extends Vue {
     return store.chatLoading()
   }
   get sortedChats() {
-    return ((this as any).bot.chats || ([] as Chat[])).sort(
+    return ((this as any).curbot.chats || ([] as Chat[])).sort(
       (a: any, b: any) => {
         if (a.lastMessage && b.lastMessage) {
           return new Date(a.lastMessage!.createdAt) <
@@ -235,6 +235,11 @@ export default class BotView extends Vue {
   }
 
   openChat(chat: Chat) {
+    if (this.chat) {
+      if (this.chat._id === chat._id) {
+        return
+      }
+    }
     if (this.chat && this.chat._id !== chat._id) {
       Vue.set(this.chat, 'messages', [])
     }
@@ -250,7 +255,10 @@ export default class BotView extends Vue {
         Vue.set(bot, 'selected_chat', chat)
       }
     }
-    if (!this.chat.messages && !store.chatLoading()) {
+    if (
+      !(this.chat.messages && this.chat.messages.length) &&
+      !store.chatLoading()
+    ) {
       store.setChatLoading(true)
       Vue.set(this.chat, 'messages', [])
       sockets.send('request_messages', {
