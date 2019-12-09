@@ -1,6 +1,7 @@
 import { State, bots } from '../store'
 import Vue from 'vue'
 import { store, user, setSnackbarError } from '../store'
+import * as storemodule from '../store'
 import vm from '../../../main'
 import { Chat } from '../../../models/chat'
 
@@ -17,11 +18,18 @@ const mutations = {
         if (chats.length < 1) {
           return
         }
+        if (!bot.chats) {
+          return
+        }
         if (chats.length < 20) {
           Vue.set(bot, 'no_more_chats', true)
           const newchats = await Promise.all(
             chats.filter((chat: Chat) => {
-              return !bot.chats?.find(v => chat._id === v._id)
+              return !(bot as any).chats.find((v: any) => {
+                if (chat._id === v._id) {
+                  return v
+                }
+              })
             }),
           )
           let oldestChat = await newchats.reduce((min: any, cur: any) =>
@@ -29,15 +37,16 @@ const mutations = {
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           Vue.set(bot, 'chatsloading', false)
-          if (!bot.chats) {
-            return
-          }
-          bot.chats.push(...(newchats as any))
+          storemodule.addChat(newchats)
           return
         }
         const newchats = await Promise.all(
           chats.filter((chat: Chat) => {
-            return !bot.chats?.find(v => chat._id === v._id)
+            return !(bot as any).chats.find((v: any) => {
+              if (chat._id === v._id) {
+                return v
+              }
+            })
           }),
         )
         let oldestChat = await newchats.reduce((min: any, cur: any) =>
@@ -45,10 +54,7 @@ const mutations = {
         )
         Vue.set(bot, 'oldestLoadedChat', oldestChat)
         Vue.set(bot, 'chatsloading', false)
-        if (!bot.chats) {
-          return
-        }
-        bot.chats.push(...(newchats as any))
+        storemodule.addChats(newchats)
       }
     }
   },
@@ -84,7 +90,7 @@ const mutations = {
           if (!bot.chats) {
             return
           }
-          bot.chats.push(chat as any)
+          storemodule.addChat(chat)
           Vue.set(bot, 'selected_chat', chat)
         }
       }
@@ -97,11 +103,13 @@ const mutations = {
     const chats = object[2]
     for (const bot of store.state.bots) {
       if (bot._id === botId) {
-        let oldestChat = await chats.reduce((min: any, cur: any) =>
-          min.updatedAt < cur.updatedAt ? min : cur,
-        )
-        Vue.set(bot, 'oldestLoadedChat', oldestChat)
-        Vue.set(bot, 'chats', chats)
+        if (chats.length > 0) {
+          let oldestChat = await chats.reduce((min: any, cur: any) =>
+            min.updatedAt < cur.updatedAt ? min : cur,
+          )
+          Vue.set(bot, 'oldestLoadedChat', oldestChat)
+          Vue.set(bot, 'chats', chats)
+        }
       }
     }
 
@@ -236,7 +244,7 @@ const mutations = {
           filter = false
         }
         if (!filter || filter.length < 1) {
-          ;(bot as any).chats.push(object)
+          storemodule.addChat(object)
         }
       }
     }

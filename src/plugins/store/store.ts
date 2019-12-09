@@ -67,6 +67,33 @@ const storeOptions = {
       state.user = user
       sockets.send('authentication', state.user.token)
     },
+    addChat(state: State, chat: any) {
+      for (const bot of state.bots) {
+        if (bot._id === chat.bot) {
+          if (bot.chats) {
+            if (
+              bot.chats.find(v => {
+                if (v._id === chat._id) {
+                  return v
+                }
+              })
+            ) {
+              return
+            }
+            bot.chats.push(chat)
+          }
+        }
+      }
+    },
+    addChats(state: State, chats: any) {
+      for (const bot of state.bots) {
+        if (bot._id === chats[0].bot) {
+          if (bot.chats) {
+            bot.chats.push(...chats)
+          }
+        }
+      }
+    },
     logout(state: State) {
       state.user = undefined
       sockets.send('logout')
@@ -192,4 +219,12 @@ export const setNoMoreMessages = (nomoremessages: Boolean) => {
 
 export const setBotTab = (tab: Number) => {
   store.commit('setBotTab', tab)
+}
+
+export const addChat = (chat: any) => {
+  store.commit('addChat', chat)
+}
+
+export const addChats = (chat: any) => {
+  store.commit('addChats', chat)
 }
