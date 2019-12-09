@@ -38,7 +38,7 @@ const mutations = {
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           Vue.set(bot, 'chatsloading', false)
-          storemodule.addChat(newchats)
+          storemodule.addChats(newchats)
           return
         }
         const newchats = await Promise.all(
