@@ -32,6 +32,7 @@ const mutations = {
               })
             }),
           )
+          console.log(newchats)
           let oldestChat = await newchats.reduce((min: any, cur: any) =>
             min.updatedAt < cur.updatedAt ? min : cur,
           )
