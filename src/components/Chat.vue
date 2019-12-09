@@ -72,7 +72,7 @@ export default class ChatComponent extends Vue {
   }
 
   get sortedMessages() {
-    if (this.$props.curchat.bot) {
+    if (!this.$props.curchat) {
       return
     }
     for (const bot of store.bots()) {

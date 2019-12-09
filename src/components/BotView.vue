@@ -161,7 +161,7 @@ export default class BotView extends Vue {
         this.chat
       ) {
         this.openChat(this.chat)
-        return bot.selected_chat
+        return this.chat
       }
     }
   }
