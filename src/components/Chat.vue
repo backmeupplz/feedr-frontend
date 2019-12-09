@@ -78,10 +78,7 @@ export default class ChatComponent extends Vue {
           return []
         }
         for (const chat of bot.chats || []) {
-          if (
-            this.$props.curchat &&
-            chat._id === this.$props.bot.selected_chat._id
-          ) {
+          if (this.$props.curchat && chat._id === this.$props.curchat._id) {
             if (!chat.messages) {
               sockets.send('request_messages', {
                 bot: bot._id,
