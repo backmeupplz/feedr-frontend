@@ -30,18 +30,53 @@ declare const sockets: any
     curchat: Object,
     messages: Array,
   },
+  watch: {
+    lastMessage: function(val) {
+      let that = this as any
+      let needScroll = true
+      if (!that.last) {
+        that.last = val
+        that.chatUpdate()
+        that.scroll()
+        return
+      }
+      if (that.last && val && !val.frombot) {
+        needScroll = false
+      }
+      if (val !== that.last) {
+        that.last = val
+        that.chatUpdate()
+        if (needScroll) {
+          that.scroll()
+        }
+      }
+    },
+  },
 })
 export default class ChatComponent extends Vue {
+  last: any
   text = ''
   messageUpdating = true
-  scroll = true
 
-  setUpdating() {
-    this.messageUpdating = false
+  scrollTimer() {
+    let elem = this.$el
+    elem.scrollTop = 100000
   }
-
-  setScroll() {
-    this.scroll = true
+  scroll() {
+    this.chatUpdate()
+    setTimeout(this.scrollTimer, 200)
+  }
+  chatUpdate() {
+    let that = this
+    let chat = this.$props.curchat || undefined
+    this.messageUpdating = true
+    setTimeout(() => (that.messageUpdating = false), 700)
+    if (chat) {
+      sockets.send('read_chat', {
+        botId: chat.bot,
+        chatId: chat._id,
+      })
+    }
   }
 
   frombot(bot: any, message: any) {
@@ -59,15 +94,23 @@ export default class ChatComponent extends Vue {
     }
   }
 
+  get lastMessage() {
+    if (
+      this.$props.curchat &&
+      this.$props.curchat.messages.length > 0 &&
+      this.sortedMessages
+    ) {
+      let lastmsg: any
+      return (this as any).sortedMessages[
+        (this as any).sortedMessages.length - 1
+      ]
+    }
+    return false
+  }
+
   updated() {
     this.$nextTick(() => {
-      this.messageUpdating = true
       store.setNoMoreMessages(false)
-      if (this.scroll) {
-        let elem = this.$el
-        elem.scrollTop = 100000
-      }
-      setTimeout(this.setUpdating, 1)
     })
   }
 
@@ -81,7 +124,6 @@ export default class ChatComponent extends Vue {
           return []
         }
         for (const chat of bot.chats || []) {
-          console.log(this.$props.curchat._id, chat._id)
           if (this.$props.curchat && chat._id === this.$props.curchat._id) {
             if (!chat.messages) {
               sockets.send('request_messages', {
@@ -131,8 +173,6 @@ export default class ChatComponent extends Vue {
       store.setSnackbarError('errors.loadMessages')
     } finally {
       this.messageUpdating = false
-      this.scroll = false
-      setTimeout(this.setScroll, 200)
     }
   }
 }

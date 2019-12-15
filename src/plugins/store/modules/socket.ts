@@ -90,7 +90,7 @@ const mutations = {
           if (!bot.chats) {
             return
           }
-          storemodule.addChat(chat)
+          storemodule.addChats(chat)
           Vue.set(bot, 'selected_chat', chat)
         }
       }
@@ -108,7 +108,7 @@ const mutations = {
             min.updatedAt < cur.updatedAt ? min : cur,
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
-          Vue.set(bot, 'chats', chats)
+          storemodule.addChats(chats)
         }
       }
     }
@@ -162,8 +162,15 @@ const mutations = {
         }
         for (const i in bot.chats) {
           if (bot.chats[Number(i)]._id === chat._id) {
-            chat.messages = bot.chats[i].messages
-            bot.chats.splice(Number(i), 1, chat)
+            let newChat = bot.chats[i]
+            if (newChat.updatedAt > chat.updatedAt) {
+              return
+            }
+            if (chat.hasOwnProperty('bot_counter')) {
+              Vue.set(bot, 'unread', chat.bot_counter)
+            }
+            newChat = Object.assign(newChat, chat) // now it is true new chat
+            bot.chats.splice(Number(i), 1, newChat)
           }
         }
         return
@@ -244,7 +251,7 @@ const mutations = {
           filter = false
         }
         if (!filter || filter.length < 1) {
-          storemodule.addChat(object)
+          storemodule.addChats(object)
         }
       }
     }
