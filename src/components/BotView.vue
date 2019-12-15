@@ -261,6 +261,7 @@ export default class BotView extends Vue {
     this.chat = chat
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id) {
+        Vue.set(chat, 'messages', [])
         Vue.set(bot, 'selected_chat', chat)
       }
     }
