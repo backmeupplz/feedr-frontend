@@ -250,19 +250,7 @@ export default class BotView extends Vue {
   }
 
   openChat(chat: Chat) {
-    if (chat.unread) {
-      sockets.send('read_chat', {
-        botId: chat.bot,
-        chatId: chat._id,
-      })
-    }
     if (this.chat) {
-      if (this.chat.unread) {
-        sockets.send('read_chat', {
-          botId: this.chat.bot,
-          chatId: this.chat._id,
-        })
-      }
       if (this.chat._id === chat._id) {
         return
       }
@@ -273,6 +261,7 @@ export default class BotView extends Vue {
     this.chat = chat
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id) {
+        Vue.set(chat, 'messages', [])
         Vue.set(bot, 'selected_chat', chat)
       }
     }

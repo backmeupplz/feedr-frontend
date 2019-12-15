@@ -67,29 +67,42 @@ const storeOptions = {
       state.user = user
       sockets.send('authentication', state.user.token)
     },
-    addChat(state: State, chat: any) {
-      for (const bot of state.bots) {
-        if (bot._id === chat.bot) {
-          if (bot.chats) {
-            if (
-              bot.chats.find(v => {
-                if (v._id === chat._id) {
-                  return v
-                }
-              })
-            ) {
-              return
+    async addChats(state: State, chat: any) {
+      if (Array.isArray(chat)) {
+        for (const bot of state.bots) {
+          if (bot._id === chat[0].bot) {
+            if (bot.chats) {
+              const newchats = await Promise.all(
+                chat.filter((chat: any) => {
+                  return !(bot as any).chats.find((v: any) => {
+                    if (chat._id === v._id) {
+                      return v
+                    }
+                  })
+                }),
+              )
+              if (!newchats) {
+                return
+              }
+              bot.chats.push(...newchats)
             }
-            bot.chats.push(chat)
           }
         }
-      }
-    },
-    addChats(state: State, chats: any) {
-      for (const bot of state.bots) {
-        if (bot._id === chats[0].bot) {
-          if (bot.chats) {
-            bot.chats.push(...chats)
+      } else {
+        for (const bot of state.bots) {
+          if (bot._id === chat.bot) {
+            if (bot.chats) {
+              if (
+                bot.chats.find(v => {
+                  if (v._id === chat._id) {
+                    return v
+                  }
+                })
+              ) {
+                return
+              }
+              bot.chats.push(chat)
+            }
           }
         }
       }
