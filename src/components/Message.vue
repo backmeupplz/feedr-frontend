@@ -47,7 +47,7 @@ v-card.message
               UnSupportedMessage(v-else :message="message")
             div(v-else="viber")
               // Simple text
-              TextMessage(v-if="message.raw.type === 'text'" :text="message.raw.text")
+              TextMessage(v-if="message.raw.type === 'text'" :message="message")
               // Location
               ViberLocationMessage(v-else-if="message.raw.location" :message="message.raw")
               // Picture
