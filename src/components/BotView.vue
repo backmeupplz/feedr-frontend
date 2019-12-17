@@ -9,7 +9,9 @@
               v-list-item-subtitle(v-if='chat.lastMessage')
                 i {{frombot(curbot, chat.lastMessage)}}
                 |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
-              v-list-item-subtitle(v-if="curbot.botType === 'feed'") {{getBotName(chat)}}
+              v-list-item-subtitle(v-if="curbot.botType === 'feed'") 
+                i {{$t('bot.bot')}}:&nbsp;
+                | {{getBotName(chat)}}
                 v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
                 v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram
             v-list-item-action()
@@ -28,6 +30,11 @@
                     v-list-item-subtitle(v-if='chat.lastMessage') 
                       i {{frombot(curbot, chat.lastMessage)}}
                       |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
+                    v-list-item-subtitle(v-if="curbot.botType === 'feed'") 
+                      i {{$t('bot.bot')}}:&nbsp;
+                      | {{getBotName(chat)}}
+                      v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
+                      v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram                    
                   v-list-item-action(v-if='chat.lastMessage')
                     v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
                     v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
@@ -98,7 +105,7 @@ export default class BotView extends Vue {
   getBotName(chat: Chat) {
     for (const bot of store.bots()) {
       if (chat.bot === bot._id.toString()) {
-        return `Bot: ${bot.name}`
+        return bot.name
       }
     }
   }

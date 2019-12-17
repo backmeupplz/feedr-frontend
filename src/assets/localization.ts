@@ -8,6 +8,7 @@ export const messages = {
       privacy: 'Политика конфиденциальности',
     },
     bot: {
+      bot: 'Бот',
       status: 'Статус',
       owner: 'Владелец',
       type: 'Тип',
@@ -197,6 +198,7 @@ export const messages = {
           'Telegram API Error: File size to big for download (>20mb). Sorry.',
       },
       bot: {
+        bot: 'Bot',
         add: 'Could not add bot, check token',
         edit: 'Could not edit bot',
         inviteAdmin: 'Could not invite admin to bot',
