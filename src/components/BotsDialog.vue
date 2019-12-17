@@ -20,8 +20,8 @@
           @click='updateList')
             v-icon refresh
         v-card-text
-          p(v-if='!$store.state.bots.length && !loading') {{$t('botList.noBotsText')}}
-          v-card(v-for='bot in $store.state.bots' :key='bot._id').botCard
+          p(v-if='$store.state.bots.length && $store.state.bots.length < 2 && !loading') {{$t('botList.noBotsText')}}
+          v-card(v-for='bot in $store.state.bots' :key='bot._id' v-if="bot.botType !== 'feed'").botCard
             v-card-title {{bot.name}}
             v-card-text
               p FeedrID: {{bot._id}}

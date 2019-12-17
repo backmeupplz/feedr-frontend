@@ -4,14 +4,16 @@
     NoBots(v-if='!$store.state.bots.length && !BotsLoading')
     div(v-else)
       v-tabs(v-model='tab' show-arrows)
-        v-tab(v-for='bot in $store.state.bots' :key='bot._id') {{bot.name}}&nbsp;
+        v-tab(v-for='bot in bots' :key='bot._id') 
+          | {{(bot.botType === 'feed' && $t('feed')) || bot.name}}&nbsp;
           v-icon(x-small v-if="bot.botType === 'viber'") mdi-phone-in-talk
-          v-icon(x-small v-else) mdi-telegram
+          v-icon(x-small v-else-if="bot.botType === 'telegram'") mdi-telegram
+          v-icon(x-small v-else)
           |&nbsp;
           .count-badge.count-badge--botTab(v-if="bot.unread") {{bot.unread}}
       v-tabs-items(v-model='tab')
-        v-tab-item(v-for='(bot, i) in $store.state.bots' :key='bot._id' :value='i')
-          BotView(:bot='bot')
+        v-tab-item(v-for='(bot, i) in bots' :key='bot._id' :value='i')
+          BotView(:bot='bot' v-if='i === tab')
 </template>
 
 <script lang="ts">
@@ -20,15 +22,18 @@ import Component from 'vue-class-component'
 import NoBots from '../components/NoBots.vue'
 import BotView from '../components/BotView.vue'
 import * as store from '../plugins/store/store'
+declare const sockets: any
 
 @Component({
   components: { NoBots, BotView },
 })
 export default class Superpower extends Vue {
+  get bots() {
+    return store.bots()
+  }
   get tab() {
     return store.botTab()
   }
-
   set tab(value) {
     store.setBotTab(value)
   }

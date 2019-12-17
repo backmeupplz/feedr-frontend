@@ -1,5 +1,5 @@
 <template lang="pug">
-  v-card(flat height="100vh")
+  v-card(flat height="100vh" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%")
     v-row.pr-1
       v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller.border__top
         div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
@@ -9,6 +9,11 @@
               v-list-item-subtitle(v-if='chat.lastMessage')
                 i {{frombot(curbot, chat.lastMessage)}}
                 |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
+              v-list-item-subtitle(v-if="curbot.botType === 'feed'") 
+                i {{$t('bot.bot')}}:&nbsp;
+                | {{getBotName(chat)}}
+                v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
+                v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram
             v-list-item-action()
               v-list-item-action-text(v-if='chat.lastMessage' v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
               v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
@@ -25,6 +30,11 @@
                     v-list-item-subtitle(v-if='chat.lastMessage') 
                       i {{frombot(curbot, chat.lastMessage)}}
                       |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
+                    v-list-item-subtitle(v-if="curbot.botType === 'feed'") 
+                      i {{$t('bot.bot')}}:&nbsp;
+                      | {{getBotName(chat)}}
+                      v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
+                      v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram                    
                   v-list-item-action(v-if='chat.lastMessage')
                     v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
                     v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
@@ -39,19 +49,24 @@
             ChatMenu(v-bind:chat="selectedChat")
           v-progress-linear(indeterminate v-if="chatloading")
         .headline.pa-4.text-center(v-if='!chat && curbot && curbot.chats && curbot.chats.length') {{$t('chat.select')}}
-        .headline.pa-4.text-center(v-else-if='!chat && curbot && !curbot.chats.length') {{$t('chat.invite')}} 
+        .headline.pa-4.text-center(v-else-if='!chat && curbot && !curbot.chats.length && curbot.botType !== "feed"') {{$t('chat.invite')}} 
           a(v-if="bot.botType ==='telegram'" :href="'https://t.me/' + curbot.username" target="_blank")   
             |@{{curbot.username}}
           div(v-else)
             |@{{curbot.username}}
-        div(:style="wrapperHeight" v-else).border__right.border__left
-          ChatComponent(v-bind:bot="bot" v-bind:curchat="selectedChat")
-          v-form(v-model="validsend" ref="msgSendForm" onSubmit="return false;").border__right
-            v-container(justify-center)
-              v-text-field(v-model='text' ref="inputMsg" :rules="sendRules" @keypress.enter="send")
-                template(v-slot:append)
-                  v-btn(icon text @click='send' :disabled="!validsend")
-                    v-icon send
+        .headline.pa-4.text-center(v-else-if="curbot.chats && !curbot.chats.length && curbot.botType === 'feed'") 
+          div(v-if="$store.state.bots.length > 1") {{$t('chat.nochats')}}
+          div(v-else) {{$t('noBots')}}
+        v-container(v-else).border__right.border__left
+          v-row
+            ChatComponent(v-bind:bot="bot" :style="wrapperHeight" v-bind:curchat="selectedChat")
+          v-row
+            v-form(style="width: 100%" v-model="validsend" ref="msgSendForm" onSubmit="return false;").border__right
+              v-container(justify-center )
+                v-text-field(v-model='text' ref="inputMsg" :rules="sendRules" @keypress.enter="send")
+                  template(v-slot:append)
+                    v-btn(icon text @click='send' :disabled="!validsend")
+                      v-icon send
 </template>
 
 <script lang="ts">
@@ -85,6 +100,22 @@ export default class BotView extends Vue {
   $refs!: Vue['$refs'] & {
     msgSendForm: any
     inputMsg: any
+  }
+
+  getBotName(chat: Chat) {
+    for (const bot of store.bots()) {
+      if (chat.bot === bot._id.toString()) {
+        return bot.name
+      }
+    }
+  }
+
+  getBotType(chat: Chat) {
+    for (const bot of store.bots()) {
+      if (chat.bot === bot._id.toString()) {
+        return bot.botType
+      }
+    }
   }
 
   visibilityChanged(isVisible: Boolean, entry: any, i: number, chat: Chat) {
@@ -238,7 +269,7 @@ export default class BotView extends Vue {
 
   get wrapperHeight() {
     let height = this.winheight - 120 - 160
-    return { height: height + 'px' }
+    return { height: height + 'px', position: 'absoulte' }
   }
 
   get sendRules() {
@@ -272,13 +303,16 @@ export default class BotView extends Vue {
       store.setChatLoading(true)
       Vue.set(this.chat, 'messages', [])
       sockets.send('request_messages', {
-        bot: (this as any).bot._id,
+        bot: chat.bot,
         chat: chat._id,
       })
     }
   }
 
   setMessageSendFocus() {
+    if (this.mobile) {
+      return
+    }
     if (this.$refs.inputMsg) {
       this.$refs.msgSendForm.reset()
       this.$refs.inputMsg.focus()
@@ -312,7 +346,7 @@ export default class BotView extends Vue {
       return
     }
     sockets.send('send_message', {
-      bot: (this as any).bot._id,
+      bot: this.chat.bot,
       chat: this.chat._id,
       message: this.text,
       type: this.chat.type,

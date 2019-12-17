@@ -34,7 +34,25 @@ declare const sockets: any
     lastMessage: function(val) {
       let that = this as any
       let needScroll = true
+      if (
+        that.chatUpdated &&
+        that.$props.curchat &&
+        that.chatUpdated < that.$props.curchat.updated
+      ) {
+        that.chatUpdated = that.$props.curchat.updatedAt
+        that.last = val
+        that.chatUpdate()
+        that.scroll()
+        return
+      }
       if (!that.last) {
+        that.chatUpdated = that.$props.curchat.updatedAt
+        that.last = val
+        that.chatUpdate()
+        that.scroll()
+        return
+      }
+      if (that.last.chat !== val.chat) {
         that.last = val
         that.chatUpdate()
         that.scroll()
@@ -56,12 +74,14 @@ declare const sockets: any
 export default class ChatComponent extends Vue {
   last: any
   text = ''
+  chatUpdated: any
   messageUpdating = true
 
   scrollTimer() {
     let elem = this.$el
     elem.scrollTop = 100000
   }
+
   scroll() {
     this.chatUpdate()
     setTimeout(this.scrollTimer, 200)
@@ -80,18 +100,10 @@ export default class ChatComponent extends Vue {
   }
 
   frombot(bot: any, message: any) {
-    if (bot.botType === 'telegram') {
-      if (bot.telegramId === message.raw.from.id) {
-        return true
-      }
-      return false
+    if (message.frombot) {
+      return true
     }
-    if (bot.botType === 'viber') {
-      if (message.frombot) {
-        return true
-      }
-      return false
-    }
+    return false
   }
 
   get lastMessage() {
@@ -105,7 +117,7 @@ export default class ChatComponent extends Vue {
         (this as any).sortedMessages.length - 1
       ]
     }
-    return false
+    return []
   }
 
   updated() {
@@ -115,11 +127,11 @@ export default class ChatComponent extends Vue {
   }
 
   get sortedMessages() {
-    if (!this.$props.curchat) {
+    if (!this.$props.curchat || !this.$props.bot) {
       return
     }
     for (const bot of store.bots()) {
-      if (bot._id === this.$props.curchat.bot) {
+      if (bot._id === this.$props.bot._id) {
         if (!bot.chats) {
           return []
         }
@@ -127,7 +139,7 @@ export default class ChatComponent extends Vue {
           if (this.$props.curchat && chat._id === this.$props.curchat._id) {
             if (!chat.messages) {
               sockets.send('request_messages', {
-                bot: bot._id,
+                bot: chat.bot,
                 chat: chat._id,
               })
               return []
@@ -170,7 +182,7 @@ export default class ChatComponent extends Vue {
     try {
       this.messageUpdating = true
       sockets.send('request_messages', {
-        bot: bot._id,
+        bot: curchat.bot,
         chat: curchat._id,
         id: lastmessage._id,
       })

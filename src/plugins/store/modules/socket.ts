@@ -37,7 +37,7 @@ const mutations = {
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           Vue.set(bot, 'chatsloading', false)
-          storemodule.addChats(newchats)
+          storemodule.addChats(newchats, botId)
           return
         }
         const newchats = await Promise.all(
@@ -54,7 +54,7 @@ const mutations = {
         )
         Vue.set(bot, 'oldestLoadedChat', oldestChat)
         Vue.set(bot, 'chatsloading', false)
-        storemodule.addChats(newchats)
+        storemodule.addChats(newchats, botId)
       }
     }
   },
@@ -62,6 +62,7 @@ const mutations = {
   async socket_requested_chat(state: State, object: any) {
     const chat = object[1]
     const error = object[2]
+    const botId = object[3]
     if (error) {
       setSnackbarError(error)
       vm.$router.replace('/app')
@@ -75,8 +76,8 @@ const mutations = {
     if (chat) {
       let botNumber = 0
       ;(await Promise.all(
-        store.state.bots.filter((v, k) => {
-          if (chat.bot === v._id) {
+        store.state.bots.filter((v: any, k: any) => {
+          if (botId === v._id) {
             botNumber = k
             return v
           }
@@ -86,11 +87,11 @@ const mutations = {
       store.state.botTab = botNumber
       chat.requested = true
       for (const bot of store.state.bots) {
-        if (bot._id === chat.bot) {
+        if (bot._id === botId) {
           if (!bot.chats) {
             return
           }
-          storemodule.addChats(chat)
+          storemodule.addChats(chat, botId)
           Vue.set(bot, 'selected_chat', chat)
         }
       }
@@ -108,7 +109,7 @@ const mutations = {
             min.updatedAt < cur.updatedAt ? min : cur,
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
-          storemodule.addChats(chats)
+          storemodule.addChats(chats, botId)
         }
       }
     }
@@ -123,7 +124,7 @@ const mutations = {
       if (!(findchat.length < 1)) {
         let botNumber = 0
         const selectBot = (await Promise.all(
-          store.state.bots.filter((v, k) => {
+          store.state.bots.filter((v: any, k: any) => {
             if (botId === v._id) {
               botNumber = k
               return v
@@ -141,7 +142,7 @@ const mutations = {
         return
       }
 
-      const existschats = store.state.bots.filter(bot => {
+      const existschats = store.state.bots.filter((bot: any) => {
         return bot.chats
       })
       await Promise.all(existschats)
@@ -161,6 +162,7 @@ const mutations = {
           return
         }
         for (const i in bot.chats) {
+          feedChatUpdate(chat)
           if (bot.chats[Number(i)]._id === chat._id) {
             let newChat = bot.chats[i]
             if (newChat.updatedAt > chat.updatedAt) {
@@ -193,6 +195,7 @@ const mutations = {
     const paginated = object[3]
     for (const bot of store.state.bots) {
       if (bot._id === botId) {
+        feedMessagesInsert(chatId, messages, paginated)
         for (const chat of bot.chats || []) {
           if (chat._id === chatId) {
             if (!paginated) {
@@ -220,9 +223,10 @@ const mutations = {
         }
         for (const chat of bot.chats || []) {
           if (chat._id === object.chat) {
+            feedMessageInsert(object.chat, object)
             if (!chat.messages) {
               sockets.send('request_messages', {
-                bot: bot._id,
+                bot: chat.bot,
                 chat: chat._id,
               })
               Vue.set(chat, 'lastMessage', object)
@@ -238,20 +242,22 @@ const mutations = {
     }
   },
   async socket_new_chat(state: State, object: any) {
-    const botId = object.bot
+    const newChat = object[0]
+    const botId = object[1]
     for (const bot of store.state.bots) {
       if (bot._id === botId) {
         let filter: any
         if (bot.chats) {
-          filter = bot.chats.filter(chat => {
-            return chat === object
+          filter = bot.chats.filter((chat: any) => {
+            return chat === newChat
           }) as any
           await Promise.all(filter)
         } else {
           filter = false
         }
         if (!filter || filter.length < 1) {
-          storemodule.addChats(object)
+          storemodule.addChats(newChat, botId)
+          storemodule.addChats(newChat, '__feed')
         }
       }
     }
@@ -291,4 +297,63 @@ const mutations = {
 
 export default {
   mutations,
+}
+
+export function feedChatUpdate(chat: any) {
+  if (store.state.bots[0].botType === 'feed') {
+    for (const i in store.state.bots[0].chats) {
+      if (store.state.bots[0].chats[Number(i)]._id === chat._id) {
+        let newChat = store.state.bots[0].chats[Number(i)]
+        if (newChat.updatedAt > chat.updatedAt) {
+          return
+        }
+        if (chat.hasOwnProperty('bot_counter')) {
+          Vue.set(store.state.bots[0], 'unread', chat.bot_counter)
+        }
+        newChat = Object.assign(newChat, chat) // now it is true new chat
+        store.state.bots[0].chats.splice(Number(i), 1, newChat)
+      }
+    }
+  }
+}
+
+export function feedMessagesInsert(chatId: any, messages: any, paginated: any) {
+  if (store.state.bots[0].botType === 'feed') {
+    for (const chat of store.state.bots[0].chats || []) {
+      if (chat._id === chatId) {
+        if (!paginated) {
+          Vue.set(chat, 'messages', messages)
+        } else {
+          if (messages.length < 1) {
+            store.state.nomoremessages = true
+            return
+          }
+          Vue.set(chat, 'messages', [...messages, ...(chat.messages || [])])
+        }
+        store.state.loading.chatloading = false
+        return
+      }
+    }
+  }
+}
+
+
+export function feedMessageInsert(chatId: any, message: any) {
+  if (store.state.bots[0].botType === 'feed') {
+    for (const chat of store.state.bots[0].chats || []) {
+      if (chat._id === chatId) {
+        if (!chat.messages) {
+          sockets.send('request_messages', {
+            bot: chat.bot,
+            chat: chat._id,
+          })
+          Vue.set(chat, 'lastMessage', message)
+          return
+        }
+        Vue.set(chat, 'messages', [...(chat.messages || []), message])
+        Vue.set(chat, 'lastMessage', message)
+        return
+      }
+    }
+  }
 }

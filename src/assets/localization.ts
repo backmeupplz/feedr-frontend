@@ -8,6 +8,7 @@ export const messages = {
       privacy: 'Политика конфиденциальности',
     },
     bot: {
+      bot: 'Бот',
       status: 'Статус',
       owner: 'Владелец',
       type: 'Тип',
@@ -17,6 +18,7 @@ export const messages = {
       unsupported: 'Это сообщение пока не поддерживается :(',
     },
     chat: {
+      nochats: 'У вас нет ни одного чата',
       ban: 'Заблокировать',
       banned: 'Заблокирован',
       unban: 'Разблокировать',
@@ -147,6 +149,7 @@ export const messages = {
       no_username: 'У этого пользователя нет юзернейма',
       forwarded_from: 'Переслано от:',
     },
+    feed: 'Лента',
   },
   en: {
     title: 'Feedr',
@@ -166,6 +169,7 @@ export const messages = {
       unsupported: 'This message is not yet supported :(',
     },
     chat: {
+      nochats: 'You have no chat.',
       ban: 'Ban',
       banned: 'Banned',
       unban: 'Unban',
@@ -194,6 +198,7 @@ export const messages = {
           'Telegram API Error: File size to big for download (>20mb). Sorry.',
       },
       bot: {
+        bot: 'Bot',
         add: 'Could not add bot, check token',
         edit: 'Could not edit bot',
         inviteAdmin: 'Could not invite admin to bot',
@@ -294,5 +299,6 @@ export const messages = {
       no_username: "This user doesn't have a username",
       forwarded_from: 'Forwarded from:',
     },
+    feed: 'Feed',
   },
 }
