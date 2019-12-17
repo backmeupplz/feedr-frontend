@@ -68,9 +68,11 @@ const storeOptions = {
       sockets.send('authentication', state.user.token)
     },
     async addChats(state: State, chat: any) {
+      let botId = chat[0]
+      chat = chat[1]
       if (Array.isArray(chat)) {
         for (const bot of state.bots) {
-          if (bot._id === chat[0].bot) {
+          if (bot._id === botId) {
             if (bot.chats) {
               const newchats = await Promise.all(
                 chat.filter((chat: any) => {
@@ -90,7 +92,7 @@ const storeOptions = {
         }
       } else {
         for (const bot of state.bots) {
-          if (bot._id === chat.bot) {
+          if (bot._id === botId) {
             if (bot.chats) {
               if (
                 bot.chats.find(v => {
@@ -131,12 +133,26 @@ const storeOptions = {
         await Promise.all(
           bots.bots.map((bot: any) => {
             bot.chats = []
+            bot.selected_chat = undefined
             return bot
           }),
         )
       }
 
-      state.bots = bots.bots
+      let updatedBots = [
+        {
+          _id: '__feed',
+          botType: 'feed',
+          name: 'Feed',
+          username: '',
+          greetingMessage: '',
+          chats: [],
+          unread: 0,
+          status: 'active',
+        },
+      ]
+      updatedBots.push(...bots.bots)
+      state.bots = updatedBots
       state.invites = bots.invites
 
       if (state.user) {
@@ -223,7 +239,7 @@ export const setBotsLoading = (loading: Boolean) => {
 export const logout = () => {
   store.commit('logout')
 }
-export const setBots = (bots: Bot[]) => {
+export const setBots = (bots: any) => {
   store.commit('setBots', bots)
 }
 export const setNoMoreMessages = (nomoremessages: Boolean) => {
@@ -238,6 +254,6 @@ export const addChat = (chat: any) => {
   store.commit('addChat', chat)
 }
 
-export const addChats = (chat: any) => {
-  store.commit('addChats', chat)
+export const addChats = (chat: any, botId: string) => {
+  store.commit('addChats', [botId, chat])
 }

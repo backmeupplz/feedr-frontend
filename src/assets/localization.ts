@@ -17,6 +17,7 @@ export const messages = {
       unsupported: 'Это сообщение пока не поддерживается :(',
     },
     chat: {
+      nochats: 'У вас нет ни одного чата',
       ban: 'Заблокировать',
       banned: 'Заблокирован',
       unban: 'Разблокировать',
@@ -147,6 +148,7 @@ export const messages = {
       no_username: 'У этого пользователя нет юзернейма',
       forwarded_from: 'Переслано от:',
     },
+    feed: 'Лента',
   },
   en: {
     title: 'Feedr',
@@ -166,6 +168,7 @@ export const messages = {
       unsupported: 'This message is not yet supported :(',
     },
     chat: {
+      nochats: 'You have no chat.',
       ban: 'Ban',
       banned: 'Banned',
       unban: 'Unban',
@@ -294,5 +297,6 @@ export const messages = {
       no_username: "This user doesn't have a username",
       forwarded_from: 'Forwarded from:',
     },
+    feed: 'Feed',
   },
 }
