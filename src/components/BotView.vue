@@ -5,7 +5,7 @@
         div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
           v-list-item(@click='openChat(chat)' @click.prevent="setMessageSendFocus" active-class="active" :class="{'v-list-item--active': chatActivated(chat)}" )
             v-list-item-content
-              v-list-item-title {{getChatName(chat)}}
+              v-list-item-title {{getChatName(chat).name}}
               v-list-item-subtitle(v-if='chat.lastMessage')
                 i {{frombot(curbot, chat.lastMessage)}}
                 |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
@@ -26,7 +26,7 @@
               div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
                 v-list-item(@click='openChat(chat); chatnav = !chatnav' @click.prevent="setMessageSendFocus" active-class="active" :class="{'v-list-item--active': chatActivated(chat, selectedChat)}") 
                   v-list-item-content
-                    v-list-item-title {{getChatName(chat)}}
+                    v-list-item-title {{getChatName(chat).name}}
                     v-list-item-subtitle(v-if='chat.lastMessage') 
                       i {{frombot(curbot, chat.lastMessage)}}
                       |{{chat.lastMessage.raw.text || $t('chat.attachment')}}
@@ -43,7 +43,15 @@
             v-app-bar-nav-icon(@click.stop="chatnav = !chatnav" v-if="mobile")
             v-tooltip(bottom v-if="chat")
               template(v-slot:activator='{ on }')
-                span(v-on='on') {{getChatName(chat)}}
+                span(v-on='on') 
+                  span(v-if="getChatName(chat).type === 'feed'")
+                    i {{getChatName(chat).botName}}
+                    |&nbsp;
+                    v-icon(small v-if="getChatName(chat).botType === 'viber'") mdi-phone-in-talk
+                    v-icon(small v-else-if="getChatName(chat).botType === 'telegram'") mdi-telegram
+                    |&nbsp;|
+                    | {{getChatName(chat).name}}
+                  span(v-else) {{getChatName(chat).name}}
               span(style="white-space:pre-line;") {{JSON.stringify(chat.raw, undefined, 2)}}
             v-spacer
             ChatMenu(v-bind:chat="selectedChat")
@@ -173,7 +181,14 @@ export default class BotView extends Vue {
     if (!name) {
       return i18n.t('chat.noname')
     }
-    return name
+    if ((this as any).curbot.botType === 'feed') {
+      for (const bot of store.bots()) {
+        if (bot._id == chat.bot) {
+          return { type: 'feed', botType: bot.botType, name, botName: bot.name }
+        }
+      }
+    }
+    return { type: 'default', name }
   }
 
   get selectedChat() {
@@ -281,6 +296,7 @@ export default class BotView extends Vue {
   }
 
   openChat(chat: Chat) {
+    const date = Number(new Date())
     if (this.chat) {
       if (this.chat._id === chat._id) {
         return
@@ -289,6 +305,7 @@ export default class BotView extends Vue {
     if (this.chat && this.chat._id !== chat._id) {
       Vue.set(this.chat, 'messages', [])
     }
+
     this.chat = chat
     for (const bot of store.bots()) {
       if (bot && bot._id === this.$props.bot._id) {
