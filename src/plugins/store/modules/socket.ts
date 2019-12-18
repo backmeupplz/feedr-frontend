@@ -170,6 +170,7 @@ const mutations = {
             }
             if (chat.hasOwnProperty('bot_counter')) {
               Vue.set(bot, 'unread', chat.bot_counter)
+              updateFeedCounter()
             }
             newChat = Object.assign(newChat, chat) // now it is true new chat
             bot.chats.splice(Number(i), 1, newChat)
@@ -182,8 +183,8 @@ const mutations = {
   async socket_bot_counter(state: State, object: any) {
     const updatedbot = object as any
     for (const bot of store.state.bots) {
-      if (bot._id === updatedbot.id) {
-        Vue.set(bot, 'unread', updatedbot.unread)
+      if (bot._id === updatedbot[1].id) {
+        Vue.set(bot, 'unread', updatedbot[1].unread)
         return
       }
     }
@@ -199,13 +200,13 @@ const mutations = {
         for (const chat of bot.chats || []) {
           if (chat._id === chatId) {
             if (!paginated) {
-              Vue.set(chat, 'messages', messages)
+              storemodule.addMessages(messages, chatId, botId)
             } else {
               if (messages.length < 1) {
                 store.state.nomoremessages = true
                 return
               }
-              Vue.set(chat, 'messages', [...messages, ...(chat.messages || [])])
+              storemodule.addMessages(messages, chatId, botId)
             }
             store.state.loading.chatloading = false
             return
@@ -232,7 +233,7 @@ const mutations = {
               Vue.set(chat, 'lastMessage', object)
               return
             }
-            Vue.set(chat, 'messages', [...(chat.messages || []), object])
+            storemodule.addMessages(object, object.chat, object.bot)
             Vue.set(chat, 'lastMessage', object)
             return
           }
@@ -271,6 +272,9 @@ const mutations = {
       case 'messages':
         store.commit('socket_messages', obj)
         break
+      case 'bot_counter':
+        store.commit('socket_bot_counter', obj)
+        break
       case 'chats_paginated':
         store.commit('socket_chats_paginated', obj)
         break
@@ -307,9 +311,6 @@ export function feedChatUpdate(chat: any) {
         if (newChat.updatedAt > chat.updatedAt) {
           return
         }
-        if (chat.hasOwnProperty('bot_counter')) {
-          Vue.set(store.state.bots[0], 'unread', chat.bot_counter)
-        }
         newChat = Object.assign(newChat, chat) // now it is true new chat
         store.state.bots[0].chats.splice(Number(i), 1, newChat)
       }
@@ -322,13 +323,14 @@ export function feedMessagesInsert(chatId: any, messages: any, paginated: any) {
     for (const chat of store.state.bots[0].chats || []) {
       if (chat._id === chatId) {
         if (!paginated) {
+          storemodule.addMessages(messages, chatId, '__feed')
           Vue.set(chat, 'messages', messages)
         } else {
           if (messages.length < 1) {
             store.state.nomoremessages = true
             return
           }
-          Vue.set(chat, 'messages', [...messages, ...(chat.messages || [])])
+          storemodule.addMessages(messages, chatId, '__feed')
         }
         store.state.loading.chatloading = false
         return
@@ -336,7 +338,6 @@ export function feedMessagesInsert(chatId: any, messages: any, paginated: any) {
     }
   }
 }
-
 
 export function feedMessageInsert(chatId: any, message: any) {
   if (store.state.bots[0].botType === 'feed') {
@@ -350,10 +351,20 @@ export function feedMessageInsert(chatId: any, message: any) {
           Vue.set(chat, 'lastMessage', message)
           return
         }
-        Vue.set(chat, 'messages', [...(chat.messages || []), message])
+        storemodule.addMessages(message, chatId, '__feed')
         Vue.set(chat, 'lastMessage', message)
         return
       }
     }
   }
+}
+
+export function updateFeedCounter() {
+  let unread = 0
+  store.state.bots.map((bot, i) => { 
+    if (i) {
+      unread = unread + bot.unread
+    } 
+  })
+  store.state.bots[0].unread = unread
 }

@@ -7,7 +7,6 @@
                 MessageComponent(v-bind:message="message")
 </template>
 
-
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
@@ -144,7 +143,11 @@ export default class ChatComponent extends Vue {
               })
               return []
             }
-            return chat.messages || []
+            return (chat as any).messages.sort((a: any, b: any) => {
+              if (a.createdAt && b.createdAt) {
+                return new Date(a.createdAt) < new Date(b.createdAt) ? -1 : 1
+              }
+            })
           }
         }
       }

@@ -109,6 +109,78 @@ const storeOptions = {
         }
       }
     },
+    async addMessages(state: State, message: any) {
+      let botId = message[0]
+      let chatId = message[1]
+      message = message[2]
+      if (Array.isArray(message)) {
+        for (const bot of state.bots) {
+          if (bot._id === botId) {
+            if (bot.chats) {
+              for (const chat of bot.chats) {
+                if (
+                  chat._id === chatId &&
+                  bot.selected_chat &&
+                  bot.selected_chat._id === chat._id
+                ) {
+                  if (!chat.messages?.length) {
+                    chat.messages = []
+                    chat.messages.push(...message)
+                    return
+                  }
+                  const newMessages = await Promise.all(
+                    message.filter((msg: any) => {
+                      return !(chat as any).messages.find((v: any) => {
+                        
+                        if (msg._id === v._id) {
+                          console.log(msg._id, v._id)
+                          return v
+                        }
+                      })
+                    }),
+                  )
+                  if (!newMessages) {
+                    return
+                  }
+                  chat.messages.push(...newMessages)
+                }
+              }
+            }
+          }
+        }
+      } else {
+        for (const bot of state.bots) {
+          if (bot._id === botId) {
+            if (bot.chats) {
+              for (const chat of bot.chats) {
+                if (
+                  chat._id === chatId &&
+                  bot.selected_chat &&
+                  bot.selected_chat._id === chat._id
+                ) {
+                  if (
+                    (chat as any).messages.find((v: any) => {
+                      if (message._id === v._id) {
+                        return v
+                      }
+                    })
+                  ) {
+                    return
+                  }
+                  if (!chat?.messages?.length) {
+                    chat.messages = []
+                    chat.messages.push(message)
+                    return
+                  }
+                  chat.messages.push(message)
+                  return
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     logout(state: State) {
       state.user = undefined
       sockets.send('logout')
@@ -256,4 +328,8 @@ export const addChat = (chat: any) => {
 
 export const addChats = (chat: any, botId: string) => {
   store.commit('addChats', [botId, chat])
+}
+
+export const addMessages = (message: any, chatId: string, botId: string) => {
+  store.commit('addMessages', [botId, chatId, message])
 }
