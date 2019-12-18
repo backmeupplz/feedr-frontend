@@ -1,5 +1,8 @@
 <template lang="pug">
     v-col(cols='12' :style="heightStyle").columner
+            .new_message(v-if="unreadMessages")
+              div(style="text-align:center;")
+                v-chip {{$t('message.new')}}
             div(v-for='(message, i) in sortedMessages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
               v-row(v-if='frombot(bot, message)' justify='end' class='pa-4')
                 MessageComponent(v-bind:message="message")
@@ -71,6 +74,9 @@ declare const sockets: any
   },
 })
 export default class ChatComponent extends Vue {
+  $refs!: Vue['$refs'] & {
+    newMessage: any
+  }
   last: any
   text = ''
   chatUpdated: any
@@ -125,6 +131,19 @@ export default class ChatComponent extends Vue {
     })
   }
 
+  get unreadMessages() {
+    if (!this.sortedMessages) {
+      return false
+    }
+    let exists = false
+    this.sortedMessages.map((message: Message) => {
+      if (message.unread) {
+        exists = true
+      }
+    })
+    return exists
+  }
+
   get sortedMessages() {
     if (!this.$props.curchat || !this.$props.bot) {
       return
@@ -170,6 +189,9 @@ export default class ChatComponent extends Vue {
     if (!isVisible) {
       return
     }
+    if (message.unread) {
+      store.readMessage(message)
+    }
     if (this.messageUpdating || store.nomoremessages()) {
       return
     }
@@ -203,5 +225,12 @@ export default class ChatComponent extends Vue {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overflow-x: hidden;
+}
+.new_message {
+  position: sticky;
+  left: 50%;
+  top: 0;
+  z-index: 1;
+  transform: translateX(-50%);
 }
 </style>

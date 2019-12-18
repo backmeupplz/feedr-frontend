@@ -217,6 +217,7 @@ const mutations = {
     }
   },
   async socket_new_message(state: State, object: any) {
+    object.unread = true
     for (const bot of store.state.bots) {
       if (bot._id === object.bot) {
         if (!bot.chats) {
@@ -224,18 +225,7 @@ const mutations = {
         }
         for (const chat of bot.chats || []) {
           if (chat._id === object.chat) {
-            if (!object.frombot) {
-              newMessageNotify(object)
-            }
             feedMessageInsert(object.chat, object)
-            if (!chat.messages) {
-              sockets.send('request_messages', {
-                bot: chat.bot,
-                chat: chat._id,
-              })
-              Vue.set(chat, 'lastMessage', object)
-              return
-            }
             storemodule.addMessages(object, object.chat, object.bot)
             Vue.set(chat, 'lastMessage', object)
             return
@@ -362,24 +352,12 @@ export function feedMessageInsert(chatId: any, message: any) {
   }
 }
 
-export function newMessageNotify(message: any) {
-  for (const bot in store.state.bots) {
-    if (store.state.bots[Number(bot)].selected_chat && (store as any).state.bots[Number(bot)].selected_chat._id === message.chat && store.state.botTab === Number(bot)) {
-      storemodule.setSnackbar({
-        message: 'message.new',
-        color: 'info',
-        active: true,
-      })
-    }
-  }
-}
-
 export function updateFeedCounter() {
   let unread = 0
-  store.state.bots.map((bot, i) => { 
+  store.state.bots.map((bot, i) => {
     if (i) {
       unread = unread + bot.unread
-    } 
+    }
   })
   store.state.bots[0].unread = unread
 }
