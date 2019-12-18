@@ -131,9 +131,7 @@ const storeOptions = {
                   const newMessages = await Promise.all(
                     message.filter((msg: any) => {
                       return !(chat as any).messages.find((v: any) => {
-                        
                         if (msg._id === v._id) {
-                          console.log(msg._id, v._id)
                           return v
                         }
                       })
