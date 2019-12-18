@@ -15,6 +15,7 @@ export const messages = {
       greetings: 'Приветствие',
     },
     message: {
+      new: 'Новое сообщение',
       unsupported: 'Это сообщение пока не поддерживается :(',
     },
     chat: {
@@ -167,6 +168,7 @@ export const messages = {
       greetings: 'Greetings message',
     },
     message: {
+      new: 'New message',
       unsupported: 'This message is not yet supported :(',
     },
     chat: {

@@ -155,10 +155,10 @@ export default class ChatComponent extends Vue {
   }
 
   get heightStyle() {
-    let height = document.documentElement.clientHeight - 400;
-    return { height: height + "px !important;"} 
-  };
-  
+    let height = document.documentElement.clientHeight - 400
+    return { height: height + 'px !important;' }
+  }
+
   async visibilityChanged(
     isVisible: Boolean,
     entry: any,
