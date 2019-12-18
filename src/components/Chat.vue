@@ -228,9 +228,7 @@ export default class ChatComponent extends Vue {
 }
 .new_message {
   position: sticky;
-  left: 50%;
   top: 0;
   z-index: 1;
-  transform: translateX(-50%);
 }
 </style>
