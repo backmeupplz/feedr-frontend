@@ -168,8 +168,31 @@ export default class BotView extends Vue {
   }
 
   getChatName(chat: Chat) {
+    if ((this as any).curbot.botType === 'feed') {
+      for (const bot of store.bots()) {
+        if (bot._id == chat.bot) {
+          let name = ''
+          if (chat.raw.name) {
+            name = chat.raw.name
+            return {
+              type: 'feed',
+              botType: bot.botType,
+              name,
+              botName: bot.name,
+            }
+          }
+          if (chat.raw.first_name) {
+            name = chat.raw.first_name
+          }
+          if (chat.raw.last_name) {
+            name = `${name} ${chat.raw.last_name}`
+          }
+          return { type: 'feed', botType: bot.botType, name, botName: bot.name }
+        }
+      }
+    }
     if (chat.raw.name) {
-      return chat.raw.name
+      return { type: 'default', name: chat.raw.name }
     }
     let name = ''
     if (chat.raw.first_name) {
@@ -181,13 +204,7 @@ export default class BotView extends Vue {
     if (!name) {
       return i18n.t('chat.noname')
     }
-    if ((this as any).curbot.botType === 'feed') {
-      for (const bot of store.bots()) {
-        if (bot._id == chat.bot) {
-          return { type: 'feed', botType: bot.botType, name, botName: bot.name }
-        }
-      }
-    }
+
     return { type: 'default', name }
   }
 
