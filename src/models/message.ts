@@ -9,4 +9,5 @@ export interface Message {
   raw?: any
   type: string
   frombot: boolean
+  unread?: boolean
 }

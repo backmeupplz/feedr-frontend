@@ -65,12 +65,12 @@
         .headline.pa-4.text-center(v-else-if="curbot.chats && !curbot.chats.length && curbot.botType === 'feed'") 
           div(v-if="$store.state.bots.length > 1") {{$t('chat.nochats')}}
           div(v-else) {{$t('noBots')}}
-        v-container(v-else).border__right.border__left
+        v-container(v-else style="max-width: 100% !important").border__right.border__left
           v-row
             ChatComponent(v-bind:bot="bot" :style="wrapperHeight" v-bind:curchat="selectedChat")
           v-row
-            v-form(style="width: 100%" v-model="validsend" ref="msgSendForm" onSubmit="return false;").border__right
-              v-container(justify-center )
+            v-form(style="width: 100%" v-model="validsend" ref="msgSendForm" onSubmit="return false;")
+              v-container(justify-center style="max-width: 100% !important")
                 v-text-field(v-model='text' ref="inputMsg" :rules="sendRules" @keypress.enter="send")
                   template(v-slot:append)
                     v-btn(icon text @click='send' :disabled="!validsend")

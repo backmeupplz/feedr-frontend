@@ -179,6 +179,20 @@ const storeOptions = {
         }
       }
     },
+    readMessage(state: State, message: any) {
+      for (const chat of (state as any).bots[(state as any).botTab]
+        .chats) {
+        if (chat._id === (state as any).bots[(state as any).botTab]
+        .selected_chat._id) {
+          for (const messages of chat.messages) {
+            if (messages._id === message._id) {
+              message.unread = undefined
+              return
+            }
+          }
+        }
+      }
+    },
     logout(state: State) {
       state.user = undefined
       sockets.send('logout')
@@ -330,4 +344,8 @@ export const addChats = (chat: any, botId: string) => {
 
 export const addMessages = (message: any, chatId: string, botId: string) => {
   store.commit('addMessages', [botId, chatId, message])
+}
+
+export const readMessage = (message: any) => {
+  store.commit('readMessage', message)
 }
