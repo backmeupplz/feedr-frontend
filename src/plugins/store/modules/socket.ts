@@ -224,6 +224,9 @@ const mutations = {
         }
         for (const chat of bot.chats || []) {
           if (chat._id === object.chat) {
+            if (!object.frombot) {
+              newMessageNotify(object)
+            }
             feedMessageInsert(object.chat, object)
             if (!chat.messages) {
               sockets.send('request_messages', {
@@ -355,6 +358,18 @@ export function feedMessageInsert(chatId: any, message: any) {
         Vue.set(chat, 'lastMessage', message)
         return
       }
+    }
+  }
+}
+
+export function newMessageNotify(message: any) {
+  for (const bot in store.state.bots) {
+    if (store.state.bots[Number(bot)].selected_chat && (store as any).state.bots[Number(bot)].selected_chat._id === message.chat && store.state.botTab === Number(bot)) {
+      storemodule.setSnackbar({
+        message: 'message.new',
+        color: 'info',
+        active: true,
+      })
     }
   }
 }
