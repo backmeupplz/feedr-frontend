@@ -1,51 +1,43 @@
 <template lang="pug">
-  v-dialog(v-model='dialog'
-  scrollable
-  max-width='600px'
-  persistent)
-    v-form(v-model="validid" ref="formAddAdmin" onSubmit="return false;")
-      v-card
-        v-card-title
-          span {{$t('admin.admins')}}
-          v-spacer
-          v-btn(icon
-          :loading='loading'
-          @click='refresh')
-            v-icon refresh
-        v-card-text
-          v-container
-            div(v-if="adminsinvites && adminsinvites.length >= 1")
-              v-data-table(:headers="headersTable" hide-default-footer :items="tableval" class="elevation-1")
-                template(v-slot:item.action="{ item }")
-                  v-icon(@click="removeAdminOrInvite(item)")
-                    |delete
-            div(v-else)
-              |{{$t('admin.noadmins')}}
-          v-container
-            .subtitle-1.black--text {{$t('admin.invite')}}
-                v-container(fluid fill-height)
-                    v-row
-                        v-col(cols="7" md="4")
-                            v-select.addadmin__select-field(dense :items="[{text: 'E-mail', value: 'E-mail'}, {text: 'TelegramID', value: 'TelegramID'}]" item-value="E-mail" v-model="accountType" :label="$t('admin.type')" 
-                            required outlined)
-                        v-col(cols="12" md="8")
-                            v-text-field.addadmin__text-field(:label='IDFieldText' 
-                            :rules="IdentifierRules"
-                            @keypress.enter="add"
-                            multiline
-                            required
-                            v-model='accountIdentifier')
-        v-card-actions
-          v-spacer
-          v-btn(text 
-          @click='close'
-          :loading='loading'
-          color='error') {{$t('cancel')}}
-          v-btn(text
-          @click='add'
-          :loading='loading'
-          :disabled="!validid"
-          color='blue') {{$t('invite')}}
+v-form(v-model="validid" ref="formAddAdmin" onSubmit="return false;")
+  v-card
+    v-card-title
+      span {{$t('admin.admins')}}
+      v-spacer
+      v-btn(icon
+      :loading='loading'
+      @click='refresh')
+        v-icon refresh
+    v-card-text
+      v-container
+        div(v-if="adminsinvites && adminsinvites.length >= 1")
+          v-data-table(:headers="headersTable" hide-default-footer :items="tableval" class="elevation-1")
+            template(v-slot:item.action="{ item }")
+              v-icon(@click="removeAdminOrInvite(item)")
+                |delete
+        div(v-else)
+          |{{$t('admin.noadmins')}}
+      v-container
+        .subtitle-1.black--text {{$t('admin.invite')}}
+            v-container(fluid fill-height)
+                v-row
+                    v-col(cols="7" md="4")
+                        v-select.addadmin__select-field(dense :items="[{text: 'E-mail', value: 'E-mail'}, {text: 'TelegramID', value: 'TelegramID'}]" item-value="E-mail" v-model="accountType" :label="$t('admin.type')" 
+                        required outlined)
+                    v-col(cols="12" md="8")
+                        v-text-field.addadmin__text-field(:label='IDFieldText' 
+                        :rules="IdentifierRules"
+                        @keypress.enter="add"
+                        multiline
+                        required
+                        v-model='accountIdentifier')
+    v-card-actions
+      v-spacer
+      v-btn(text
+      @click='add'
+      :loading='loading'
+      :disabled="!validid"
+      color='blue') {{$t('invite')}}
 </template>
 
 <script lang="ts">
@@ -64,12 +56,10 @@ interface tabledata {
 
 @Component({
   props: {
-    dialog: Boolean,
-    close: Function,
     botId: String,
   },
   watch: {
-    dialog: async function(val) {
+    botId: async function(val) {
       if (val) {
         ;(this as any).accountType = 'E-mail'
         ;(this as any).accountIdentifier = ''
@@ -108,7 +98,7 @@ interface tabledata {
     },
   },
 })
-export default class AddAdminDialog extends Vue {
+export default class AddAdminTab extends Vue {
   $refs!: Vue['$refs'] & {
     formAddAdmin: any
   }
@@ -129,6 +119,12 @@ export default class AddAdminDialog extends Vue {
       { text: status, value: 'status' },
       { text: actions, value: 'action', sortable: false },
     ]
+  }
+
+  mounted() {
+    this.accountType = 'E-mail'
+    this.accountIdentifier = ''
+    this.refresh()
   }
 
   get tableval() {

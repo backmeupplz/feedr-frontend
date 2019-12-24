@@ -59,7 +59,6 @@ export default class AddBotDialog extends Vue {
   $refs!: Vue['$refs'] & {
     formAddBot: any
   }
-
   loading = false
   token = ''
   validtoken = false

@@ -13,6 +13,10 @@ export const messages = {
       owner: 'Владелец',
       type: 'Тип',
       greetings: 'Приветствие',
+      update: 'Обновить бота',
+      delete: 'Удалить бота',
+      reject: 'Отказаться',
+      about: 'О боте',
     },
     message: {
       new: 'Новое сообщение',
@@ -84,7 +88,8 @@ export const messages = {
     botList: {
       title: 'Боты',
       noBotsText:
-        'Еще не было добавлено ни одного бота, пожалуйста, нажмите на плюс ниже, чтобы добавить вашего первого бота.',
+        'Еще не было добавлено ни одного бота, пожалуйста, добавьте вашего первого бота в меню слева.',
+      select: 'Пожалуйста, выберите настройку в меню слева.',
     },
     chatlist: 'Список чатов',
     addBot: {
@@ -165,7 +170,11 @@ export const messages = {
       status: 'Status',
       owner: 'Owner',
       type: 'Type',
-      greetings: 'Greetings message',
+      greetings: 'Greetings',
+      update: 'Update bot',
+      delete: 'Delete bot',
+      reject: 'Refuse',
+      about: 'About',
     },
     message: {
       new: 'New message',
@@ -237,7 +246,8 @@ export const messages = {
     botList: {
       title: 'Bots',
       noBotsText:
-        'No bots added yet, please, use the plus button below to add your first bot.',
+        'No bots added yet, please, use "Add bot" setting in left-side menu to add your first bot.',
+      select: 'Please select any setting in left-side menu',
     },
     chatlist: 'Chats',
     addBot: {
