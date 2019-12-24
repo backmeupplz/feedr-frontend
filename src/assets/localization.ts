@@ -7,6 +7,10 @@ export const messages = {
       facebook: 'Зайти через Фейсбук',
       privacy: 'Политика конфиденциальности',
     },
+    edit: {
+      edited: 'изменено',
+      edits: 'Изменения',
+    },
     bot: {
       bot: 'Бот',
       status: 'Статус',
@@ -164,6 +168,10 @@ export const messages = {
       google: 'Login with Google',
       facebook: 'Login with Facebook',
       privacy: 'Privacy policy',
+    },
+    edit: {
+      edited: 'edited',
+      edits: 'Edits',
     },
     bot: {
       bot: 'Bot',

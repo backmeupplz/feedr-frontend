@@ -37,7 +37,7 @@ export default class TelegramTextMessage extends Vue {
         return `https://viber.me/${handle}`
         break
       default:
-        return
+        return `https://t.me/${handle}`
     }
   }
 }

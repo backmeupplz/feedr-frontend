@@ -1,5 +1,7 @@
 <template lang="pug">
 v-list-item-title.message-text 
+    div(v-if="message.raw.caption") {{message.raw.caption}}
+    br(v-if='message.raw.caption')
     div(v-if="message.raw.audio && message.raw.audio.title") {{title}}
     v-container(fluid)
         v-row(v-if="!loaded" :justify="mobile").row_nowrap

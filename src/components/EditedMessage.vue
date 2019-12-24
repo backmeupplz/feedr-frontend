@@ -1,0 +1,34 @@
+<template lang="pug">
+v-row(justify='center' class='pa-4') 
+    MessageComponent(:edited='true' :message="mes")
+</template>
+
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import MessageComponent from './Message.vue'
+
+@Component({
+  components: { MessageComponent: () => import('./Message.vue') },
+  props: ['message', 'type', 'editIndex', '_id'],
+})
+export default class EditedMessage extends Vue {
+  get mes() {
+    if (this.$props.message && this.$props.type) {
+      let r = Object.assign({}, this.$props.message)
+      // If this edited message
+      if (!r.raw) {
+        r.raw = Object.assign({}, r)
+        r._id = this.$props._id
+        r.type = this.$props.type
+      }
+      // Set index for backend
+      if (this.$props.editIndex) {
+        r.editIndex = this.$props.editIndex
+      }
+      // Return formatted message
+      return r
+    }
+  }
+}
+</script>

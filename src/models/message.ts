@@ -10,4 +10,6 @@ export interface Message {
   type: string
   frombot: boolean
   unread?: boolean
+  edits?: any
+  editIndex?: any
 }

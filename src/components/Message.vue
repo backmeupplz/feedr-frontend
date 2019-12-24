@@ -24,27 +24,27 @@ v-card.message
                   @click='modalForwarded = false') {{$t('close')}}
             div(v-if="telegram")
               // Simple text
-              TextMessage(v-if="message.raw.text" :message="message")
+              TextMessage(v-if="msg.raw.text" :message="msg")
               // Photo
-              TelegramPhotoMessage(v-else-if="message.raw.photo" :message="message")
+              TelegramPhotoMessage(v-else-if="msg.raw.photo" :message="msg")
               // Video, Telescope Video and Animation
-              TelegramVideoMessage(v-else-if="message.raw.video || message.raw.video_note || message.raw.animation" :message="message")
+              TelegramVideoMessage(v-else-if="msg.raw.video || msg.raw.video_note || msg.raw.animation" :message="msg")
               // Location and Venue
-              TelegramLocationMessage(v-else-if="message.raw.location" :message="message.raw")
+              TelegramLocationMessage(v-else-if="msg.raw.location" :message="msg.raw")
               // Polls
-              TelegramPollMessage(v-else-if="message.raw.poll" :message="message.raw")
+              TelegramPollMessage(v-else-if="msg.raw.poll" :message="msg.raw")
               // Sticker
-              TelegramStickerMessage(v-else-if="message.raw.sticker" :message="message")
+              TelegramStickerMessage(v-else-if="msg.raw.sticker" :message="msg")
               // Document
-              TelegramDocumentMessage(v-else-if="message.raw.document && !message.raw.animation" :message="message")
+              TelegramDocumentMessage(v-else-if="msg.raw.document && !msg.raw.animation" :message="msg")
               // Contact
-              TelegramContactMessage(v-else-if="message.raw.contact" :message="message")
+              TelegramContactMessage(v-else-if="msg.raw.contact" :message="msg")
               // Audio and Voice
-              TelegramAudioMessage(v-else-if="message.raw.audio || message.raw.voice" :message="message")
+              TelegramAudioMessage(v-else-if="msg.raw.audio || msg.raw.voice" :message="msg")
               // Game
-              TelegramGameMessage(v-else-if="message.raw.game" :game="message.raw.game")
+              TelegramGameMessage(v-else-if="msg.raw.game" :game="msg.raw.game")
               // Unsupported Messages
-              UnSupportedMessage(v-else :message="message")
+              UnSupportedMessage(v-else :message="msg")
             div(v-else="viber")
               // Simple text
               TextMessage(v-if="message.raw.type === 'text'" :message="message")
@@ -66,10 +66,25 @@ v-card.message
               UnSupportedMessage(v-else :message="message")
 
             v-list-item-subtitle(class="text-right")
-                v-tooltip(bottom)
-                    template(v-slot:activator='{ on }')
-                        span(v-on='on') {{formatDate(message)}}
-                    span {{formatDateTooltip(message)}}
+              v-dialog(v-model="modalEdits" persistent width="500" v-if="message.edits && message.edits.length && !edited")
+                template(v-slot:activator="{on}") 
+                  span( @click.stop="modalEdits = true") {{$t('edit.edited')}}&nbsp;
+                v-card
+                  v-card-title {{$t('edit.edits')}}
+                  v-card-text
+                    v-col
+                      EditedMessage(:message='trueMessage' :type='trueMessage.type')
+                      div(v-for='(mes, i) in edits' v-if='msg.edits && msg.edits.length && telegram') 
+                        EditedMessage(:message='mes' :type='msg.type' :editIndex='i' :_id='message._id' :key='i')
+                  v-card-actions(fixed)
+                    v-spacer
+                    v-btn(color='blue'
+                    text 
+                    @click='modalEdits = false') {{$t('close')}}
+              v-tooltip(bottom)
+                  template(v-slot:activator='{ on }')
+                      span(v-on='on') {{formatDate(message)}}
+                  span {{formatDateTooltip(message)}}
 </template>
 
 <script lang="ts">
@@ -97,14 +112,17 @@ import ViberVideoMessage from './messages/viber/Video.vue' // Video, Telescope a
 import ViberDocumentMessage from './messages/viber/Document.vue' // Contact message type
 import ViberStickerMessage from './messages/viber/Sticker.vue' // Video, Telescope and Animation message types
 
+import EditedMessage from './EditedMessage.vue'
+
 import { i18n } from '../plugins/i18n'
 import * as api from '../utils/api'
 import moment from 'moment'
 
 @Component({
-  props: ['message'],
+  props: ['message', 'edited'],
   components: {
     TextMessage,
+    EditedMessage,
     UnSupportedMessage,
     TelegramPhotoMessage,
     TelegramVideoMessage,
@@ -125,6 +143,7 @@ import moment from 'moment'
 })
 export default class ChatMenu extends Vue {
   modalForwarded = false
+  modalEdits = false
 
   get telegram() {
     return this.$props.message.type === 'telegram'
@@ -132,15 +151,58 @@ export default class ChatMenu extends Vue {
   formatDate(message: any) {
     let date: number
     if (message.type === 'viber') {
-      return moment(message.createdAt).format('HH:mm:ss')
+      return moment(message.createdAt).format('HH:mm')
     }
-    return moment(message.raw.date * 1000).format('HH:mm:ss')
+    if (message.raw.edit_date) {
+      return moment(message.raw.edit_date * 1000).format('HH:mm')
+    }
+    return moment(message.raw.date * 1000).format('HH:mm')
+  }
+
+  get trueMessage() {
+    // Get not edited first message
+    let m = Object.assign({}, this.$props.message)
+    delete m.edits
+    return m
+  }
+
+  get edits() {
+    if (!this.$props.message) {
+      return
+    }
+    let msg = this.$props.message
+    if (!msg.edits || !msg.edits.length) {
+      return
+    }
+    // Get edits
+    return msg.edits
+  }
+
+  get msg() {
+    if (!this.$props.message) {
+      return
+    }
+    let msg = this.$props.message
+    // If not edited message, return this
+    if (!msg.edits || !msg.edits.length) {
+      return msg
+      // Else format end return last edit of message
+    } else {
+      let m = Object.assign({}, msg)
+      delete m.raw
+      m.editIndex = msg.edits.length - 1
+      m.raw = msg.edits[msg.edits.length - 1]
+      return m
+    }
   }
 
   formatDateTooltip(message: any) {
     let date: number
     if (message.type === 'viber') {
       return moment(message.createdAt).format('YYYY-MM-DD HH:mm:ss')
+    }
+    if (message.raw.edit_date) {
+      return moment(message.raw.edit_date * 1000).format('YYYY-MM-DD HH:mm:ss')
     }
     return moment(message.raw.date * 1000).format('YYYY-MM-DD HH:mm:ss')
   }

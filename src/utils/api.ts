@@ -155,11 +155,21 @@ export async function banChat(chat: Chat) {
 }
 
 export async function getFilesLink(message: Message) {
-  return (
-    await axios.get(`${base}/message/${message._id}`, {
-      headers: getHeaders(),
-    })
-  ).data as any
+  if (!(message as any).editIndex) {
+    return (
+      await axios.get(`${base}/message/${message._id}`, {
+        headers: getHeaders(),
+      })
+    ).data as any
+  } else
+    return (
+      await axios.get(
+        `${base}/message/${message._id}/${(message as any).editIndex}`,
+        {
+          headers: getHeaders(),
+        },
+      )
+    ).data as any
 }
 
 export async function unbanChat(chat: Chat) {
