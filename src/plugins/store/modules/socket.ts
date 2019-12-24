@@ -256,6 +256,25 @@ const mutations = {
       }
     }
   },
+  async socket_updated_message(state: State, object: any) {
+    const msgId = object[0]
+    const chatId = object[1]
+    const updated = object[2]
+
+    for (const bot of store.state.bots) {
+      if (bot.selected_chat && bot.chats && bot.selected_chat._id === chatId) {
+        for (const chat of bot.chats) {
+          if (chat._id === chatId && chat.messages) {
+            for (let message of chat.messages) {
+              if (message._id === msgId) {
+                message.edits = updated
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   socket_message(_: State, obj: any) {
     let eventName: string = obj instanceof Array ? obj[0] : obj
     switch (eventName) {

@@ -180,10 +180,11 @@ const storeOptions = {
       }
     },
     readMessage(state: State, message: any) {
-      for (const chat of (state as any).bots[(state as any).botTab]
-        .chats) {
-        if (chat._id === (state as any).bots[(state as any).botTab]
-        .selected_chat._id) {
+      for (const chat of (state as any).bots[(state as any).botTab].chats) {
+        if (
+          chat._id ===
+          (state as any).bots[(state as any).botTab].selected_chat._id
+        ) {
           for (const messages of chat.messages) {
             if (messages._id === message._id) {
               message.unread = undefined
