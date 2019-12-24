@@ -7,7 +7,7 @@ v-list-item-title.message-text
             v-icon(right) mdi-video-outline
       v-dialog(v-model="opened" fullscreen hide-overlay)
         v-card
-          v-toolbar(dark color="primary")
+          v-toolbar(dark)
             v-btn(icon dark @click="opened = false")
               v-icon mdi-close
             v-toolbar-title(v-if="message.raw.video") Telegram Video

@@ -8,7 +8,7 @@ v-list-item-title.message-text
               |{{$t('oldlink')}}
         v-dialog(v-model="opened" fullscreen hide-overlay)
           v-card
-            v-toolbar(dark color="primary")
+            v-toolbar(dark)
               v-btn(icon dark @click="opened = false")
                 v-icon mdi-close
               v-toolbar-title Viber Video
