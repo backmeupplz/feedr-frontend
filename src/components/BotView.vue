@@ -1,7 +1,7 @@
 <template lang="pug">
   v-card(flat height="100vh" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%")
     v-row.pr-1
-      v-col(cols='0' sm='3' md="2" v-if='!mobile').scrollable.scroller.border__top
+      v-col(cols='0' sm='4' md="3" lg='2' v-if='!mobile').scrollable.scroller.border__top
         div(v-if='bot.chats' v-for='(chat, i) in sortedChats' :key='chat._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i)')
           v-list-item(@click='openChat(chat)' @click.prevent="setMessageSendFocus" active-class="active" :class="{'v-list-item--active': chatActivated(chat)}" )
             v-list-item-content
@@ -18,7 +18,7 @@
               v-list-item-action-text(v-if='chat.lastMessage' v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
               v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
           v-divider
-      v-col(cols='12' sm="9" md="10" :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0 pr-4 chatview': $vuetify.breakpoint.smAndUp}")
+      v-col(cols='12' sm="8" md="9" lg='10' :class="{'pa-4': $vuetify.breakpoint.xsOnly, 'pa-0 pr-4 chatview': $vuetify.breakpoint.smAndUp}")
         v-navigation-drawer(v-model="chatnav" absolute temporary v-if="mobile" :style="listStyle")
           v-list(nav two-line)
             v-list-item-title {{$t('chatlist')}}:
@@ -123,6 +123,20 @@ export default class BotView extends Vue {
       if (chat.bot === bot._id.toString()) {
         return bot.botType
       }
+    }
+  }
+
+  updated() {
+    let unread = false
+    for (const bot of store.bots()) {
+      if (bot.unread) {
+        unread = true
+      }
+    }
+    if (unread) {
+      ;(document as any).getElementById('favicon').href = './icons/circle.png'
+    } else {
+      ;(document as any).getElementById('favicon').href = './icons/feedr.png'
     }
   }
 

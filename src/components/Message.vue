@@ -64,11 +64,10 @@ v-card.message
               TextMessage(v-else-if="message.raw.type === 'url'" :text="'URL: ' + message.raw.media")
               // Unsupported Messages
               UnSupportedMessage(v-else :message="message")
-
             v-list-item-subtitle(class="text-right")
               v-dialog(v-model="modalEdits" persistent width="500" v-if="message.edits && message.edits.length && !edited")
                 template(v-slot:activator="{on}") 
-                  span( @click.stop="modalEdits = true") {{$t('edit.edited')}}&nbsp;
+                  span(@click.stop="modalEdits = true").pointer {{$t('edit.edited')}}&nbsp;
                 v-card
                   v-card-title {{$t('edit.edits')}}
                   v-card-text
@@ -262,5 +261,8 @@ export default class ChatMenu extends Vue {
   white-space: break-spaces !important;
   overflow-wrap: anywhere !important;
   user-select: text !important;
+}
+.pointer {
+  cursor: pointer;
 }
 </style>
