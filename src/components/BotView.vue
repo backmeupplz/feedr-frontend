@@ -89,6 +89,7 @@ import { Chat } from '../models/chat'
 import moment from 'moment'
 import ChatComponent from './Chat.vue'
 import ChatMenu from './ChatMenu.vue'
+import Checkout from './Checkout.vue'
 // Global hack here
 declare const sockets: any
 
@@ -96,7 +97,7 @@ declare const sockets: any
   props: {
     bot: Object,
   },
-  components: { ChatComponent, ChatMenu },
+  components: { ChatComponent, ChatMenu, Checkout },
 })
 export default class BotView extends Vue {
   chat: Chat | null = null

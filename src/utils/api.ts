@@ -184,6 +184,35 @@ export async function unbanChat(chat: Chat) {
   ).data as Bot[]
 }
 
+export async function getStripeSessionId() {
+  return (
+    await axios.get(`${base}/subscription/session/default`, {
+      headers: getHeaders(),
+    })
+  ).data as string
+}
+
+export interface Subscription {
+  status: string
+  nextInvoice: any
+}
+
+export async function getSubscriptionStatus() {
+  return (
+    await axios.get(`${base}/subscription/status`, {
+      headers: getHeaders(),
+    })
+  ).data as Subscription
+}
+
+export async function cancelSubscription() {
+  return (
+    await axios.post(`${base}/subscription/cancel`, undefined, {
+      headers: getHeaders(),
+    })
+  ).data as string
+}
+
 function getHeaders() {
   const user = store.user()
   if (!!user && user.token) {

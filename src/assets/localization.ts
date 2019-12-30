@@ -11,6 +11,31 @@ export const messages = {
       edited: 'изменено',
       edits: 'Изменения',
     },
+    subscription: {
+      subscription: 'Подписка',
+      status: 'Статус подписки',
+      active: 'Активная',
+      inactive: 'Неактивная',
+      failed: 'Ошибка платежа',
+      early: 'Ранний адоптер',
+      update: 'Обновить реквизиты',
+      price: '$1/бот месяц',
+      earlyStatusText: 'Вы ранний адоптер. Мы любим Вас.',
+      activeStatusText:
+        'Вы подписчик. При отмене подписки, в конце вашего платежного периода будет списана плата за прошедший период, и после этого подписка будет отменена.',
+      inactiveStatusText:
+        'Чтобы получить доступ к Feedr, купите подписку.\nЦена подписки: $1 за одного бота в месяц.\nСумма списывается в конце месяца и расчитывается по максимальному кол-ву ботов в периоде.',
+      failedStatusText: 'Ошибка платежа обновите свои платежные реквизиты...',
+      needSub:
+        'Для дальнейшего доступа вам необходимо купить подписку, кликнув по кнопке справа вверху.',
+      cancel: 'Отменить подписку',
+      nextInvoice: 'Следующий платеж',
+      nextPeriod: 'Следующий период',
+      failedPage: '✋ Ох! Что-то пошло не так. Может, попробуете еще раз? 😳',
+      successPage: '✅ У вас получилось! Наслаждайтесь Feedr.',
+      noSub: 'Нет подписки',
+    },
+    backToFeedr: 'Вернуться к Feedr',
     bot: {
       bot: 'Бот',
       status: 'Статус',
@@ -55,6 +80,7 @@ export const messages = {
         tobig: 'Telegram API Error: Размер файла слишком большой (>20mb).',
       },
       bot: {
+        needSub: 'У владельца бота нет активной подписки. Сообщение отменено.',
         add: 'Не получилось добавить бота, проверьте токен',
         edit: 'Не получилось отредактировать бота',
         inviteAdmin: 'Не получилось пригласить администратора в бота',
@@ -94,6 +120,7 @@ export const messages = {
       noBotsText:
         'Еще не было добавлено ни одного бота, пожалуйста, добавьте вашего первого бота в меню слева.',
       select: 'Пожалуйста, выберите настройку в меню слева.',
+      noSubText: 'Для добавления ботов необходима активная подписка.',
     },
     chatlist: 'Список чатов',
     addBot: {
@@ -173,6 +200,32 @@ export const messages = {
       edited: 'edited',
       edits: 'Edits',
     },
+    subscription: {
+      subscription: 'Subscription',
+      status: 'Subscription status',
+      active: 'Active',
+      inactive: 'Inactive',
+      failed: 'Payment failed',
+      early: 'Early adopter',
+      update: 'Update card details',
+      price: '$1/bot month',
+      earlyStatusText: 'You are early adopter. You are the best. We love you.',
+      activeStatusText:
+        'You are subscriber. If you cancel subscribe now, it was charged at end of period.',
+      inactiveStatusText:
+        'To get access to Feedr, buy a subscription.\nSubscription price: $1 per bot per month.\nThe amount is debited at the end of the month and is calculated by the maximum number of bots in a period.',
+      failedStatusText:
+        'Error with payment or adding card, please update card details...',
+      needSub:
+        'For further access you need to buy a subscription by clicking on the button in the top right.',
+      cancel: 'Cancel subscription',
+      nextInvoice: 'Next invoice',
+      nextPeriod: 'Next period',
+      failedPage: '✋ Wait, something went wrong. Maybe you could retry? 😳',
+      successPage: '✅ You are all done! Enjoy Feedr experience.',
+      noSub: 'No subscription',
+    },
+    backToFeedr: 'Back to Feedr',
     bot: {
       bot: 'Bot',
       status: 'Status',
@@ -218,6 +271,7 @@ export const messages = {
           'Telegram API Error: File size to big for download (>20mb). Sorry.',
       },
       bot: {
+        needSub: 'Bot owner has not active subscription. Message canceled.',
         add: 'Could not add bot, check token',
         edit: 'Could not edit bot',
         inviteAdmin: 'Could not invite admin to bot',
@@ -256,6 +310,7 @@ export const messages = {
       noBotsText:
         'No bots added yet, please, use "Add bot" setting in left-side menu to add your first bot.',
       select: 'Please select any setting in left-side menu',
+      noSubText: 'For adding bots you need active subscription.',
     },
     chatlist: 'Chats',
     addBot: {

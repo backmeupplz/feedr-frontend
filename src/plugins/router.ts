@@ -5,6 +5,8 @@ import Home from '../views/Home.vue'
 import Privacy from '../views/Privacy.vue'
 import App from '../views/App.vue'
 import NotFound from '../views/NotFound.vue'
+import paymentFailure from '../views/FailedPayment.vue'
+import paymentSuccess from '../views/SuccessPayment.vue'
 import { store } from './store/store'
 import * as storemodule from './store/store'
 import * as api from '../utils/api'
@@ -51,6 +53,16 @@ const router = new Router({
       path: '*',
       name: 'notFound',
       component: NotFound,
+    },
+    {
+      path: '/payment_success',
+      name: 'paymentSuccess',
+      component: paymentSuccess,
+    },
+    {
+      path: '/payment_failure',
+      name: 'paymentFailure',
+      component: paymentFailure,
     },
   ],
 })
