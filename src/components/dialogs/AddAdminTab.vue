@@ -18,7 +18,7 @@ v-form(v-model="validid" ref="formAddAdmin" onSubmit="return false;")
         div(v-else)
           |{{$t('admin.noadmins')}}
       v-container
-        .subtitle-1.black--text {{$t('admin.invite')}}
+        .subtitle-1 {{$t('admin.invite')}}
             v-container(fluid fill-height)
                 v-row
                     v-col(cols="7" md="4")

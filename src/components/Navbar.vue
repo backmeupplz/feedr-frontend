@@ -1,6 +1,7 @@
 <template lang="pug">
   nav
     BotsDialog(:dialog='botsDialog' :close='closeBotsDialog')
+    Checkout(:dialog='subscriptionDialog' :close='closeSubscription')
     v-app-bar(flat app)
       // Title
       router-link(:to='$store.state.user ? "/app" : "/"')
@@ -11,6 +12,7 @@
             span {{$store.state.user.name}}, {{$store.state.user.email || $store.state.user.facebookId || $store.state.user.telegramId}}
           span(v-else) {{$t('title')}}
       v-spacer
+      v-chip(color='error' v-if='$store.state.user && $store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"') {{$t('subscription.noSub')}}
       // Language picker
       v-menu(offset-y)
         template(v-slot:activator='{ on }')
@@ -24,8 +26,11 @@
             v-icon mdi-dots-vertical
         v-list
           // Bots
-          v-list-item(@click='botsDialog = true' v-if="$store.state.user")
+          v-list-item(@click.stop='botsDialog = true' v-if="$store.state.user")
             v-list-item-title {{$t('navbar.bots')}}
+          // Subscription
+          v-list-item(@click.stop='subscriptionDialog = true' v-if="$store.state.user")
+            v-list-item-title {{$t('subscription.subscription')}}
           // Dark mode
           v-list-item(@click='toggleMode')
             v-list-item-title {{currentTheme}}
@@ -41,14 +46,17 @@ import * as store from '../plugins/store/store'
 import { i18n } from '../plugins/i18n'
 import * as api from '../utils/api'
 import BotsDialog from './BotsDialog.vue'
+import Checkout from './Checkout.vue'
 
 @Component({
   components: {
     BotsDialog,
+    Checkout,
   },
 })
 export default class Navbar extends Vue {
   botsDialog = false
+  subscriptionDialog = false
 
   get locales() {
     return [{ icon: '🇺🇸', code: 'en' }, { icon: '🇷🇺', code: 'ru' }]
@@ -74,6 +82,9 @@ export default class Navbar extends Vue {
 
   closeBotsDialog() {
     this.botsDialog = false
+  }
+  closeSubscription() {
+    this.subscriptionDialog = false
   }
   toggleMode() {
     store.setDark(!store.dark())

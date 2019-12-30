@@ -54,7 +54,7 @@
                   v-icon mdi-alert-decagram
                 v-list-item-content
                   v-list-item-title {{invite.bot}}
-              v-list-item(@click='addBotDialog = true;' :disabled="loading")
+              v-list-item(@click='addBotDialog = true;'  v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"' :disabled="loading")
                 v-list-item-icon(
                 :loading='loading')                
                   v-icon add
@@ -97,7 +97,7 @@
                     v-icon mdi-alert-decagram
                   v-list-item-content
                     v-list-item-title {{invite.bot}}
-                v-list-item(@click='addBotDialog = true; settingsNav = false;' :disabled="loading")
+                v-list-item(@click='addBotDialog = true; settingsNav = false;' v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"' :disabled="loading")
                   v-list-item-icon(
                   :loading='loading')                
                     v-icon add
@@ -135,8 +135,10 @@
                     v-btn(color='blue' text @click='AcceptInvite(invite.inviteID); openedBot = null; openedTab = null; invite = null;') {{$t('accept')}} 
           v-col(cols='12' sm='8' md='9' v-else)
             v-card.botCard
-              v-card-title(v-if='$store.state.bots.length < 2')
+              v-card-title(v-if='$store.state.bots.length < 2 && ($store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter")')
                 .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.noBotsText')}}
+              v-card-title(v-else-if='$store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"')
+                .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.noSubText')}}
               v-card-title(v-else)
                 .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.select')}}
                   
@@ -254,6 +256,14 @@ export default class BotsDialog extends Vue {
     this.loading = true
     try {
       store.setBots(await api.getBots())
+      const user = store.user()
+      if (!user) {
+        return
+      }
+      const { status, nextInvoice } = await api.getSubscriptionStatus()
+      user.subscriptionStatus = status
+      user.nextInvoice = nextInvoice
+      store.setUser(user)
     } catch (err) {
       store.setSnackbarError(err.message)
     } finally {

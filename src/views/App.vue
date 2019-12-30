@@ -1,7 +1,9 @@
 <template lang="pug">
   div
     v-progress-linear(indeterminate v-if="BotsLoading")
-    NoBots(v-if='!$store.state.bots.length && !BotsLoading')
+    .headline.pa-4.text-center(v-if='$store.state.user && $store.state.bots.length < 2 && !($store.state.user.subscriptionStatus === "earlyAdopter" || $store.state.user.subscriptionStatus === "active")')
+      | {{$t('subscription.needSub')}}
+    NoBots(v-else-if='$store.state.bots.length < 2 && !BotsLoading')
     div(v-else)
       v-tabs(v-model='tab' show-arrows)
         v-tab(v-for='bot in bots' :key='bot._id') 

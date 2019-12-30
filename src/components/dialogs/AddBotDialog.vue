@@ -8,6 +8,10 @@
         v-card-title {{$t('addBot.title')}}
         v-card-text
           v-container(fluid fill-height)
+            div(v-if='$store.state.user.subscriptionStatus === "active" && !loading')
+              | {{$t('subscription.nextInvoice')}} (${{amount || 0}}): +${{amountCalc}}
+              br
+              | {{$t('subscription.nextPeriod')}} (${{$store.state.bots.length - 1}}): +$1
             v-row
                 v-col(cols="7" md="4")
                   v-select.addbot__select-field(dense :items="[{text: 'Telegram', value: 'Telegram'}, {text: 'Viber', value: 'Viber'}]" item-value="Telegram" v-model="botType" :label="$t('bot.type')" 
@@ -51,6 +55,7 @@ import { i18n } from '../../plugins/i18n'
         ;(this as any).botType = 'Telegram'
         ;(this as any).token = ''
         setTimeout((this as any).reset, 101)
+        ;(this as any).updateSubs()
       }
     },
   },
@@ -63,6 +68,24 @@ export default class AddBotDialog extends Vue {
   token = ''
   validtoken = false
   botType = ''
+  nextInvoice: any = false
+
+  get amount() {
+    if (this.nextInvoice && this.nextInvoice.amount) {
+      return this.nextInvoice.amount / 100
+    }
+  }
+
+  get amountCalc() {
+    if (this.amount) {
+      if (this.amount <= this.$store.state.bots.length - 1) {
+        return 1
+      }
+      return 0
+    } else {
+      return 1
+    }
+  }
 
   async save() {
     this.loading = true
@@ -76,6 +99,24 @@ export default class AddBotDialog extends Vue {
       } else {
         store.setSnackbarError('errors.bot.add')
       }
+    } finally {
+      this.loading = false
+    }
+  }
+
+  async updateSubs() {
+    this.loading = true
+    const user = store.user()
+    if (!user) {
+      this.loading = false
+      return
+    }
+    try {
+      const { status, nextInvoice } = await api.getSubscriptionStatus()
+      user.subscriptionStatus = status
+      user.nextInvoice = nextInvoice
+      this.nextInvoice = nextInvoice
+      store.setUser(user)
     } finally {
       this.loading = false
     }
