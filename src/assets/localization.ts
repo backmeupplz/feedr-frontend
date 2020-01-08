@@ -20,12 +20,13 @@ export const messages = {
       early: 'Ранний адоптер',
       update: 'Обновить реквизиты',
       price: '$1/бот месяц',
-      earlyStatusText: 'Вы ранний адоптер. Мы любим Вас.',
+      earlyStatusText: 'Вы ранний адоптер. Вы офигенны.',
       activeStatusText:
         'Вы подписчик. При отмене подписки, в конце вашего платежного периода будет списана плата за прошедший период, и после этого подписка будет отменена.',
       inactiveStatusText:
         'Чтобы получить доступ к Feedr, купите подписку.\nЦена подписки: $1 за одного бота в месяц.\nСумма списывается в конце месяца и расчитывается по максимальному кол-ву ботов в периоде.',
-      failedStatusText: 'Ошибка платежа обновите свои платежные реквизиты...',
+      failedStatusText:
+        'Ошибка платежа: обновите, пожалуйста, свои платежные реквизиты',
       needSub:
         'Для дальнейшего доступа вам необходимо купить подписку, кликнув по кнопке справа вверху.',
       cancel: 'Отменить подписку',
@@ -49,7 +50,7 @@ export const messages = {
     },
     message: {
       new: 'Новое сообщение',
-      unsupported: 'Это сообщение пока не поддерживается :(',
+      unsupported: 'Это сообщение пока не поддерживается',
     },
     chat: {
       nochats: 'У вас нет ни одного чата',
@@ -77,10 +78,11 @@ export const messages = {
       },
       media: {
         loading: 'Ошибка загрузки медиа',
-        tobig: 'Telegram API Error: Размер файла слишком большой (>20mb).',
+        tobig: 'Ошибка Телеграм API: Размер файла слишком большой (>20мб).',
       },
       bot: {
-        needSub: 'У владельца бота нет активной подписки. Сообщение отменено.',
+        needSub:
+          'У владельца бота нет активной подписки. Отправка сообщения отменена.',
         add: 'Не получилось добавить бота, проверьте токен',
         edit: 'Не получилось отредактировать бота',
         inviteAdmin: 'Не получилось пригласить администратора в бота',
@@ -98,7 +100,7 @@ export const messages = {
     type: 'Тип',
     avatar: 'Аватар',
     location: 'Карта',
-    oldlink: 'К сожалению, ссылка на файл истекла. Ограничение Viber API.',
+    oldlink: 'К сожалению, ссылка на файл истекла. Ограничение API Вайбера.',
     accept: 'Принять',
     reject: 'Отклонить',
     cookie: {
@@ -152,7 +154,7 @@ export const messages = {
     },
     validation: {
       needtext: 'Это поле не может быть пустым.',
-      notemail: 'Это не E-mail',
+      notemail: 'Это не имеил',
       notnumber: 'Это поле должно быть числом',
       tomuchtext: 'Длинна сообщения не может быть длиннее 4000 символов.',
       tokenformat:
@@ -209,20 +211,20 @@ export const messages = {
       early: 'Early adopter',
       update: 'Update card details',
       price: '$1/bot month',
-      earlyStatusText: 'You are early adopter. You are the best. We love you.',
+      earlyStatusText: 'You are an early adopter. You are breathtaking.',
       activeStatusText:
-        'You are subscriber. If you cancel subscribe now, it was charged at end of period.',
+        'You are an active subscriber. If you cancel your subscription now, you will be charged in the end of the period.',
       inactiveStatusText:
-        'To get access to Feedr, buy a subscription.\nSubscription price: $1 per bot per month.\nThe amount is debited at the end of the month and is calculated by the maximum number of bots in a period.',
+        'To get access to Feedr, you need do buy a subscription.\nSubscription price is $1 per bot per month.\nThe amount is charged at the end of the month and is calculated by the maximum number of bots used in the period.',
       failedStatusText:
-        'Error with payment or adding card, please update card details...',
+        'Error with payment or adding card, please, update the card details',
       needSub:
         'For further access you need to buy a subscription by clicking on the button in the top right.',
       cancel: 'Cancel subscription',
       nextInvoice: 'Next invoice',
       nextPeriod: 'Next period',
-      failedPage: '✋ Wait, something went wrong. Maybe you could retry? 😳',
-      successPage: '✅ You are all done! Enjoy Feedr experience.',
+      failedPage: '✋ Wait, something went wrong. Could you retry? 😳',
+      successPage: '✅ You are all done! Enjoy the Feedr experience.',
       noSub: 'No subscription',
     },
     backToFeedr: 'Back to Feedr',
@@ -239,19 +241,19 @@ export const messages = {
     },
     message: {
       new: 'New message',
-      unsupported: 'This message is not yet supported :(',
+      unsupported: 'This message is not yet supported',
     },
     chat: {
-      nochats: 'You have no chat.',
+      nochats: 'You have no chats yet.',
       ban: 'Ban',
       banned: 'Banned',
       unban: 'Unban',
       noname: 'No name',
       profile: 'Profile',
       attachment: 'Attachment',
-      select: 'Please, select chat',
+      select: 'Please, select a chat',
       invite:
-        'No users have initiated the chat with this bot. Please, let your users know that the bot is reachable at',
+        'No users have started a chat with this bot. Please, let your users know that the bot is reachable at',
     },
     errors: {
       login: {
@@ -267,16 +269,16 @@ export const messages = {
       },
       media: {
         loading: 'Media loading error',
-        tobig:
-          'Telegram API Error: File size to big for download (>20mb). Sorry.',
+        tobig: 'Telegram API Error: File size is too big for download (>20mb).',
       },
       bot: {
-        needSub: 'Bot owner has not active subscription. Message canceled.',
-        add: 'Could not add bot, check token',
+        needSub:
+          'Bot owner does not have an active subscription. Message sending is canceled.',
+        add: 'Could not add bot, please, check token',
         edit: 'Could not edit bot',
-        inviteAdmin: 'Could not invite admin to bot',
-        getAdmins: 'Could not get list of admins',
-        message_rejected: 'Failed to send message',
+        inviteAdmin: 'Could not invite the admin to the bot',
+        getAdmins: 'Could not get the list of the admins',
+        message_rejected: 'Failed to send the message',
       },
     },
     media: {
@@ -289,7 +291,7 @@ export const messages = {
     type: 'Type',
     avatar: 'Avatar',
     location: 'Map',
-    oldlink: 'Sorry, link to this media has expired. Viber API restriction',
+    oldlink: 'Sorry, link to this media has expired. Viber API restriction.',
     accept: 'Accept',
     reject: 'Reject',
     cookie: {
@@ -302,15 +304,15 @@ export const messages = {
     no: 'No',
     invite: 'Invite',
     InviteMessage:
-      'You have been invited by {inviter} to become the administrator of {bot}',
+      'You have been invited by {inviter} to become an administrator of {bot}',
     currentMessage: 'Current message',
     cancel: 'Cancel',
     botList: {
       title: 'Bots',
       noBotsText:
-        'No bots added yet, please, use "Add bot" setting in left-side menu to add your first bot.',
-      select: 'Please select any setting in left-side menu',
-      noSubText: 'For adding bots you need active subscription.',
+        'No bots were added yet, please, use the "Add bot" option in tne left-side menu to add your first bot.',
+      select: 'Please, select an option in the left-side menu',
+      noSubText: 'You need an active subscription to add bots.',
     },
     chatlist: 'Chats',
     addBot: {
@@ -318,8 +320,8 @@ export const messages = {
       token: 'Bot token',
     },
     editBot: {
-      title: 'Edit greetings message',
-      greeting: 'Greetings message',
+      title: 'Edit the greeting message',
+      greeting: 'Greeting message',
     },
     admin: {
       status: 'Status',
@@ -330,18 +332,19 @@ export const messages = {
       admins: 'Administrators',
       type: 'Type of account',
       invite: 'Invite the administrator',
-      confirm: 'Are you sure you want to delete {name} administrator from bot?',
+      confirm:
+        'Are you sure you want to delete {name} administrator from the bot?',
       noadmins: 'No administrators',
     },
     deleteBot: {
-      confirm: 'Are you sure you want to delete the bot {name}?',
+      confirm: 'Are you sure you want to delete {name}?',
     },
     rejectBot: {
       confirm: 'Are you sure you want refuse to administer the bot {name}?',
     },
     validation: {
       needtext: "This field can't be empty",
-      notemail: 'This is not E-mail',
+      notemail: 'This is not a valid email',
       notnumber: 'This field should be number',
       tomuchtext: "Message length can't be longer than 4000 characters",
       tokenformat: 'Token format should be 12345678:AasdkasdWAKDa-wdLWsd',
@@ -368,7 +371,7 @@ export const messages = {
     you: 'You',
     forwarded_message: {
       user_hidden:
-        'This user disallow adding a link to his account in forwarded messages',
+        'This user disallowed adding links to his account in forwarded messages',
       channel_private: 'This channel is private',
       group_private: 'This group is private',
       no_username: "This user doesn't have a username",
