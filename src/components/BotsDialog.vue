@@ -14,7 +14,7 @@
               :loading='loading'
               @click='updateList')
                 v-icon refresh
-              v-btn(dark text @click='close' @click.stop='setDefault') Закрыть
+              v-btn(dark text @click='close' @click.stop='setDefault') {{$t('close')}}
         v-progress-linear(indeterminate v-if="loading")
         v-row(no-gutters)
           v-col(cols='0' sm='4' md="3" v-if='!mobile').border__right.border__top
