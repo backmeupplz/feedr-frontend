@@ -224,7 +224,7 @@ const storeOptions = {
         )
       }
 
-      let updatedBots = [
+      let updatedBots: Bot[] = [
         {
           _id: '__feed',
           botType: 'feed',
@@ -237,6 +237,18 @@ const storeOptions = {
         },
       ]
       updatedBots.push(...bots.bots)
+
+      updatedBots = updatedBots.map((bot: Bot) => {
+        for (const oldBot of state.bots) {
+          if (bot._id === oldBot._id) {
+            bot.chats = oldBot.chats
+            bot.selected_chat = oldBot.selected_chat
+            return bot
+          }
+        }
+        return bot
+      })
+
       state.bots = updatedBots
       state.invites = bots.invites
 
