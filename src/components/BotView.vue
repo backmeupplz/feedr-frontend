@@ -97,6 +97,9 @@ declare const sockets: any
   props: {
     bot: Object,
   },
+  watch: {
+    text: 'sendTyping',
+  },
   components: { ChatComponent, ChatMenu, Checkout },
 })
 export default class BotView extends Vue {
@@ -105,6 +108,7 @@ export default class BotView extends Vue {
   validsend = false
   chatnav = false
   winheight = 0
+  typingCooldown = false
 
   $refs!: Vue['$refs'] & {
     msgSendForm: any
@@ -116,6 +120,48 @@ export default class BotView extends Vue {
       if (chat.bot === bot._id.toString()) {
         return bot.name
       }
+    }
+  }
+
+  setTypingCooldown(a: boolean) {
+    this.typingCooldown = a
+  }
+
+  debounce<F extends Function>(func: F, wait: number): F {
+    let timeoutID: number
+
+    const that = this
+    return <any>function(this: any, ...args: any[]) {
+      if (that.typingCooldown) {
+        return
+      }
+      that.setTypingCooldown(true)
+      clearTimeout(timeoutID)
+
+      func.apply(this, args)
+
+      timeoutID = window.setTimeout(function() {
+        that.setTypingCooldown(false)
+      }, wait)
+    }
+  }
+
+  setTyping() {
+    if (!this.chat) {
+      return
+    }
+
+    sockets.send('send_typing', {
+      bot: this.chat.bot,
+      chat: this.chat._id,
+      type: this.chat.type,
+    })
+  }
+
+  sendTyping(v: string) {
+    if (v) {
+      const f = this.debounce(this.setTyping, 5000)
+      f()
     }
   }
 
@@ -400,6 +446,7 @@ export default class BotView extends Vue {
       message: this.text,
       type: this.chat.type,
     })
+    this.setTypingCooldown(false)
     this.$refs.msgSendForm.reset()
   }
 }
