@@ -127,25 +127,6 @@ export default class BotView extends Vue {
     this.typingCooldown = a
   }
 
-  debounce<F extends Function>(func: F, wait: number): F {
-    let timeoutID: number
-
-    const that = this
-    return <any>function(this: any, ...args: any[]) {
-      if (that.typingCooldown) {
-        return
-      }
-      that.setTypingCooldown(true)
-      clearTimeout(timeoutID)
-
-      func.apply(this, args)
-
-      timeoutID = window.setTimeout(function() {
-        that.setTypingCooldown(false)
-      }, wait)
-    }
-  }
-
   setTyping() {
     if (!this.chat) {
       return
@@ -160,8 +141,15 @@ export default class BotView extends Vue {
 
   sendTyping(v: string) {
     if (v) {
-      const f = this.debounce(this.setTyping, 5000)
-      f()
+      if (this.typingCooldown) {
+        return
+      }
+      this.setTypingCooldown(true)
+      this.setTyping()
+
+      const t = this
+
+      setTimeout(() => t.setTypingCooldown(false), 5000)
     }
   }
 
