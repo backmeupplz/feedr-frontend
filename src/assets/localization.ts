@@ -36,6 +36,12 @@ export const messages = {
       successPage: '✅ У вас получилось! Наслаждайтесь Feedr.',
       noSub: 'Нет подписки',
     },
+    merge: {
+      header: 'Объединить аккаунты',
+      text1:
+        'Вы можете объединить разные аккаунты (например, Фейсбук, Гугл, Телеграм) здесь. Просто залогиньтесь в аккаунты, используя кнопки ниже и аккаунты будут объединены. Осторожно: это действие нельзя обратить. Возможно, если вы зашли из России без VPN, вы не видите кнопку Телеграма — тогда либо зайдите через VPN, либо обратитесь к',
+      text2: 'в Телеграме и залогиньтесь через него.',
+    },
     backToFeedr: 'Вернуться к Feedr',
     bot: {
       bot: 'Бот',
@@ -69,6 +75,23 @@ export const messages = {
         facebook: 'Не получилось зайти через Фейсбук',
         google: 'Не получилось зайти через Гугл',
         telegram: 'Не получилось зайти через Телеграм',
+      },
+      merge: {
+        telegram: {
+          exists:
+            'Этот Телеграм аккаунт уже привязан к аккаунту другого пользователя.',
+          linked: 'К вашему аккаунту уже привязан Телеграм аккаунт.',
+        },
+        google: {
+          exists:
+            'Этот Гугл аккаунт уже привязан к аккаунту другого пользователя.',
+          linked: 'К вашему аккаунту уже привязан Гугл аккаунт.',
+        },
+        facebook: {
+          exists:
+            'Этот Фейсбук аккаунт уже привязан к аккаунту другого пользователя.',
+          linked: 'К вашему аккаунту уже привязан Фейсбук аккаунт.',
+        },
       },
       chat: {
         ban: 'Не получилось забанить этого пользователя, ошибка API',
@@ -227,6 +250,11 @@ export const messages = {
       successPage: '✅ You are all done! Enjoy the Feedr experience.',
       noSub: 'No subscription',
     },
+    merge: {
+      header: 'Merge accounts',
+      text1:
+        'You can merge multiple accounts (e.g. Facebook, Google, Telegram) here. Just login to the accounts with the buttons below and the accounts will be merged.',
+    },
     backToFeedr: 'Back to Feedr',
     bot: {
       bot: 'Bot',
@@ -260,6 +288,23 @@ export const messages = {
         facebook: 'Could not login with Facebook',
         google: 'Could not login with Google',
         telegram: 'Could not login with Telegram',
+      },
+      merge: {
+        telegram: {
+          exists:
+            "This Telegram account is already linked to another user's account.",
+          linked: 'A Telegram account is already linked to your account.',
+        },
+        google: {
+          exists:
+            "This Google account is already linked to another user's account.",
+          linked: 'A Google account is already linked to your account.',
+        },
+        facebook: {
+          exists:
+            "This Facebook account is already linked to another user's account.",
+          linked: 'A Facebook account is already linked to your account.',
+        },
       },
       chat: {
         ban: 'Could not ban this user, API error',

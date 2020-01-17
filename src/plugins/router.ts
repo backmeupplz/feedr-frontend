@@ -74,15 +74,30 @@ router.beforeEach(async (to, _, next) => {
   // TG-LOGIN
   if (to.name === 'tg-login') {
     try {
-      const user = await api.loginTelegram(to.query)
-      storemodule.setUser(user)
-      sockets.send('authorization', user.token)
-      try {
-        storemodule.setBots(await api.getBots())
-        next('/app')
-      } catch (err) {
-        next('/')
-        storemodule.setSnackbarError(err.message)
+      const loginedUser = store.state.user
+
+      // If logined and telegram not linked
+      if (loginedUser && !loginedUser.telegramId) {
+        await api.mergeTelegram(to.query)
+        try {
+          storemodule.setBots(await api.getBots())
+          next('/app')
+        } catch (err) {
+          next('/')
+          storemodule.setSnackbarError(err.message)
+        }
+      } else {
+        const loginUser = await api.loginTelegram(to.query)
+
+        storemodule.setUser(loginUser)
+        sockets.send('authorization', loginUser.token)
+        try {
+          storemodule.setBots(await api.getBots())
+          next('/app')
+        } catch (err) {
+          next('/')
+          storemodule.setSnackbarError(err.message)
+        }
       }
     } catch (err) {
       next('/')
