@@ -2,6 +2,7 @@
   nav
     BotsDialog(:dialog='botsDialog' :close='closeBotsDialog')
     Checkout(:dialog='subscriptionDialog' :close='closeSubscription')
+    Merge(:dialog='mergeDialog' :close='closeMerge')
     v-app-bar(flat app)
       // Title
       router-link(:to='$store.state.user ? "/app" : "/"')
@@ -28,6 +29,9 @@
           // Bots
           v-list-item(@click.stop='botsDialog = true' v-if="$store.state.user")
             v-list-item-title {{$t('navbar.bots')}}
+          // Merge
+          v-list-item(@click.stop='mergeDialog = true' v-if="$store.state.user")
+            v-list-item-title {{$t('merge.header')}}
           // Subscription
           v-list-item(@click.stop='subscriptionDialog = true' v-if="$store.state.user")
             v-list-item-title {{$t('subscription.subscription')}}
@@ -47,19 +51,25 @@ import { i18n } from '../plugins/i18n'
 import * as api from '../utils/api'
 import BotsDialog from './BotsDialog.vue'
 import Checkout from './Checkout.vue'
+import Merge from './Merge.vue'
 
 @Component({
   components: {
     BotsDialog,
     Checkout,
+    Merge,
   },
 })
 export default class Navbar extends Vue {
   botsDialog = false
   subscriptionDialog = false
+  mergeDialog = false
 
   get locales() {
-    return [{ icon: '🇺🇸', code: 'en' }, { icon: '🇷🇺', code: 'ru' }]
+    return [
+      { icon: '🇺🇸', code: 'en' },
+      { icon: '🇷🇺', code: 'ru' },
+    ]
   }
   get currentLocale() {
     for (const locale of this.locales) {
@@ -85,6 +95,9 @@ export default class Navbar extends Vue {
   }
   closeSubscription() {
     this.subscriptionDialog = false
+  }
+  closeMerge() {
+    this.mergeDialog = false
   }
   toggleMode() {
     store.setDark(!store.dark())
