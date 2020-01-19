@@ -12,10 +12,13 @@ v-menu(left bottom v-if="chat")
                     v-card-title {{getChatName(chat)}}
                     v-card-text FeedrID: {{chat._id}}
                     v-card-text(v-if="chat.type === 'telegram'") TelegramID: {{chat.telegramId}}
+                    v-card-text(v-if="chat.type === 'vk'") VK Profile: 
+                      a(target="_blank" :href='`https://vk.com/id${chat.raw.id}`') https://vk.com/id{{chat.raw.id}}
                     v-card-text(v-if="chat.raw.username") 
                       | Username: 
                       a(target="_blank" :href='`https://t.me/${chat.raw.username}`') @{{chat.raw.username}}
                     v-card-text(v-else-if="chat.type === 'viber'") ViberID: {{chat.viberId}}
+                    v-card-text(v-else-if="chat.type === 'vk'") VkID: {{chat.raw.id}}
                     v-card-text(v-if="chat.banned") 
                       b {{$t('chat.banned')}}!
                     v-card-actions

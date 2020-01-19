@@ -250,6 +250,19 @@ const storeOptions = {
       })
 
       state.bots = updatedBots
+
+      const updatedChats = []
+
+      for (const chat of (state as any).bots[0].chats) {
+        for (const bot of updatedBots) {
+          if (chat.bot === bot._id) {
+            updatedChats.push(chat)
+          }
+        }
+      }
+
+      state.bots[0].chats = updatedChats
+
       state.invites = bots.invites
 
       if (state.user) {
