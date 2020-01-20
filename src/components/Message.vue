@@ -45,7 +45,7 @@ v-card.message
               TelegramGameMessage(v-else-if="msg.raw.game" :game="msg.raw.game")
               // Unsupported Messages
               UnSupportedMessage(v-else :message="msg")
-            div(v-else="viber")
+            div(v-else-if="viber")
               // Simple text
               TextMessage(v-if="message.raw.type === 'text'" :message="message")
               // Location
@@ -64,6 +64,11 @@ v-card.message
               TextMessage(v-else-if="message.raw.type === 'url'" :text="'URL: ' + message.raw.media")
               // Unsupported Messages
               UnSupportedMessage(v-else :message="message")
+            div(v-else="vk")
+              // Simple text
+              TextMessage(v-if="message.raw.text && message.raw.attachments.length < 1" :message="msg")
+              // Unsupported Messages
+              UnSupportedMessage(v-else :message="msg")
             v-list-item-subtitle(class="text-right")
               v-dialog(v-model="modalEdits" persistent width="500" v-if="message.edits && message.edits.length && !edited")
                 template(v-slot:activator="{on}") 
@@ -73,8 +78,8 @@ v-card.message
                   v-card-text
                     v-col
                       EditedMessage(:message='trueMessage' :type='trueMessage.type')
-                      div(v-for='(mes, i) in edits' v-if='msg.edits && msg.edits.length && telegram') 
-                        EditedMessage(:message='mes' :type='msg.type' :editIndex='i' :_id='message._id' :key='i')
+                      div(v-for='(mes, i) in edits' v-if='msg.edits && msg.edits.length && (telegram || vk)') 
+                        EditedMessage(:message='mes' :type='msg.type' :editIndex='i' :_id='message._id' :key='i' :name='trueMessage.raw.name || "no name"')
                   v-card-actions(fixed)
                     v-spacer
                     v-btn(color='blue'
@@ -147,6 +152,15 @@ export default class ChatMenu extends Vue {
   get telegram() {
     return this.$props.message.type === 'telegram'
   }
+
+  get vk() {
+    return this.$props.message.type === 'vk'
+  }
+
+  get viber() {
+    return this.$props.message.type === 'viber'
+  }
+
   formatDate(message: any) {
     let date: number
     if (message.type === 'viber') {

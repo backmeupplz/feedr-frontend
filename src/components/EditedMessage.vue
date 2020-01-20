@@ -10,7 +10,7 @@ import MessageComponent from './Message.vue'
 
 @Component({
   components: { MessageComponent: () => import('./Message.vue') },
-  props: ['message', 'type', 'editIndex', '_id'],
+  props: ['message', 'type', 'editIndex', '_id', 'name'],
 })
 export default class EditedMessage extends Vue {
   get mes() {
@@ -21,6 +21,10 @@ export default class EditedMessage extends Vue {
         r.raw = Object.assign({}, r)
         r._id = this.$props._id
         r.type = this.$props.type
+
+        if (this.$props.type === 'vk') {
+          r.raw.name = this.$props.name
+        }
       }
       // Set index for backend
       if (this.$props.editIndex) {

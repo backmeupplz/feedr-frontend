@@ -10,6 +10,7 @@
           | {{(bot.botType === 'feed' && $t('feed')) || bot.name}}&nbsp;
           v-icon(x-small v-if="bot.botType === 'viber'") mdi-phone-in-talk
           v-icon(x-small v-else-if="bot.botType === 'telegram'") mdi-telegram
+          v-icon(x-small v-else-if="bot.botType === 'vk'") mdi-vk
           v-icon(x-small v-else)
           |&nbsp;
           .count-badge.count-badge--botTab(v-if="bot.unread") {{bot.unread}}

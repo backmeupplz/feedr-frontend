@@ -7,20 +7,21 @@
       v-card
         v-card-title {{$t('addBot.title')}}
         v-card-text
-          v-container(fluid fill-height)
-            div(v-if='$store.state.user.subscriptionStatus === "active" && !loading')
-              | {{$t('subscription.nextInvoice')}} (${{amount || 0}}): +${{amountCalc}}
-              br
-              | {{$t('subscription.nextPeriod')}} (${{$store.state.bots.length - 1}}): +$1
-            v-row
-                v-col(cols="7" md="4")
-                  v-select.addbot__select-field(dense :items="[{text: 'Telegram', value: 'Telegram'}, {text: 'Viber', value: 'Viber'}]" item-value="Telegram" v-model="botType" :label="$t('bot.type')" 
-                  required outlined)
-                v-col(cols="12" md="8")
-                  v-text-field.addbot__text-field(:label='$t("addBot.token")' 
-                  :rules="tokenRules"
-                  single-line
-                  v-model='token')
+          div(v-if="botType === 'VK'").message-text
+            | {{$t('addBot.vkHelp')}}
+          div(v-if='$store.state.user.subscriptionStatus === "active" && !loading')
+            | {{$t('subscription.nextInvoice')}} (${{amount || 0}}): +${{amountCalc}}
+            br
+            | {{$t('subscription.nextPeriod')}} (${{$store.state.bots.length - 1}}): +$1
+          v-row
+              v-col(cols="7" md="4")
+                v-select.addbot__select-field(dense :items="[{text: 'Telegram', value: 'Telegram'}, {text: 'Viber', value: 'Viber'}, {text: 'VK', value: 'VK'}]" item-value="Telegram" v-model="botType" :label="$t('bot.type')" 
+                required outlined)
+              v-col(cols="12" md="8")
+                v-text-field.addbot__text-field(:label='$t("addBot.token")' 
+                :rules="tokenRules"
+                single-line
+                v-model='token')
     
         v-card-actions
           v-spacer
@@ -144,6 +145,10 @@ export default class AddBotDialog extends Vue {
         (v: any) => !!v || i18n.t('validation.needtext'),
         (v: any) => regex.test(v) || i18n.t('validation.tokenformat'),
       ]
+    }
+    if (this.botType === 'VK') {
+      const regex = new RegExp(/\S+/)
+      return [(v: any) => !!v || i18n.t('validation.needtext')]
     }
     const regex = new RegExp(/[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+-[a-zA-Z0-9_-]+/)
     return [

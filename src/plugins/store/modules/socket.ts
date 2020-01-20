@@ -217,7 +217,10 @@ const mutations = {
     }
   },
   async socket_new_message(state: State, object: any) {
-    object.unread = true
+    if (!object.frombot) {
+      object.unread = true
+    }
+
     for (const bot of store.state.bots) {
       if (bot._id === object.bot) {
         if (!bot.chats) {

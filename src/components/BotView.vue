@@ -14,6 +14,7 @@
                 | {{getBotName(chat)}}
                 v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
                 v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram
+                v-icon(x-small v-else-if="getBotType(chat) === 'vk'") mdi-vk
             v-list-item-action()
               v-list-item-action-text(v-if='chat.lastMessage' v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
               v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
@@ -34,7 +35,8 @@
                       i {{$t('bot.bot')}}:&nbsp;
                       | {{getBotName(chat)}}
                       v-icon(x-small v-if="getBotType(chat) === 'viber'") mdi-phone-in-talk
-                      v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram                    
+                      v-icon(x-small v-else-if="getBotType(chat) === 'telegram'") mdi-telegram                 
+                      v-icon(x-small v-else-if="getBotType(chat) === 'vk'") mdi-vk      
                   v-list-item-action(v-if='chat.lastMessage')
                     v-list-item-action-text(v-text="formatDateHM(new Date(chat.lastMessage.updatedAt))")
                     v-list-item-action-text.count-badge(v-if="chat.unread") {{chat.unread}}
@@ -49,6 +51,7 @@
                     |&nbsp;
                     v-icon(small v-if="getChatName(chat).botType === 'viber'") mdi-phone-in-talk
                     v-icon(small v-else-if="getChatName(chat).botType === 'telegram'") mdi-telegram
+                    v-icon(small v-else-if="getChatName(chat).botType === 'vk'") mdi-vk
                     |&nbsp;|
                     | {{getChatName(chat).name}}
                   span(v-else) {{getChatName(chat).name}}
@@ -208,7 +211,7 @@ export default class BotView extends Vue {
       }
       return ''
     }
-    if (bot.botType === 'viber') {
+    if (bot.botType === 'viber' || bot.botType === 'vk') {
       if (message.frombot) {
         return `${i18n.t('you')}: `
       }
@@ -295,8 +298,9 @@ export default class BotView extends Vue {
         if (bot.chats) {
           return bot.chats.sort((a: Chat, b: Chat) => {
             if (a.lastMessage && b.lastMessage) {
-              return new Date(a.lastMessage!.createdAt) <
-                new Date(b.lastMessage!.createdAt)
+              return new Date(
+                a.lastMessage!.createdAt || a.lastMessage!.updatedAt,
+              ) < new Date(b.lastMessage!.createdAt || a.lastMessage!.updatedAt)
                 ? 1
                 : -1
             } else if (a.lastMessage && !b.lastMessage) {

@@ -49,7 +49,7 @@ export const messages = {
       owner: 'Владелец',
       type: 'Тип',
       greetings: 'Приветствие',
-      update: 'Обновить бота',
+      update: 'Перезапустить бота',
       delete: 'Удалить бота',
       reject: 'Отказаться',
       about: 'О боте',
@@ -104,6 +104,7 @@ export const messages = {
         tobig: 'Ошибка Телеграм API: Размер файла слишком большой (>20мб).',
       },
       bot: {
+        isBroken: 'Бот сломан, попробуйте перезапустить его.',
         needSub:
           'У владельца бота нет активной подписки. Отправка сообщения отменена.',
         add: 'Не получилось добавить бота, проверьте токен',
@@ -151,6 +152,8 @@ export const messages = {
     addBot: {
       title: 'Добавить бота',
       token: 'Токен бота',
+      vkHelp:
+        'Для того, чтобы получить API ключ сообщества, необходимо открыть раздел «Управление» вашего сообщества ВКонтакте, перейти в пункт «Настройки» —> «Работа с API», затем в разделе «Long Poll API» включить его, включить все события типа «Сообщение» и, наконец, в разделе «Ключи доступа» создать ключ с доступом к управлению сообществом и сообщениями.\n\nТакже рекомендуется включить в разделе "Сообщения" —> "Настройки для бота" опции "Возможности ботов" и "Добавить кнопку «Начать»".',
     },
     editBot: {
       title: 'Редактировать приветствие',
@@ -262,7 +265,7 @@ export const messages = {
       owner: 'Owner',
       type: 'Type',
       greetings: 'Greetings',
-      update: 'Update bot',
+      update: 'Re-start bot',
       delete: 'Delete bot',
       reject: 'Refuse',
       about: 'About',
@@ -317,6 +320,7 @@ export const messages = {
         tobig: 'Telegram API Error: File size is too big for download (>20mb).',
       },
       bot: {
+        isBroken: 'Bot is broken, try restart it.',
         needSub:
           'Bot owner does not have an active subscription. Message sending is canceled.',
         add: 'Could not add bot, please, check token',
@@ -363,6 +367,8 @@ export const messages = {
     addBot: {
       title: 'Add bot',
       token: 'Bot token',
+      vkHelp:
+        'To obtain API key for the community go to the settings of the community, then to the API section, then turn on the "Long Poll API" setting as well as all the message types. After that create an API key with the access to control the community and to community messages.\n\nAlso we recommend turning on the "Start" button in the section "Messages" -> "Bot settings" -> "Bot abilities"',
     },
     editBot: {
       title: 'Edit the greeting message',

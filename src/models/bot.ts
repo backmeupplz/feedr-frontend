@@ -4,6 +4,7 @@ import { Chat } from './chat'
 export interface Bot {
   _id: string
   telegramId?: number
+  vkId?: number
   viberAvatar?: string
   botType: string
   name: string

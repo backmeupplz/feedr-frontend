@@ -115,6 +115,8 @@
                     p Username: @{{curbot.username}}
                     div(v-if="curbot.botType === 'telegram'")
                       p TelegramID: {{curbot.telegramId}}
+                    div(v-if="curbot.botType === 'vk'")
+                      p VKontakteID: {{curbot.vkId}}
                     p {{$t('type')}}: {{curbot.botType}}
                     div(v-if="curbot.botType === 'viber'")
                       p {{$t('avatar')}}: {{curbot.viberAvatar}}
@@ -244,6 +246,9 @@ export default class BotsDialog extends Vue {
       case 'viber':
         return 'mdi-phone-in-talk'
         break
+      case 'vk':
+        return 'mdi-vk'
+        break
       default:
         return
     }
@@ -341,7 +346,6 @@ export default class BotsDialog extends Vue {
   }
 }
 </script>
-
 
 <style>
 .botCard {

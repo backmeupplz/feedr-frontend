@@ -10,6 +10,7 @@ export interface Chat {
   bot: string
   telegramId?: string
   viberId?: string
+  vkId?: number
   raw?: any
   lastMessage?: Message
   messages?: Message[]
