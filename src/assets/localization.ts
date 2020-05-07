@@ -1,8 +1,27 @@
 export const messages = {
   ru: {
+    feedback: {
+      reviews: [
+        {
+          name: 'Kiku Reise',
+          username: 'Kiku_Reise',
+          text: `Ведем вместе с командой канал в Телеграме по находкам с Алиэкспресса. И решили дать подписчикам возможность предлагать свои находки с отзывами, но так как в Телеграме нет такой предложки постов как в ВК, мы решили сделать это через какого-нибудь бота, чтобы всей команде были видны сообщения. И тут я вспомнил Feedr.
+
+          Довольно быстро подключил к сервису всю команду, интуитивно просто разобраться в его минималистичном интерфейсе. К слову, команда не покупала подписку сервиса, но доступ к сообщениям бота получила, и это меня очень порадовало. Не нужно платить за всю компанию или давать им доступ к своему аккаунту — можно просто пригласить в админы.
+          
+          Теперь будем всей командой отвечать подписчикам от одного лица, с сайта или в боте Телеграма. Спасибо большое за удобный Feedr :)`,
+        },
+      ],
+    },
     title: 'Feedr',
     home: {
       info: 'Мульти-платформенный чат для компаний',
+      info2:
+        'Общайтесь с вашими клиентами в Телеграме, Вайбере и ВКонтакте в одном сервисе',
+      info3:
+        'Нужен бот для Телеграма, Вайбера или ВКонтакте? Зарегистрируйтесь сегодня и начните общаться с пользователями без промедления!',
+      contact:
+        'Все еще остались вопросы? <a href="mailto:feedr@borodutch.com">Напишите нам</a>.',
       google: 'Зайти через Гугл',
       facebook: 'Зайти через Фейсбук',
       privacy: 'Политика конфиденциальности',
@@ -217,9 +236,28 @@ export const messages = {
     feed: 'Лента',
   },
   en: {
+    feedback: {
+      reviews: [
+        {
+          name: 'Kiku Reise',
+          username: 'Kiku_Reise',
+          text: `We're running a channel with the team in Telegram for Aliexpress finds. So we decided to give subscribers the opportunity to offer their findings with feedback, but since there is no such offer of posts in Telegram as in VK, we decided to do it through some bot so that the whole team could see the messages. And that's when I remembered Feedr.
+
+          Quite quickly connected the whole team to the service, intuitively just to understand its minimalistic interface. By the way, the team didn't buy a subscription to the service, but I got access to the bot's messages, and I was very happy about it. You don't have to pay for the whole company or give them access to your account - you can just invite them to the admins.
+          
+          Now we will respond as a team to subscribers from one person, from the site or in the Telegram bot. Thank you so much for the handy Feedr :)`,
+        },
+      ],
+    },
     title: 'Feedr',
     home: {
       info: 'Multi-platform chat solution for companies',
+      info2:
+        'Connect with your customers and followers on Telegram, Viber and VK in one place',
+      info3:
+        'Need a Telegram, Viber or VK bot? Sign up and start talking to your customers right away!',
+      contact:
+        'Still got questions? <a href="mailto:feedr@borodutch.com">Contact sales</a>.',
       google: 'Login with Google',
       facebook: 'Login with Facebook',
       privacy: 'Privacy policy',
