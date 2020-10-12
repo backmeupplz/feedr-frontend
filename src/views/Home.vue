@@ -8,18 +8,20 @@
         .headline.pb-4 {{$t("home.info")}}
         .title.pb-4 {{$t("home.info2")}}
         .title.pb-4 {{$t("home.info3")}}
-      v-flex.pt-4
+      .d-flex.flex-column.pt-4
         vue-telegram-login(mode='callback'
         telegram-login='feedrbot'
         @callback='onTelegramAuth'
         radius='3'
         :userpic='false')
-        g-signin-button(:params='{ client_id: googleClientId }'
-        @success='onGoogleSignInSuccess'
-        @error='onGoogleSignInError') {{$t("home.google")}}
-        fb-signin-button(:params='{ scope: "email", return_scopes: true}'
-        @success='onFacebookSignInSuccess'
-        @error='onFacebookSignInError') {{$t('home.facebook')}}
+        // Google
+        v-btn.signin-button.google-signin(
+          @click='loginWithGoogle'
+        )
+          span {{ $t("home.google") }}
+        // Facebook
+        v-btn.signin-button.facebook-signin(@click='loginWithFacebook')
+          span {{ $t("home.facebook") }}
       v-row
         v-col.d-flex.justify-center
           v-img(src='/images/feedr.png' max-width='400')
@@ -54,9 +56,9 @@ import * as api from '../utils/api'
 import Component from 'vue-class-component'
 import { i18n } from '../plugins/i18n'
 const { vueTelegramLogin } = require('vue-telegram-login')
+import * as firebase from 'firebase/app'
+import 'firebase/auth'
 
-// FB object is global, declaring here for TS
-declare const FB: any
 // It's the same global hack
 declare let sockets: any
 
@@ -78,21 +80,16 @@ export default class Home extends Vue {
     this.winheight = data.target.innerHeight
   }
 
-  mounted() {
+  async mounted() {
     this.winheight = window.innerHeight
     this.$nextTick(function() {
       window.addEventListener('resize', this.WindowHeight)
     })
-  }
-
-  get googleClientId() {
-    return '302048926858-k211pbhb02t32gc1osqbh2q3sv3u5h9g.apps.googleusercontent.com'
-  }
-
-  onFacebookSignInSuccess(response: any) {
-    FB.api('/me', async (dude: any) => {
-      try {
-        const user = await loginFacebook(response.authResponse.accessToken)
+    try {
+      const result = await firebase.auth().getRedirectResult()
+      if (result.credential) {
+        const token = (result.credential as any).accessToken
+        const user = await loginGoogle(token)
         store.setUser(user)
         sockets.send('authorization', user.token)
         try {
@@ -102,27 +99,26 @@ export default class Home extends Vue {
         } finally {
           this.$router.replace('app')
         }
-      } catch (err) {
-        store.setSnackbar({
-          message: 'errors.login.facebook',
-          color: 'error',
-          active: true,
-        })
       }
-    })
+    } catch (error) {
+      store.setSnackbarError(error.message)
+    }
   }
-  onFacebookSignInError(error: Error) {
-    store.setSnackbar({
-      message: 'errors.login.facebook',
-      color: 'error',
-      active: true,
-    })
+
+  async loginWithGoogle() {
+    const authProvider = new firebase.auth.GoogleAuthProvider()
+    authProvider.addScope('email')
+    authProvider.addScope('profile')
+    await firebase.auth().signInWithRedirect(authProvider)
   }
-  async onGoogleSignInSuccess(googleUser: any) {
+
+  async loginWithFacebook() {
+    const authProvider = new firebase.auth.FacebookAuthProvider()
+    authProvider.addScope('email')
     try {
-      const user = await loginGoogle(googleUser.getAuthResponse().id_token)
-      store.setUser(user)
-      sockets.send('authorization', user.token)
+      const result = await firebase.auth().signInWithPopup(authProvider)
+      const token = (result.credential as any).accessToken
+      const user = await loginFacebook(token)
       try {
         store.setBots(await api.getBots())
       } catch (err) {
@@ -130,21 +126,11 @@ export default class Home extends Vue {
       } finally {
         this.$router.replace('app')
       }
-    } catch (err) {
-      store.setSnackbar({
-        message: 'errors.login.google',
-        color: 'error',
-        active: true,
-      })
+    } catch (error) {
+      store.setSnackbarError(error.message)
     }
   }
-  onGoogleSignInError(error: Error) {
-    store.setSnackbar({
-      message: 'errors.login.google',
-      color: 'error',
-      active: true,
-    })
-  }
+
   async onTelegramAuth(loginInfo: any) {
     try {
       const user = await loginTelegram(loginInfo)
@@ -169,22 +155,20 @@ export default class Home extends Vue {
 </script>
 
 <style>
-.fb-signin-button {
-  cursor: pointer;
-  display: block;
-  padding: 10px 46px;
-  border-radius: 3px;
-  background-color: #647daf;
-  color: #fff;
-  margin: 10px;
+.google-signin {
+  background-color: #ce5658 !important;
 }
-.g-signin-button {
+
+.facebook-signin {
+  background-color: #647daf !important;
+}
+
+.signin-button {
   margin: 10px;
   cursor: pointer;
   display: block;
-  padding: 10px 46px;
+  padding: 16px !important;
   border-radius: 3px;
-  background-color: #ce5658;
-  color: #fff;
+  color: #fff !important;
 }
 </style>
