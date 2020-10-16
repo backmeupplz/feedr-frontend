@@ -1,15 +1,19 @@
 <template lang="pug">
-v-card.message
-  v-list-item(three-line)
-    v-list-item-content
-      .overline.mb-2(v-if='!forwardedMessage(message)') {{ (message.raw.from && message.raw.from.first_name) || message.raw.name }}
-      v-dialog(v-model='modalForwarded', persistent, width='500', v-else)
+.chat-preview-user-messagebox
+  v-list-item.test-test(three-line)
+    v-list-item-content.test-test
+      v-dialog(
+        v-model='modalForwarded',
+        persistent,
+        width='500',
+        v-if='forwardedMessage(message)'
+      )
         template(v-slot:activator='{ on }')
-          .caption.mb-2.blue--text(
+          .caption.mb-2.white--text(
             style='cursor: pointer;',
             @click.stop='modalForwarded = true'
           ) {{ $t("forwarded_message.forwarded_from") }} {{ forwardedMessageName(message) }}
-        v-card
+        v-card.test-test
           v-card-title {{ forwardedMessageName(message) }}
           v-card-text(
             v-if='message.raw.forward_from_chat && message.raw.forward_from_chat.username'
@@ -145,10 +149,6 @@ v-card.message
             v-card-actions(fixed)
               v-spacer
               v-btn(color='blue', text, @click='modalEdits = false') {{ $t("close") }}
-        v-tooltip(bottom)
-          template(v-slot:activator='{ on }')
-            span(v-on='on') {{ formatDate(message) }}
-          span {{ formatDateTooltip(message) }}
 </template>
 
 <script lang="ts">

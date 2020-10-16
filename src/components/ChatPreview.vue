@@ -1,5 +1,7 @@
 <template lang="pug">
-.d-flex.flex-column.chat-preview-main-container(v-if='chat && chat.messages')
+.d-flex.flex-column.chat-preview-main-container.chat-preview-limit-message-size(
+  v-if='chat && chat.messages'
+)
   .d-flex.chat-preview-userbar
     .chat-preview-avatar-circle
     .d-flex.chat-preview-username
@@ -7,15 +9,27 @@
       .app-view-bot-container-text {{ chat.raw.last_name }}
   .app-view-bot-divier
   .chat-preview-message-area.d-flex.flex-column
-    .d-flex.flex-column.align-self-start.chat-preview-messagebox(
+    .d-flex.flex-column.chat-preview-messagebox(
       v-for='message in chat.messages'
     ) 
-      .d-flex.app-view-bot-container-text.chat-preview-message-name
+      .d-flex.app-view-bot-container-text.chat-preview-message-name(
+        :class='isUser(message) ? "align-self-start" : "align-self-end"'
+      )
         .app-view-bot-container-text.mr-2 {{ name(message.raw.from.first_name) }}
         .app-view-bot-container-text {{ name(message.raw.from.last_name) }}
-      .d-flex
-        MessageComponent(:message='message')
-        .d-flex.align-end.chat-preview-timestamp {{ beautifylDate(message.raw.date) }}
+      .d-flex(:class='isUser(message) ? "align-self-start" : "align-self-end"')
+        .d-flex.chat-preview-user-messagebox.align-self-end(
+          v-if='message && message.raw.text',
+          :class='isUser(message) ? "chat-preview-user-send" : "chat-preview-bot-send"'
+        ) {{ message.raw.text }}
+        MessageComponent(
+          :message='message',
+          :class='isUser(message) ? "chat-preview-user-send" : "chat-preview-bot-send"',
+          v-else
+        )
+        .d-flex.align-end.chat-preview-timestamp(
+          :class='isUser(message) ? "" : "order-first"'
+        ) {{ beautifylDate(message.raw.date) }}
   .chat-preview-send-message-container
     .app-view-bot-divier
     .d-flex.chat-preview-send-message.justify-space-between.align-center
@@ -67,7 +81,9 @@ export default class ChatPreview extends Vue {
     return unixToDate(stamp)
   }
 
-  created() {}
+  isUser(message: Message) {
+    return message.raw.from.id === this.chat.raw.id
+  }
 
   name(name: string) {
     if (!name) {
@@ -167,13 +183,23 @@ export default class ChatPreview extends Vue {
 }
 
 .chat-preview-user-messagebox {
+  min-width: 5%;
+}
+
+.chat-preview-user-send {
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.24), 0px 2px 4px rgba(0, 0, 0, 0.16),
     0px -1px 1px rgba(0, 0, 0, 0.08);
-  background: #1868fb;
   border-radius: 0px 24px 24px 24px;
-  min-width: 5%;
   padding: 12px 20px 12px 20px;
-  max-width: 80%;
+  background: #1868fb;
+}
+
+.chat-preview-bot-send {
+  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.24), 0px 2px 4px rgba(0, 0, 0, 0.16),
+    0px -1px 1px rgba(0, 0, 0, 0.08);
+  border-radius: 24px 0px 24px 24px;
+  background: rgba(255, 255, 255, 0.16);
+  padding: 12px 20px 12px 20px;
 }
 
 .chat-preview-messagebox {
@@ -183,6 +209,7 @@ export default class ChatPreview extends Vue {
 .chat-preview-message-area {
   overflow-y: auto;
   height: 100%;
+  overflow-x: hidden;
 }
 
 .chat-preview-message-name {
@@ -209,6 +236,7 @@ export default class ChatPreview extends Vue {
 
   opacity: 0.4;
   margin-left: 8px;
+  margin-right: 8px;
 }
 
 .test-field {
@@ -242,5 +270,19 @@ export default class ChatPreview extends Vue {
 
 .chat-preview-send-button {
   cursor: pointer;
+}
+
+.chat-preview-limit-message-size {
+  max-width: 100%;
+}
+
+.test-test {
+  max-width: 50% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.chat-preview-user-messagebox {
+  overflow-wrap: anywhere;
 }
 </style>

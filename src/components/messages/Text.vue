@@ -1,5 +1,5 @@
 <template lang="pug">
-span.chat-preview-user-messagebox
+span
   span(v-for='(text, i) in messageText', :key='i')
     a(v-if='text.type === "link"', :href='text.url', target='_blank') {{ text.value }}
     a(

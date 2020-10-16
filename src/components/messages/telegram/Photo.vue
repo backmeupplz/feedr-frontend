@@ -3,7 +3,7 @@ v-list-item-title.message-text
   handledText(:message='message')
   v-container
     v-row(justify='start')
-      v-btn(outlined, color='indigo', :loading='loading', @click='loadPhoto') {{ $t("media.load") }}
+      v-btn(outlined, color='white  ', :loading='loading', @click='loadPhoto') {{ $t("media.load") }}
         v-icon(right) mdi-file-image-outline
   vue-easy-lightbox(:visible='opened', :imgs='[link]', @hide='hide')
 </template>
