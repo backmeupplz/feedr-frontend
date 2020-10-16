@@ -1,9 +1,13 @@
 <template lang="pug">
-span
-    span(v-for='(text, i) in messageText' :key='i')
-        a(v-if="text.type === 'link'" :href="text.url", target="_blank") {{text.value}}
-        a(v-else-if="text.type === 'handle'" :href="getHandle(text.value.slice(1))", target="_blank") {{text.value}}
-        span(v-else-if="text.type === 'text' && text.value") {{text.value}}
+span.chat-preview-user-messagebox
+  span(v-for='(text, i) in messageText', :key='i')
+    a(v-if='text.type === "link"', :href='text.url', target='_blank') {{ text.value }}
+    a(
+      v-else-if='text.type === "handle"',
+      :href='getHandle(text.value.slice(1))',
+      target='_blank'
+    ) {{ text.value }}
+    span(v-else-if='text.type === "text" && text.value') {{ text.value }}
 </template>
 
 <script lang="ts">

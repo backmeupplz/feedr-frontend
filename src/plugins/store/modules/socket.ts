@@ -30,10 +30,10 @@ const mutations = {
                   return v
                 }
               })
-            }),
+            })
           )
           let oldestChat = await newchats.reduce((min: any, cur: any) =>
-            min.updatedAt < cur.updatedAt ? min : cur,
+            min.updatedAt < cur.updatedAt ? min : cur
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           Vue.set(bot, 'chatsloading', false)
@@ -47,10 +47,10 @@ const mutations = {
                 return v
               }
             })
-          }),
+          })
         )
         let oldestChat = await newchats.reduce((min: any, cur: any) =>
-          min.updatedAt < cur.updatedAt ? min : cur,
+          min.updatedAt < cur.updatedAt ? min : cur
         )
         Vue.set(bot, 'oldestLoadedChat', oldestChat)
         Vue.set(bot, 'chatsloading', false)
@@ -81,7 +81,7 @@ const mutations = {
             botNumber = k
             return v
           }
-        }),
+        })
       )) as any
 
       store.state.botTab = botNumber
@@ -106,7 +106,7 @@ const mutations = {
       if (bot._id === botId) {
         if (chats.length > 0) {
           let oldestChat = await chats.reduce((min: any, cur: any) =>
-            min.updatedAt < cur.updatedAt ? min : cur,
+            min.updatedAt < cur.updatedAt ? min : cur
           )
           Vue.set(bot, 'oldestLoadedChat', oldestChat)
           storemodule.addChats(chats, botId)
@@ -129,7 +129,7 @@ const mutations = {
               botNumber = k
               return v
             }
-          }),
+          })
         )) as any
 
         store.state.botTab = botNumber
@@ -307,7 +307,7 @@ const mutations = {
     const client = user()
     if (client) {
       sockets.send('authorization', client.token)
-      bots().forEach(bot => {
+      bots().forEach((bot) => {
         sockets.send('join', bot._id)
       })
     }

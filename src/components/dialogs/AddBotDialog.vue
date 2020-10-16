@@ -1,39 +1,46 @@
 <template lang="pug">
-  v-dialog(v-model='dialog'
-  scrollable
-  max-width='600px'
-  persistent)
-    v-form(v-model="validtoken" ref="formAddBot" onSubmit="return false;")
-      v-card
-        v-card-title {{$t('addBot.title')}}
-        v-card-text
-          div(v-if="botType === 'VK'").message-text
-            | {{$t('addBot.vkHelp')}}
-          div(v-if='$store.state.user.subscriptionStatus === "active" && !loading')
-            | {{$t('subscription.nextInvoice')}} (${{amount || 0}}): +${{amountCalc}}
-            br
-            | {{$t('subscription.nextPeriod')}} (${{$store.state.bots.length - 1}}): +$1
-          v-row
-              v-col(cols="7" md="4")
-                v-select.addbot__select-field(dense :items="[{text: 'Telegram', value: 'Telegram'}, {text: 'Viber', value: 'Viber'}, {text: 'VK', value: 'VK'}]" item-value="Telegram" v-model="botType" :label="$t('bot.type')" 
-                required outlined)
-              v-col(cols="12" md="8")
-                v-text-field.addbot__text-field(:label='$t("addBot.token")' 
-                :rules="tokenRules"
-                single-line
-                v-model='token')
-    
-        v-card-actions
-          v-spacer
-          v-btn(text 
-          @click='close'
-          :loading='loading'
-          color='error') {{$t('cancel')}}
-          v-btn(text
-          @click='save'
-          :loading='loading'
-          :disabled="!validtoken"
-          color='blue') {{$t('save')}}
+v-dialog(v-model='dialog', scrollable, max-width='600px', persistent)
+  v-form(v-model='validtoken', ref='formAddBot', onSubmit='return false;')
+    v-card
+      v-card-title {{ $t("addBot.title") }}
+      v-card-text
+        .message-text(v-if='botType === "VK"')
+          | {{ $t("addBot.vkHelp") }}
+        div(
+          v-if='$store.state.user.subscriptionStatus === "active" && !loading'
+        )
+          | {{ $t("subscription.nextInvoice") }} (${{ amount || 0 }}): +${{ amountCalc }}
+          br
+          | {{ $t("subscription.nextPeriod") }} (${{ $store.state.bots.length - 1 }}): +$1
+        v-row
+          v-col(cols='7', md='4')
+            v-select.addbot__select-field(
+              dense,
+              :items='[ { text: "Telegram", value: "Telegram" }, { text: "Viber", value: "Viber" }, { text: "VK", value: "VK" }, ]',
+              item-value='Telegram',
+              v-model='botType',
+              :label='$t("bot.type")',
+              required,
+              outlined
+            )
+          v-col(cols='12', md='8')
+            v-text-field.addbot__text-field(
+              :label='$t("addBot.token")',
+              :rules='tokenRules',
+              single-line,
+              v-model='token'
+            )
+
+      v-card-actions
+        v-spacer
+        v-btn(text, @click='close', :loading='loading', color='error') {{ $t("cancel") }}
+        v-btn(
+          text,
+          @click='save',
+          :loading='loading',
+          :disabled='!validtoken',
+          color='blue'
+        ) {{ $t("save") }}
 </template>
 
 <script lang="ts">
@@ -51,7 +58,7 @@ import { i18n } from '../../plugins/i18n'
   watch: {
     botType: 'validateForm',
     token: 'validateForm',
-    dialog: async function(val) {
+    dialog: async function (val) {
       if (val) {
         ;(this as any).botType = 'Telegram'
         ;(this as any).token = ''

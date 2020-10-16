@@ -467,5 +467,6 @@ export const messages = {
       forwarded_from: 'Forwarded from:',
     },
     feed: 'Feed',
+    messageInvite: 'Write a message...',
   },
 }

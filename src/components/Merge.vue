@@ -1,40 +1,40 @@
 <template lang="pug">
-    v-dialog(
-    scrollable
-    max-width='600px'
-    v-model='dialog'
-    persistent)
-        v-card
-            v-card-title {{$t('merge.header')}}
-            v-card-text
-                v-col
-                    v-row(v-if='user')
-                      span 
-                        | {{$t('merge.text1')}}&nbsp;
-                        span(v-if="$store.state.language === 'ru'")
-                          a(href="https://t.me/feedrbot", target="_blank") @feedrbot
-                          |&nbsp;{{$t('merge.text2')}}
-                    v-container
-                      v-col.justify-center.d-flex(v-if="!$store.state.user.telegramId")
-                        vue-telegram-login(mode='callback'
-                        telegram-login='feedrbot'
-                        @callback='onTelegramAuth'
-                        radius='3'
-                        :userpic='false')
-                      v-col.justify-center.d-flex(v-if="!$store.state.user.facebookId")
-                        fb-signin-button(:params='{ scope: "email", return_scopes: true}'
-                        @success='onFacebookSignInSuccess'
-                        @error='onFacebookSignInError') {{$t('home.facebook')}}
-                      v-col.justify-center.d-flex(v-if="!$store.state.user.email")
-                        g-signin-button(:params='{ client_id: googleClientId }'
-                        @success='onGoogleSignInSuccess'
-                        @error='onGoogleSignInError') {{$t("home.google")}}
+v-dialog(scrollable, max-width='600px', v-model='dialog', persistent)
+  v-card
+    v-card-title {{ $t("merge.header") }}
+    v-card-text
+      v-col
+        v-row(v-if='user')
+          span 
+            | {{ $t("merge.text1") }}&nbsp;
+            span(v-if='$store.state.language === "ru"')
+              a(href='https://t.me/feedrbot', target='_blank') @feedrbot
+              | &nbsp;{{ $t("merge.text2") }}
+        v-container
+          v-col.justify-center.d-flex(v-if='!$store.state.user.telegramId')
+            vue-telegram-login(
+              mode='callback',
+              telegram-login='feedrbot',
+              @callback='onTelegramAuth',
+              radius='3',
+              :userpic='false'
+            )
+          v-col.justify-center.d-flex(v-if='!$store.state.user.facebookId')
+            fb-signin-button(
+              :params='{ scope: "email", return_scopes: true }',
+              @success='onFacebookSignInSuccess',
+              @error='onFacebookSignInError'
+            ) {{ $t("home.facebook") }}
+          v-col.justify-center.d-flex(v-if='!$store.state.user.email')
+            g-signin-button(
+              :params='{ client_id: googleClientId }',
+              @success='onGoogleSignInSuccess',
+              @error='onGoogleSignInError'
+            ) {{ $t("home.google") }}
 
-            v-card-actions
-                v-spacer
-                v-btn(color='blue'
-                text 
-                @click='close') {{$t('close')}}
+    v-card-actions
+      v-spacer
+      v-btn(color='blue', text, @click='close') {{ $t("close") }}
 </template>
 
 <script lang="ts">

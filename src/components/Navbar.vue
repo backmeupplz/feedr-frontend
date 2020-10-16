@@ -1,46 +1,56 @@
 <template lang="pug">
-  nav
-    BotsDialog(:dialog='botsDialog' :close='closeBotsDialog')
-    Checkout(:dialog='subscriptionDialog' :close='closeSubscription')
-    Merge(:dialog='mergeDialog' :close='closeMerge')
-    v-app-bar(flat app)
-      // Title
-      router-link(:to='$store.state.user ? "/app" : "/"')
-        v-toolbar-title.text-uppercase.grey--text
-          v-tooltip(v-if='$store.state.user' bottom)
-            template(v-slot:activator='{ on }')
-              span(v-on='on') {{$t('title')}}
-            span {{$store.state.user.name}}, {{$store.state.user.email || $store.state.user.facebookId || $store.state.user.telegramId}}
-          span(v-else) {{$t('title')}}
-      v-spacer
-      v-chip(color='error' v-if='$store.state.user && $store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"') {{$t('subscription.noSub')}}
-      // Language picker
-      v-menu(offset-y)
-        template(v-slot:activator='{ on }')
-          v-btn(text icon color='grey' v-on='on') {{currentLocale.icon}}
-        v-list
-          v-list-item(v-for='locale in locales' @click='changeLanguage(locale.code)' :key="locale.code")
-            v-list-item-title {{locale.icon}}
-      v-menu(offset-y)
-        template(v-slot:activator='{ on }')
-          v-btn(text icon color='grey' v-on='on') 
-            v-icon mdi-dots-vertical
-        v-list
-          // Bots
-          v-list-item(@click.stop='botsDialog = true' v-if="$store.state.user")
-            v-list-item-title {{$t('navbar.bots')}}
-          // Merge
-          v-list-item(@click.stop='mergeDialog = true' v-if="$store.state.user")
-            v-list-item-title {{$t('merge.header')}}
-          // Subscription
-          v-list-item(@click.stop='subscriptionDialog = true' v-if="$store.state.user")
-            v-list-item-title {{$t('subscription.subscription')}}
-          // Dark mode
-          v-list-item(@click='toggleMode')
-            v-list-item-title {{currentTheme}}
-          // Logout
-          v-list-item(@click='logout')
-            v-list-item-title {{$t('navbar.logout')}}
+nav
+  BotsDialog(:dialog='botsDialog', :close='closeBotsDialog')
+  Checkout(:dialog='subscriptionDialog', :close='closeSubscription')
+  Merge(:dialog='mergeDialog', :close='closeMerge')
+  .d-flex.justify-space-between.justify-center.align-center
+    router-link(:to='$store.state.user ? "/app" : "/"')
+      .navbar-toolbar-title
+        v-tooltip(v-if='$store.state.user', bottom)
+          template(v-slot:activator='{ on }')
+            .d-flex
+              span.navbar-toolbar-title-text(v-on='on') {{ $t("title") }}
+              span.navbar-toolbar-circle
+          span {{ $store.state.user.name }}, {{ $store.state.user.email || $store.state.user.facebookId || $store.state.user.telegramId }}
+        .d-flex(v-else)
+          span.navbar-toolbar-title-text {{ $t("title") }}
+          span.navbar-toolbar-circle
+    v-spacer
+    v-chip(
+      color='error',
+      v-if='$store.state.user && $store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"'
+    ) {{ $t("subscription.noSub") }}
+    // Language picker
+    v-menu(offset-y)
+      template(v-slot:activator='{ on }')
+        v-btn(text, icon, color='grey', v-on='on') {{ currentLocale.icon }}
+      v-list
+        v-list-item(
+          v-for='locale in locales',
+          @click='changeLanguage(locale.code)',
+          :key='locale.code'
+        )
+          v-list-item-title {{ locale.icon }}
+    v-menu(offset-y)
+      template(v-slot:activator='{ on }')
+        v-btn(text, icon, color='grey', v-on='on') 
+          v-icon mdi-dots-vertical
+      v-list
+        // Bots
+        v-list-item(@click.stop='botsDialog = true', v-if='$store.state.user')
+          v-list-item-title {{ $t("navbar.bots") }}
+        // Merge
+        v-list-item(@click.stop='mergeDialog = true', v-if='$store.state.user')
+          v-list-item-title {{ $t("merge.header") }}
+        // Subscription
+        v-list-item(
+          @click.stop='subscriptionDialog = true',
+          v-if='$store.state.user'
+        )
+          v-list-item-title {{ $t("subscription.subscription") }}
+        // Logout
+        v-list-item(@click='logout')
+          v-list-item-title {{ $t("navbar.logout") }}
 </template>
 
 <script lang="ts">
@@ -116,6 +126,11 @@ export default class Navbar extends Vue {
 </script>
 
 <style>
+nav {
+  margin-top: -24px;
+  margin-bottom: 24px;
+}
+
 nav a:link {
   text-decoration: none;
 }
@@ -131,5 +146,24 @@ nav a:hover {
 nav a:active {
   text-decoration: underline;
 }
-</style>
 
+.navbar-toolbar-title-text {
+  background: linear-gradient(90deg, #03c1fd 0%, #b56aff 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: Archivo Narrow;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 35px;
+  text-transform: uppercase;
+}
+
+.navbar-toolbar-circle {
+  height: 10px;
+  width: 10px;
+  background: linear-gradient(90deg, #03c1fd 0%, #b56aff 100%);
+  border-radius: 50%;
+  display: inline-block;
+}
+</style>

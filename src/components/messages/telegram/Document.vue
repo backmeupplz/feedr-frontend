@@ -1,14 +1,22 @@
 <template lang="pug">
 v-list-item-title.message-text 
-  handledText(:message="message")
+  handledText(:message='message')
   v-container(fluid)
-      v-row(dense :justify="mobile()")
-          v-col(md="auto").col_nogrow
-              v-btn(fab outlined small color="indigo" :loading="loading" :disabled="disabled" @click="loadSticker") 
-                  v-icon mdi-download
-          v-col(md="auto")
-              div(class="caption" v-if="message.raw.document.file_name") {{message.raw.document.file_name}}
-              div(class="caption") {{filesize(message.raw.document.file_size)}}
+    v-row(dense, :justify='mobile()')
+      v-col.col_nogrow(md='auto')
+        v-btn(
+          fab,
+          outlined,
+          small,
+          color='indigo',
+          :loading='loading',
+          :disabled='disabled',
+          @click='loadSticker'
+        ) 
+          v-icon mdi-download
+      v-col(md='auto')
+        .caption(v-if='message.raw.document.file_name') {{ message.raw.document.file_name }}
+        .caption {{ filesize(message.raw.document.file_size) }}
 </template>
 
 <script lang="ts">

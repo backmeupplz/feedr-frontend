@@ -1,5 +1,5 @@
 <template lang="pug">
-  .headline.pa-4.text-center {{$t('noBots')}}
+.headline.pa-4.text-center {{ $t("noBots") }}
 </template>
 
 <script lang="ts">

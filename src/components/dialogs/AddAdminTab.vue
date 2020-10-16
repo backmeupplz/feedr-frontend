@@ -1,43 +1,56 @@
 <template lang="pug">
-v-form(v-model="validid" ref="formAddAdmin" onSubmit="return false;")
+v-form(v-model='validid', ref='formAddAdmin', onSubmit='return false;')
   v-card
     v-card-title
-      span {{$t('admin.admins')}}
+      span {{ $t("admin.admins") }}
       v-spacer
-      v-btn(icon
-      :loading='loading'
-      @click='refresh')
+      v-btn(icon, :loading='loading', @click='refresh')
         v-icon refresh
     v-card-text
       v-container
-        div(v-if="adminsinvites && adminsinvites.length >= 1")
-          v-data-table(:headers="headersTable" hide-default-footer :items="tableval" class="elevation-1")
-            template(v-slot:item.action="{ item }")
-              v-icon(@click="removeAdminOrInvite(item)")
-                |delete
+        div(v-if='adminsinvites && adminsinvites.length >= 1')
+          v-data-table.elevation-1(
+            :headers='headersTable',
+            hide-default-footer,
+            :items='tableval'
+          )
+            template(v-slot:item.action='{ item }')
+              v-icon(@click='removeAdminOrInvite(item)')
+                | delete
         div(v-else)
-          |{{$t('admin.noadmins')}}
+          | {{ $t("admin.noadmins") }}
       v-container
-        .subtitle-1 {{$t('admin.invite')}}
-            v-container(fluid fill-height)
-                v-row
-                    v-col(cols="7" md="4")
-                        v-select.addadmin__select-field(dense :items="[{text: 'E-mail', value: 'E-mail'}, {text: 'TelegramID', value: 'TelegramID'}]" item-value="E-mail" v-model="accountType" :label="$t('admin.type')" 
-                        required outlined)
-                    v-col(cols="12" md="8")
-                        v-text-field.addadmin__text-field(:label='IDFieldText' 
-                        :rules="IdentifierRules"
-                        @keypress.enter="add"
-                        multiline
-                        required
-                        v-model='accountIdentifier')
+        .subtitle-1 {{ $t("admin.invite") }}
+          v-container(fluid, fill-height)
+            v-row
+              v-col(cols='7', md='4')
+                v-select.addadmin__select-field(
+                  dense,
+                  :items='[ { text: "E-mail", value: "E-mail" }, { text: "TelegramID", value: "TelegramID" }, ]',
+                  item-value='E-mail',
+                  v-model='accountType',
+                  :label='$t("admin.type")',
+                  required,
+                  outlined
+                )
+              v-col(cols='12', md='8')
+                v-text-field.addadmin__text-field(
+                  :label='IDFieldText',
+                  :rules='IdentifierRules',
+                  @keypress.enter='add',
+                  multiline,
+                  required,
+                  v-model='accountIdentifier'
+                )
     v-card-actions
       v-spacer
-      v-btn(text
-      @click='add'
-      :loading='loading'
-      :disabled="!validid"
-      color='blue') {{$t('invite')}}
+      v-btn(
+        text,
+        @click='add',
+        :loading='loading',
+        :disabled='!validid',
+        color='blue'
+      ) {{ $t("invite") }}
 </template>
 
 <script lang="ts">
@@ -59,7 +72,7 @@ interface tabledata {
     botId: String,
   },
   watch: {
-    botId: async function(val) {
+    botId: async function (val) {
       if (val) {
         ;(this as any).accountType = 'E-mail'
         ;(this as any).accountIdentifier = ''
@@ -68,7 +81,7 @@ interface tabledata {
     },
     accountType: 'validateForm',
     accountIdentifier: 'validateForm',
-    adminsinvites: async function(val) {
+    adminsinvites: async function (val) {
       const invited = i18n.t('admin.invited')
       const administrator = i18n.t('admin.admin')
       if (val.length >= 1) {
@@ -155,7 +168,7 @@ export default class AddAdminTab extends Vue {
       const response = await api.BotInviteAdmin(
         this.$props.botId,
         this.accountIdentifier,
-        this.accountType,
+        this.accountType
       )
       store.setBots(await api.getBots())
     } catch (err) {
@@ -174,7 +187,7 @@ export default class AddAdminTab extends Vue {
     this.loading = true
     try {
       this.adminsinvites = await api.GetInvitesAndAdministrators(
-        this.$props.botId,
+        this.$props.botId
       )
     } catch (err) {
       if (err && err.response && err.response.data) {

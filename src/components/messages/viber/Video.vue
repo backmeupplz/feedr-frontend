@@ -1,19 +1,25 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    v-container
-        v-row(justify="start")
-            v-btn(outlined color="indigo" :loading="loading" @click="loadVideo" v-if="!hided") {{$t("media.load")}}
-              v-icon(right) mdi-video-outline
-            div(v-else) 
-              |{{$t('oldlink')}}
-        v-dialog(v-model="opened" fullscreen hide-overlay)
-          v-card
-            v-toolbar(dark)
-              v-btn(icon dark @click="opened = false")
-                v-icon mdi-close
-              v-toolbar-title Viber Video
-            video(controls ref="videoplayer").player
-              source(:src="message.raw.media" type="video/mp4")
+  v-container
+    v-row(justify='start')
+      v-btn(
+        outlined,
+        color='indigo',
+        :loading='loading',
+        @click='loadVideo',
+        v-if='!hided'
+      ) {{ $t("media.load") }}
+        v-icon(right) mdi-video-outline
+      div(v-else) 
+        | {{ $t("oldlink") }}
+    v-dialog(v-model='opened', fullscreen, hide-overlay)
+      v-card
+        v-toolbar(dark)
+          v-btn(icon, dark, @click='opened = false')
+            v-icon mdi-close
+          v-toolbar-title Viber Video
+        video.player(controls, ref='videoplayer')
+          source(:src='message.raw.media', type='video/mp4')
 </template>
 
 <script lang="ts">

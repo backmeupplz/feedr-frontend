@@ -1,94 +1,154 @@
 <template lang="pug">
 v-card.message
-    v-list-item(three-line)
-        v-list-item-content
-            div(class="overline mb-2" v-if="!forwardedMessage(message)") {{(message.raw.from && message.raw.from.first_name) || (message.raw.name)}}
-            v-dialog(v-model="modalForwarded" persistent width="500" v-else)
-              template(v-slot:activator="{on}")
-                div(class="caption mb-2 blue--text" style="cursor: pointer;" @click.stop="modalForwarded = true") {{$t('forwarded_message.forwarded_from')}} {{forwardedMessageName(message)}}
-              v-card
-                v-card-title {{forwardedMessageName(message)}} 
-                v-card-text(v-if="message.raw.forward_from_chat && message.raw.forward_from_chat.username") 
-                  |Username: 
-                  a(target="_blank" :href="`https://t.me/${message.raw.forward_from_chat.username}`")
-                    |@{{message.raw.forward_from_chat.username}}
-                v-card-text(v-else-if="message.raw.forward_from && message.raw.forward_from.username") 
-                  |Username: 
-                  a(target="_blank" :href="`https://t.me/${message.raw.forward_from.username}`")
-                    |@{{message.raw.forward_from.username}}
-                v-card-text(v-else) {{forwardedMessageUsernameExceptions(message)}}
-                v-card-actions
-                  v-spacer
-                  v-btn(color='blue'
-                  text 
-                  @click='modalForwarded = false') {{$t('close')}}
-            div(v-if="telegram")
-              // Simple text
-              TextMessage(v-if="msg.raw.text" :message="msg")
-              // Photo
-              TelegramPhotoMessage(v-else-if="msg.raw.photo" :message="msg")
-              // Video, Telescope Video and Animation
-              TelegramVideoMessage(v-else-if="msg.raw.video || msg.raw.video_note || msg.raw.animation" :message="msg")
-              // Location and Venue
-              TelegramLocationMessage(v-else-if="msg.raw.location" :message="msg.raw")
-              // Polls
-              TelegramPollMessage(v-else-if="msg.raw.poll" :message="msg.raw")
-              // Sticker
-              TelegramStickerMessage(v-else-if="msg.raw.sticker" :message="msg")
-              // Document
-              TelegramDocumentMessage(v-else-if="msg.raw.document && !msg.raw.animation" :message="msg")
-              // Contact
-              TelegramContactMessage(v-else-if="msg.raw.contact" :message="msg")
-              // Audio and Voice
-              TelegramAudioMessage(v-else-if="msg.raw.audio || msg.raw.voice" :message="msg")
-              // Game
-              TelegramGameMessage(v-else-if="msg.raw.game" :game="msg.raw.game")
-              // Unsupported Messages
-              UnSupportedMessage(v-else :message="msg")
-            div(v-else-if="viber")
-              // Simple text
-              TextMessage(v-if="message.raw.type === 'text'" :message="message")
-              // Location
-              ViberLocationMessage(v-else-if="message.raw.location" :message="message.raw")
-              // Picture
-              ViberPhotoMessage(v-else-if="message.raw.type === 'picture'" :message="message")
-              // Contact
-              ViberContactMessage(v-else-if="message.raw.type === 'contact'" :message="message")
-              // Video
-              ViberVideoMessage(v-else-if="message.raw.type === 'video'" :message="message")
-              // Sticker
-              ViberStickerMessage(v-else-if="message.raw.type === 'sticker'" :message="message")
-              // File
-              ViberDocumentMessage(v-else-if="message.raw.type === 'file'" :message="message")
-              // URL Message
-              TextMessage(v-else-if="message.raw.type === 'url'" :text="'URL: ' + message.raw.media")
-              // Unsupported Messages
-              UnSupportedMessage(v-else :message="message")
-            div(v-else="vk")
-              // Simple text
-              TextMessage(v-if="message.raw.text && message.raw.attachments.length < 1" :message="msg")
-              // Unsupported Messages
-              UnSupportedMessage(v-else :message="msg")
-            v-list-item-subtitle(class="text-right")
-              v-dialog(v-model="modalEdits" persistent width="500" v-if="message.edits && message.edits.length && !edited")
-                template(v-slot:activator="{on}") 
-                  span(@click.stop="modalEdits = true").pointer {{$t('edit.edited')}}&nbsp;
-                v-card
-                  v-card-title {{$t('edit.edits')}}
-                  v-card-text
-                    v-col
-                      EditedMessage(:message='trueMessage' :type='trueMessage.type')
-                      div(v-for='(mes, i) in edits' v-if='msg.edits && msg.edits.length && (telegram || vk)') 
-                        EditedMessage(:message='mes' :type='msg.type' :editIndex='i' :_id='message._id' :key='i' :name='trueMessage.raw.name || "no name"')
-                  v-card-actions(fixed)
-                    v-spacer
-                    v-btn(color='blue'
-                    text 
-                    @click='modalEdits = false') {{$t('close')}}
-              v-tooltip(bottom)
-                  template(v-slot:activator='{ on }')
-                      span(v-on='on') {{formatDate(message)}}
-                  span {{formatDateTooltip(message)}}
+  v-list-item(three-line)
+    v-list-item-content
+      .overline.mb-2(v-if='!forwardedMessage(message)') {{ (message.raw.from && message.raw.from.first_name) || message.raw.name }}
+      v-dialog(v-model='modalForwarded', persistent, width='500', v-else)
+        template(v-slot:activator='{ on }')
+          .caption.mb-2.blue--text(
+            style='cursor: pointer;',
+            @click.stop='modalForwarded = true'
+          ) {{ $t("forwarded_message.forwarded_from") }} {{ forwardedMessageName(message) }}
+        v-card
+          v-card-title {{ forwardedMessageName(message) }}
+          v-card-text(
+            v-if='message.raw.forward_from_chat && message.raw.forward_from_chat.username'
+          ) 
+            | Username:
+            a(
+              target='_blank',
+              :href='`https://t.me/${message.raw.forward_from_chat.username}`'
+            )
+              | @{{ message.raw.forward_from_chat.username }}
+          v-card-text(
+            v-else-if='message.raw.forward_from && message.raw.forward_from.username'
+          ) 
+            | Username:
+            a(
+              target='_blank',
+              :href='`https://t.me/${message.raw.forward_from.username}`'
+            )
+              | @{{ message.raw.forward_from.username }}
+          v-card-text(v-else) {{ forwardedMessageUsernameExceptions(message) }}
+          v-card-actions
+            v-spacer
+            v-btn(color='blue', text, @click='modalForwarded = false') {{ $t("close") }}
+      div(v-if='telegram')
+        // Simple text
+        TextMessage(v-if='msg.raw.text', :message='msg')
+        // Photo
+        TelegramPhotoMessage(v-else-if='msg.raw.photo', :message='msg')
+        // Video, Telescope Video and Animation
+        TelegramVideoMessage(
+          v-else-if='msg.raw.video || msg.raw.video_note || msg.raw.animation',
+          :message='msg'
+        )
+        // Location and Venue
+        TelegramLocationMessage(
+          v-else-if='msg.raw.location',
+          :message='msg.raw'
+        )
+        // Polls
+        TelegramPollMessage(v-else-if='msg.raw.poll', :message='msg.raw')
+        // Sticker
+        TelegramStickerMessage(v-else-if='msg.raw.sticker', :message='msg')
+        // Document
+        TelegramDocumentMessage(
+          v-else-if='msg.raw.document && !msg.raw.animation',
+          :message='msg'
+        )
+        // Contact
+        TelegramContactMessage(v-else-if='msg.raw.contact', :message='msg')
+        // Audio and Voice
+        TelegramAudioMessage(
+          v-else-if='msg.raw.audio || msg.raw.voice',
+          :message='msg'
+        )
+        // Game
+        TelegramGameMessage(v-else-if='msg.raw.game', :game='msg.raw.game')
+        // Unsupported Messages
+        UnSupportedMessage(v-else, :message='msg')
+      div(v-else-if='viber')
+        // Simple text
+        TextMessage(v-if='message.raw.type === "text"', :message='message')
+        // Location
+        ViberLocationMessage(
+          v-else-if='message.raw.location',
+          :message='message.raw'
+        )
+        // Picture
+        ViberPhotoMessage(
+          v-else-if='message.raw.type === "picture"',
+          :message='message'
+        )
+        // Contact
+        ViberContactMessage(
+          v-else-if='message.raw.type === "contact"',
+          :message='message'
+        )
+        // Video
+        ViberVideoMessage(
+          v-else-if='message.raw.type === "video"',
+          :message='message'
+        )
+        // Sticker
+        ViberStickerMessage(
+          v-else-if='message.raw.type === "sticker"',
+          :message='message'
+        )
+        // File
+        ViberDocumentMessage(
+          v-else-if='message.raw.type === "file"',
+          :message='message'
+        )
+        // URL Message
+        TextMessage(
+          v-else-if='message.raw.type === "url"',
+          :text='"URL: " + message.raw.media'
+        )
+        // Unsupported Messages
+        UnSupportedMessage(v-else, :message='message')
+      div(v-else='vk')
+        // Simple text
+        TextMessage(
+          v-if='message.raw.text && message.raw.attachments.length < 1',
+          :message='msg'
+        )
+        // Unsupported Messages
+        UnSupportedMessage(v-else, :message='msg')
+      v-list-item-subtitle.text-right
+        v-dialog(
+          v-model='modalEdits',
+          persistent,
+          width='500',
+          v-if='message.edits && message.edits.length && !edited'
+        )
+          template(v-slot:activator='{ on }') 
+            span.pointer(@click.stop='modalEdits = true') {{ $t("edit.edited") }}&nbsp;
+          v-card
+            v-card-title {{ $t("edit.edits") }}
+            v-card-text
+              v-col
+                EditedMessage(:message='trueMessage', :type='trueMessage.type')
+                div(
+                  v-for='(mes, i) in edits',
+                  v-if='msg.edits && msg.edits.length && (telegram || vk)'
+                ) 
+                  EditedMessage(
+                    :message='mes',
+                    :type='msg.type',
+                    :editIndex='i',
+                    :_id='message._id',
+                    :key='i',
+                    :name='trueMessage.raw.name || "no name"'
+                  )
+            v-card-actions(fixed)
+              v-spacer
+              v-btn(color='blue', text, @click='modalEdits = false') {{ $t("close") }}
+        v-tooltip(bottom)
+          template(v-slot:activator='{ on }')
+            span(v-on='on') {{ formatDate(message) }}
+          span {{ formatDateTooltip(message) }}
 </template>
 
 <script lang="ts">

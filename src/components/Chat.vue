@@ -1,13 +1,17 @@
 <template lang="pug">
-    v-col(cols='12' :style="heightStyle").columner
-            .new_message(v-if="unreadMessages")
-              div(style="text-align:center;")
-                v-chip {{$t('message.new')}}
-            div(v-for='(message, i) in sortedMessages' :key='message._id' v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)')
-              v-row(v-if='frombot(bot, message)' justify='end' class='pa-4')
-                MessageComponent(v-bind:message="message")
-              v-row(v-if='!frombot(bot, message)' justify='start' class='pa-4') 
-                MessageComponent(v-bind:message="message")
+v-col.columner(cols='12', :style='heightStyle')
+  .new_message(v-if='unreadMessages')
+    div(style='text-align:center;')
+      v-chip {{ $t("message.new") }}
+  div(
+    v-for='(message, i) in sortedMessages',
+    :key='message._id',
+    v-observe-visibility='(isVisible, entry) => visibilityChanged(isVisible, entry, i, message, curchat, bot)'
+  )
+    v-row.pa-4(v-if='frombot(bot, message)', justify='end')
+      MessageComponent(v-bind:message='message')
+    v-row.pa-4(v-if='!frombot(bot, message)', justify='start') 
+      MessageComponent(v-bind:message='message')
 </template>
 
 <script lang="ts">
@@ -33,7 +37,7 @@ declare const sockets: any
     messages: Array,
   },
   watch: {
-    lastMessage: function(val) {
+    lastMessage: function (val) {
       let that = this as any
       let needScroll = true
       if (
@@ -184,7 +188,7 @@ export default class ChatComponent extends Vue {
     sectionIndex: number,
     message: Message,
     chat: Chat,
-    bot: Bot,
+    bot: Bot
   ) {
     if (!isVisible) {
       return

@@ -1,6 +1,6 @@
 <template lang="pug">
-v-list-item-title(class="mb-3")
-    vue-poll(v-bind="Poll(message.poll)")
+v-list-item-title.mb-3
+  vue-poll(v-bind='Poll(message.poll)')
 </template>
 
 <script lang="ts">

@@ -1,6 +1,6 @@
 <template lang="pug">
-v-row(justify='center' class='pa-4') 
-    MessageComponent(:edited='true' :message="mes")
+v-row.pa-4(justify='center') 
+  MessageComponent(:edited='true', :message='mes')
 </template>
 
 <script lang="ts">

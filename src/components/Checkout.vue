@@ -1,66 +1,80 @@
 <template lang="pug">
-    v-dialog(
-    scrollable
-    max-width='600px'
-    v-model='dialog'
-    persistent)
-        v-card
-            v-card-title {{$t('subscription.subscription')}}
-            v-card-text
-                v-col
-                    v-row(v-if='user')
-                        div(v-if='user.subscriptionStatus === "earlyAdopter"')
-                            b {{$t('subscription.subscription')}}:
-                            |&nbsp;{{$t('subscription.early')}}
-                            br
-                            br
-                            | {{$t('subscription.earlyStatusText')}}
-                        div(v-else-if='user.subscriptionStatus === "active"')
-                            b {{$t('subscription.subscription')}}:
-                            |&nbsp;{{$t('subscription.active')}}
-                            br
-                            br
-                            | {{$t('subscription.activeStatusText')}}
-                            br
-                            br
-                            b {{$t('subscription.nextInvoice')}}:&nbsp;
-                            |{{nextInvoice && (nextInvoice.amount / 100)}}$ {{nextInvoice && formatDate(nextInvoice.period.end)}}
-                        div(v-else-if='user.subscriptionStatus === "inactive"')
-                            b {{$t('subscription.subscription')}}:
-                            |&nbsp;{{$t('subscription.inactive')}}
-                            br
-                            br
-                            |{{$t('subscription.inactiveStatusText')}}
-                        div(v-else-if='user.subscriptionStatus === "failed"')
-                            b {{$t('subscription.subscription')}}:
-                            |&nbsp;{{$t('subscription.failed')}}
-                            br
-                            br
-                            |{{$t('subscription.failedStatusText')}}
-                            br
-                            br
-                            b {{$t('subscription.nextInvoice')}}:&nbsp;
-                            |{{nextInvoice && (nextInvoice.amount / 100)}}$ {{nextInvoice && formatDate(nextInvoice.period.end)}}
-                    v-container
-                        v-row(justify='center')
-                                div(v-if='user.subscriptionStatus === "earlyAdopter"')
-                                div(v-else-if='user.subscriptionStatus === "active"')
-                                  v-col(justify='center')
-                                    v-row(justify='center')
-                                      v-btn(:loading='loading' outlined color="indigo" @click.stop='subscripe') {{$t('subscription.update')}}
-                                  v-col(justify='center')
-                                    v-row(justify='center')
-                                      v-btn(:loading='loading' outlined color="red" @click.stop='cancelSubscription') {{$t('subscription.cancel')}}
-                                div(v-else-if='user.subscriptionStatus === "inactive"')
-                                    v-btn(:loading='loading' outlined color="indigo" @click.stop='subscripe') {{$t('subscription.price')}}
-                                div(v-else-if='user.subscriptionStatus === "failed"')
-                                    v-btn(:loading='loading' outlined color="red" @click.stop='subscripe') {{$t('subscription.update')}}
+v-dialog(scrollable, max-width='600px', v-model='dialog', persistent)
+  v-card
+    v-card-title {{ $t("subscription.subscription") }}
+    v-card-text
+      v-col
+        v-row(v-if='user')
+          div(v-if='user.subscriptionStatus === "earlyAdopter"')
+            b {{ $t("subscription.subscription") }}:
+            | &nbsp;{{ $t("subscription.early") }}
+            br
+            br
+            | {{ $t("subscription.earlyStatusText") }}
+          div(v-else-if='user.subscriptionStatus === "active"')
+            b {{ $t("subscription.subscription") }}:
+            | &nbsp;{{ $t("subscription.active") }}
+            br
+            br
+            | {{ $t("subscription.activeStatusText") }}
+            br
+            br
+            b {{ $t("subscription.nextInvoice") }}:&nbsp;
+            | {{ nextInvoice && nextInvoice.amount / 100 }}$ {{ nextInvoice && formatDate(nextInvoice.period.end) }}
+          div(v-else-if='user.subscriptionStatus === "inactive"')
+            b {{ $t("subscription.subscription") }}:
+            | &nbsp;{{ $t("subscription.inactive") }}
+            br
+            br
+            | {{ $t("subscription.inactiveStatusText") }}
+          div(v-else-if='user.subscriptionStatus === "failed"')
+            b {{ $t("subscription.subscription") }}:
+            | &nbsp;{{ $t("subscription.failed") }}
+            br
+            br
+            | {{ $t("subscription.failedStatusText") }}
+            br
+            br
+            b {{ $t("subscription.nextInvoice") }}:&nbsp;
+            | {{ nextInvoice && nextInvoice.amount / 100 }}$ {{ nextInvoice && formatDate(nextInvoice.period.end) }}
+        v-container
+          v-row(justify='center')
+            div(v-if='user.subscriptionStatus === "earlyAdopter"')
+            div(v-else-if='user.subscriptionStatus === "active"')
+              v-col(justify='center')
+                v-row(justify='center')
+                  v-btn(
+                    :loading='loading',
+                    outlined,
+                    color='indigo',
+                    @click.stop='subscripe'
+                  ) {{ $t("subscription.update") }}
+              v-col(justify='center')
+                v-row(justify='center')
+                  v-btn(
+                    :loading='loading',
+                    outlined,
+                    color='red',
+                    @click.stop='cancelSubscription'
+                  ) {{ $t("subscription.cancel") }}
+            div(v-else-if='user.subscriptionStatus === "inactive"')
+              v-btn(
+                :loading='loading',
+                outlined,
+                color='indigo',
+                @click.stop='subscripe'
+              ) {{ $t("subscription.price") }}
+            div(v-else-if='user.subscriptionStatus === "failed"')
+              v-btn(
+                :loading='loading',
+                outlined,
+                color='red',
+                @click.stop='subscripe'
+              ) {{ $t("subscription.update") }}
 
-            v-card-actions
-                v-spacer
-                v-btn(color='blue'
-                text 
-                @click='close') {{$t('close')}}
+    v-card-actions
+      v-spacer
+      v-btn(color='blue', text, @click='close') {{ $t("close") }}
 </template>
 
 <script lang="ts">
@@ -75,7 +89,7 @@ import moment from 'moment'
 @Component({
   props: ['dialog', 'close'],
   watch: {
-    dialog: function(val) {
+    dialog: function (val) {
       if (val) {
         ;(this as any).updateStatus()
       }

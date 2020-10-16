@@ -1,37 +1,35 @@
 <template lang="pug">
-v-menu(left bottom v-if="chat")
-            template(v-slot:activator="{ on }")
-              v-btn(icon color='grey' v-on='on')
-                  v-icon mdi-dots-vertical
-            v-list
-                v-dialog(v-model="modalProfile" persistent width="500")
-                  template(v-slot:activator="{on}")
-                    v-list-item(@click.stop="modalProfile = true" v-if="chat")
-                      v-list-item-title {{$t('chat.profile')}}
-                  v-card
-                    v-card-title {{getChatName(chat)}}
-                    v-card-text FeedrID: {{chat._id}}
-                    v-card-text(v-if="chat.type === 'telegram'") TelegramID: {{chat.telegramId}}
-                    v-card-text(v-if="chat.type === 'vk'") VK Profile: 
-                      a(target="_blank" :href='`https://vk.com/id${chat.raw.id}`') https://vk.com/id{{chat.raw.id}}
-                    v-card-text(v-if="chat.raw.username") 
-                      | Username: 
-                      a(target="_blank" :href='`https://t.me/${chat.raw.username}`') @{{chat.raw.username}}
-                    v-card-text(v-else-if="chat.type === 'viber'") ViberID: {{chat.viberId}}
-                    v-card-text(v-else-if="chat.type === 'vk'") VkID: {{chat.raw.id}}
-                    v-card-text(v-if="chat.banned") 
-                      b {{$t('chat.banned')}}!
-                    v-card-actions
-                      v-spacer
-                      v-btn(color='blue'
-                      text 
-                      @click='modalProfile = false;') {{$t('close')}}
-                v-list-item(@click="unban(chat);" v-if="chat && chat.banned")
-                  v-list-item-title {{$t('chat.unban')}}
-                v-list-item(@click="ban(chat);" v-else-if="chat")
-                  v-list-item-title {{$t('chat.ban')}}
-                v-list-item(@click="copy(chat);" v-if="chat")
-                  v-list-item-title {{$t('text.copy')}}
+v-menu(left, bottom, v-if='chat')
+  template(v-slot:activator='{ on }')
+    v-btn(icon, color='grey', v-on='on')
+      v-icon mdi-dots-vertical
+  v-list
+    v-dialog(v-model='modalProfile', persistent, width='500')
+      template(v-slot:activator='{ on }')
+        v-list-item(@click.stop='modalProfile = true', v-if='chat')
+          v-list-item-title {{ $t("chat.profile") }}
+      v-card
+        v-card-title {{ getChatName(chat) }}
+        v-card-text FeedrID: {{ chat._id }}
+        v-card-text(v-if='chat.type === "telegram"') TelegramID: {{ chat.telegramId }}
+        v-card-text(v-if='chat.type === "vk"') VK Profile:
+          a(target='_blank', :href='`https://vk.com/id${chat.raw.id}`') https://vk.com/id{{ chat.raw.id }}
+        v-card-text(v-if='chat.raw.username') 
+          | Username:
+          a(target='_blank', :href='`https://t.me/${chat.raw.username}`') @{{ chat.raw.username }}
+        v-card-text(v-else-if='chat.type === "viber"') ViberID: {{ chat.viberId }}
+        v-card-text(v-else-if='chat.type === "vk"') VkID: {{ chat.raw.id }}
+        v-card-text(v-if='chat.banned') 
+          b {{ $t("chat.banned") }}!
+        v-card-actions
+          v-spacer
+          v-btn(color='blue', text, @click='modalProfile = false') {{ $t("close") }}
+    v-list-item(@click='unban(chat)', v-if='chat && chat.banned')
+      v-list-item-title {{ $t("chat.unban") }}
+    v-list-item(@click='ban(chat)', v-else-if='chat')
+      v-list-item-title {{ $t("chat.ban") }}
+    v-list-item(@click='copy(chat)', v-if='chat')
+      v-list-item-title {{ $t("text.copy") }}
 </template>
 
 <script lang="ts">
@@ -74,7 +72,7 @@ export default class ChatMenu extends Vue {
       await api.banChat(chat)
       for (const bot of store.bots()) {
         if (bot._id === chat.bot && bot.chats) {
-          const chats = bot.chats.map(botchat => {
+          const chats = bot.chats.map((botchat) => {
             if (botchat._id === chat._id) {
               botchat.banned = true
             }
@@ -149,7 +147,7 @@ export default class ChatMenu extends Vue {
       await api.unbanChat(chat)
       for (const bot of store.bots()) {
         if (bot._id === chat.bot && bot.chats) {
-          const chats = bot.chats.map(botchat => {
+          const chats = bot.chats.map((botchat) => {
             if (botchat._id === chat._id) {
               botchat.banned = false
             }

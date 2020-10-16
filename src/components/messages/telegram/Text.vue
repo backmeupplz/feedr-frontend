@@ -1,6 +1,5 @@
 <template lang="pug">
-v-list-item-title(class="mb-3").message-text
-  handledText(:message="message")
+handledText.d-flex(:message='message')
 </template>
 
 <script lang="ts">

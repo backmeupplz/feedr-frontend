@@ -1,11 +1,23 @@
 <template lang="pug">
 v-list-item-title.message-text 
   v-container(fluid)
-      v-row(justify="start")
-          v-btn(outlined color="indigo" :loading="loading" @click="loadSticker" v-if="!opened") {{$t("media.load")}}
-              v-icon(right) mdi-sticker-emoji
-      v-row
-          v-img(:src="message.raw.media" v-if="opened" contain width="256px" height="256px")
+    v-row(justify='start')
+      v-btn(
+        outlined,
+        color='indigo',
+        :loading='loading',
+        @click='loadSticker',
+        v-if='!opened'
+      ) {{ $t("media.load") }}
+        v-icon(right) mdi-sticker-emoji
+    v-row
+      v-img(
+        :src='message.raw.media',
+        v-if='opened',
+        contain,
+        width='256px',
+        height='256px'
+      )
 </template>
 
 <script lang="ts">

@@ -52,7 +52,7 @@ const storeOptions = {
       color: 'success',
     },
     language: undefined,
-    dark: false,
+    dark: true,
     bots: [],
     invites: [],
     nomoremessages: false,
@@ -81,7 +81,7 @@ const storeOptions = {
                       return v
                     }
                   })
-                }),
+                })
               )
               if (!newchats) {
                 return
@@ -95,7 +95,7 @@ const storeOptions = {
           if (bot._id === botId) {
             if (bot.chats) {
               if (
-                bot.chats.find(v => {
+                bot.chats.find((v) => {
                   if (v._id === chat._id) {
                     return v
                   }
@@ -135,7 +135,7 @@ const storeOptions = {
                           return v
                         }
                       })
-                    }),
+                    })
                   )
                   if (!newMessages) {
                     return
@@ -220,7 +220,7 @@ const storeOptions = {
             bot.chats = []
             bot.selected_chat = undefined
             return bot
-          }),
+          })
         )
       }
 
@@ -267,7 +267,7 @@ const storeOptions = {
 
       if (state.user) {
         sockets.send('leave_all')
-        state.bots.forEach(bot => {
+        state.bots.forEach((bot) => {
           sockets.send('join', bot._id)
         })
       }

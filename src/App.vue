@@ -1,12 +1,15 @@
 <template lang="pug">
-  v-app(:dark='$store.state.dark' style="height:100vh" :class='$store.state.dark ? "grey darken-4" : "grey lighten-4"')
-    cookie-law(theme='blood-orange'
-    :buttonText='$t("cookie.button")'
-    :message='$t("cookie.message")')
+v-app
+  cookie-law(
+    theme='blood-orange',
+    :buttonText='$t("cookie.button")',
+    :message='$t("cookie.message")'
+  )
+  .max-height-s
     Navbar
     Snackbar
-    v-content
-      router-view
+    v-content.app-container-max-height
+      router-view.app-container-max-height
 </template>
 
 <script lang="ts">
@@ -20,10 +23,34 @@ export default {
 }
 </script>
 
-<style lang="scss">
-html, body{
-  position: fixed !important;
+<style>
+* {
+  font-family: DM Sans, Source Sans Pro;
+  font-style: normal;
+  font-weight: 500;
+}
+
+html,
+body {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+}
+
+.app-container-max-height {
+  padding-bottom: 36px;
+  height: 100%;
+  width: 100%;
+}
+
+.max-height-s {
+  height: 100%;
+  padding: 48px;
+  max-height: 100vh;
+  max-width: 100%;
+}
+
+.max-height {
+  height: 100%;
+  width: 100%;
 }
 </style>

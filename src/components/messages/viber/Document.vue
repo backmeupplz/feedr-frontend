@@ -1,15 +1,15 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    v-container(fluid)
-        v-row(dense :justify="mobile()" v-if="!hided")
-            v-col(md="auto").col_nogrow
-                v-btn(fab outlined small color="indigo" @click="loadSticker") 
-                    v-icon mdi-download
-            v-col(md="auto")
-                div(class="caption" v-if="message.raw.file_name") {{message.raw.file_name}}
-                div(class="caption") {{filesize(message.raw.size)}}
-        div(v-else) 
-          | {{$t('oldlink')}}
+  v-container(fluid)
+    v-row(dense, :justify='mobile()', v-if='!hided')
+      v-col.col_nogrow(md='auto')
+        v-btn(fab, outlined, small, color='indigo', @click='loadSticker') 
+          v-icon mdi-download
+      v-col(md='auto')
+        .caption(v-if='message.raw.file_name') {{ message.raw.file_name }}
+        .caption {{ filesize(message.raw.size) }}
+    div(v-else) 
+      | {{ $t("oldlink") }}
 </template>
 
 <script lang="ts">

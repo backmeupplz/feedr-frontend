@@ -1,56 +1,68 @@
 <template lang="pug">
-  .v-container.pa-4(:style="homeStyle")
-    // Main content
-    v-layout(column
-    justify-center
-    align-center).text-center
-      v-flex(xs12 md10)
-        .headline.pb-4 {{$t("home.info")}}
-        .title.pb-4 {{$t("home.info2")}}
-        .title.pb-4 {{$t("home.info3")}}
-      .d-flex.flex-column.pt-4
-        vue-telegram-login(mode='callback'
-        telegram-login='feedrbot'
-        @callback='onTelegramAuth'
-        radius='3'
-        :userpic='false')
-        // Google
-        v-btn.signin-button.google-signin(
-          @click='loginWithGoogle'
+div
+  // Main content
+  .d-flex.flex-column.justify-center.align-center.text-center
+    v-flex(xs12, md10)
+      .headline.pb-4 {{ $t("home.info") }}
+      .title.pb-4 {{ $t("home.info2") }}
+      .title.pb-4 {{ $t("home.info3") }}
+    .d-flex.flex-column.pt-4
+      vue-telegram-login(
+        mode='callback',
+        telegram-login='feedrbot',
+        @callback='onTelegramAuth',
+        radius='3',
+        :userpic='false'
+      )
+      // Google
+      v-btn.signin-button.google-signin(@click='loginWithGoogle')
+        span {{ $t("home.google") }}
+      // Facebook
+      v-btn.signin-button.facebook-signin(@click='loginWithFacebook')
+        span {{ $t("home.facebook") }}
+      div(v-if='debug')
+        v-text-field(
+          label='Debug token login',
+          v-model='debugToken',
+          append-icon='send',
+          @click:append='debugTokenLogin'
         )
-          span {{ $t("home.google") }}
-        // Facebook
-        v-btn.signin-button.facebook-signin(@click='loginWithFacebook')
-          span {{ $t("home.facebook") }}
-      v-row
-        v-col.d-flex.justify-center
-          v-img(src='/images/feedr.png' max-width='400')
-        v-col.d-flex.justify-center
-          v-img(src='/images/telegram.png' max-width='400')
-      v-flex.pt-4(xs12 md10)
-        .title.pb-4(v-html='$t("home.contact")')
-      v-flex(row justify-center).text-left
-        v-col(v-for='(review, i) in $t("feedback.reviews")'
-        :key='i'
-        cols='12'
-        sm='6')
-          v-card
-            v-list-item.px-4.pt-3
-              v-list-item-avatar
-                img(:src='`/avatars/${review.username}.jpg`')
-              v-list-item-content
-                a(:href='`https://t.me/${review.username}`') @{{review.username}}
-            v-card-text
-              p(v-for='(text, i) in review.text.split("\\n")') {{text}}
-      v-flex.py-4
-        .caption
-          router-link(to='/privacy') {{ $t('home.privacy') }}
+    v-row
+      v-col.d-flex.justify-center
+        v-img(src='/images/feedr.png', max-width='400')
+      v-col.d-flex.justify-center
+        v-img(src='/images/telegram.png', max-width='400')
+    v-flex.pt-4(xs12, md10)
+      .title.pb-4(v-html='$t("home.contact")')
+    v-flex.text-left(row, justify-center)
+      v-col(
+        v-for='(review, i) in $t("feedback.reviews")',
+        :key='i',
+        cols='12',
+        sm='6'
+      )
+        v-card
+          v-list-item.px-4.pt-3
+            v-list-item-avatar
+              img(:src='`/avatars/${review.username}.jpg`')
+            v-list-item-content
+              a(:href='`https://t.me/${review.username}`') @{{ review.username }}
+          v-card-text
+            p(v-for='(text, i) in review.text.split("\\n")') {{ text }}
+    v-flex.py-4
+      .caption
+        router-link(to='/privacy') {{ $t("home.privacy") }}
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import axios from 'axios'
-import { loginFacebook, loginTelegram, loginGoogle } from '../utils/api'
+import {
+  loginFacebook,
+  loginTelegram,
+  loginGoogle,
+  loginToken,
+} from '../utils/api'
 import * as store from '../plugins/store/store'
 import * as api from '../utils/api'
 import Component from 'vue-class-component'
@@ -68,23 +80,25 @@ declare let sockets: any
   },
 })
 export default class Home extends Vue {
-  winheight = 0
+  debugToken = ''
 
-  get homeStyle() {
-    let height = this.winheight - 64
-    let heghtPx = height + 'px'
-    return { height: heghtPx, overflowY: 'auto' }
+  get debug() {
+    return !!process.env.VUE_APP_DEV
   }
 
-  WindowHeight(data: any) {
-    this.winheight = data.target.innerHeight
+  async debugTokenLogin() {
+    try {
+      console.log(this.debugToken)
+      const user = await loginToken(this.debugToken)
+      console.log(user)
+      store.setUser(user)
+      sockets.send('authorization', user.token)
+    } catch (error) {
+      store.setSnackbarError(error)
+    }
   }
 
   async mounted() {
-    this.winheight = window.innerHeight
-    this.$nextTick(function() {
-      window.addEventListener('resize', this.WindowHeight)
-    })
     try {
       const result = await firebase.auth().getRedirectResult()
       if (result.credential) {

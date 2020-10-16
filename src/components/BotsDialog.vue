@@ -1,149 +1,237 @@
 <template lang="pug">
-  div
-    AddBotDialog(:dialog='addBotDialog'
-    :close='closeAddBotDialog')
-    v-dialog(v-model='dialog' fullscreen persistent hide-overlay scrollable)
-      v-card
-        nav
-          v-toolbar(dark flat)
-            v-app-bar-nav-icon(@click.stop="settingsNav = !settingsNav" v-if="mobile")
-            v-toolbar-title {{$t('botList.title')}}
-            v-spacer
-            v-toolbar-items
-              v-btn(icon
-              :loading='loading'
-              @click='updateList')
-                v-icon refresh
-              v-btn(dark text @click='close' @click.stop='setDefault') {{$t('close')}}
-        v-progress-linear(indeterminate v-if="loading")
-        v-row(no-gutters)
-          v-col(cols='0' sm='4' md="3" v-if='!mobile').border__right.border__top
+div
+  AddBotDialog(:dialog='addBotDialog', :close='closeAddBotDialog')
+  v-dialog(v-model='dialog', fullscreen, persistent, hide-overlay, scrollable)
+    v-card
+      nav
+        v-toolbar(dark, flat)
+          v-app-bar-nav-icon(
+            @click.stop='settingsNav = !settingsNav',
+            v-if='mobile'
+          )
+          v-toolbar-title {{ $t("botList.title") }}
+          v-spacer
+          v-toolbar-items
+            v-btn(icon, :loading='loading', @click='updateList')
+              v-icon refresh
+            v-btn(dark, text, @click='close', @click.stop='setDefault') {{ $t("close") }}
+      v-progress-linear(indeterminate, v-if='loading')
+      v-row(no-gutters)
+        v-col.border__right.border__top(cols='0', sm='4', md='3', v-if='!mobile')
+          v-list(dense)
+            v-list-group(
+              no-action,
+              v-for='bot in $store.state.bots',
+              :key='bot._id',
+              v-if='bot.botType !== "feed"'
+            )
+              template(v-slot:activator)
+                v-list-item-icon 
+                  v-icon {{ getIcon(bot.botType) }}
+                v-list-item-content
+                  v-list-item-title {{ bot.name }}
+              v-list-item(@click='openTab(bot, "about")', :disabled='loading')
+                v-list-item-icon
+                  v-icon mdi-information
+                v-list-item-title {{ $t("bot.about") }}
+              v-list-item(
+                @click='openTab(bot, "admins")',
+                v-if='!bot.administrated',
+                :disabled='loading'
+              )
+                v-list-item-icon
+                  v-icon mdi-account
+                v-list-item-title {{ $t("admin.admins") }}
+              v-list-item(
+                @click='openTab(bot, "greeting")',
+                v-if='!bot.administrated',
+                :disabled='loading'
+              )
+                v-list-item-icon
+                  v-icon mdi-human-greeting
+                v-list-item-title {{ $t("bot.greetings") }}
+              v-list-item(
+                @click.stop='updateBot(bot)',
+                v-if='!bot.administrated',
+                :disabled='loading'
+              )
+                v-list-item-icon 
+                  v-icon refresh
+                v-list-item-title {{ $t("bot.update") }}
+              v-list-item(
+                @click.stop='deleteBot(bot)',
+                v-if='!bot.administrated',
+                :disabled='loading'
+              )
+                v-list-item-icon 
+                  v-icon mdi-delete
+                v-list-item-title.red--text {{ $t("bot.delete") }}
+              v-list-item(
+                @click.stop='rejectBot(bot); settingsNav = false',
+                v-if='bot.administrated'
+              )
+                v-list-item-icon
+                  v-icon mdi-delete
+                v-list-item-title.red--text {{ $t("bot.reject") }}
+            v-list-item(
+              @click='openTab(invite, "invite")',
+              no-action,
+              v-for='invite in $store.state.invites',
+              :key='invite.inviteID'
+            )
+              v-list-item-icon
+                v-icon mdi-alert-decagram
+              v-list-item-content
+                v-list-item-title {{ invite.bot }}
+            v-list-item(
+              @click='addBotDialog = true',
+              v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"',
+              :disabled='loading'
+            )
+              v-list-item-icon(:loading='loading') 
+                v-icon add
+              v-list-item-title.blue--text {{ $t("addBot.title") }}
+        v-col.border__right.border__top(cols='0', sm='4', md='3', v-else-if='mobile')
+          v-navigation-drawer(
+            v-model='settingsNav',
+            absolute,
+            temporary,
+            v-if='mobile',
+            :style='listStyle'
+          )
             v-list(dense)
-              v-list-group(no-action v-for='bot in $store.state.bots' :key='bot._id' v-if="bot.botType !== 'feed'")
+              v-list-group(
+                no-action,
+                v-for='bot in $store.state.bots',
+                :key='bot._id',
+                v-if='bot.botType !== "feed"'
+              )
                 template(v-slot:activator)
-                    v-list-item-icon 
-                      v-icon {{getIcon(bot.botType)}}
-                    v-list-item-content
-                      v-list-item-title  {{bot.name}}
-                v-list-item(@click="openTab(bot, 'about');" :disabled="loading")
+                  v-list-item-icon 
+                    v-icon {{ getIcon(bot.botType) }}
+                  v-list-item-content
+                    v-list-item-title {{ bot.name }}
+                v-list-item(
+                  @click='openTab(bot, "about"); settingsNav = false',
+                  :disabled='loading'
+                )
                   v-list-item-icon
                     v-icon mdi-information
-                  v-list-item-title {{$t('bot.about')}}
-                v-list-item(@click="openTab(bot, 'admins');" v-if='!bot.administrated' :disabled="loading")
+                  v-list-item-title {{ $t("bot.about") }}
+                v-list-item(
+                  @click='openTab(bot, "admins"); settingsNav = false',
+                  v-if='!bot.administrated',
+                  :disabled='loading'
+                )
                   v-list-item-icon
                     v-icon mdi-account
-                  v-list-item-title {{$t('admin.admins')}}
-                v-list-item(@click="openTab(bot, 'greeting');" v-if='!bot.administrated' :disabled="loading")
+                  v-list-item-title {{ $t("admin.admins") }}
+                v-list-item(
+                  @click='openTab(bot, "greeting"); settingsNav = false',
+                  v-if='!bot.administrated',
+                  :disabled='loading'
+                )
                   v-list-item-icon
                     v-icon mdi-human-greeting
-                  v-list-item-title {{$t('bot.greetings')}}
-                v-list-item(@click.stop='updateBot(bot)' v-if='!bot.administrated' :disabled="loading")
+                  v-list-item-title {{ $t("bot.greetings") }}
+                v-list-item(
+                  @click.stop='updateBot(bot); settingsNav = false',
+                  v-if='!bot.administrated',
+                  :disabled='loading'
+                )
                   v-list-item-icon 
                     v-icon refresh
-                  v-list-item-title {{$t('bot.update')}}
-                v-list-item(@click.stop='deleteBot(bot)' v-if='!bot.administrated' :disabled="loading")
+                  v-list-item-title {{ $t("bot.update") }}
+                v-list-item(
+                  @click.stop='deleteBot(bot); settingsNav = false',
+                  v-if='!bot.administrated',
+                  :disabled='loading'
+                )
                   v-list-item-icon 
                     v-icon mdi-delete
-                  v-list-item-title.red--text {{$t('bot.delete')}}
-                v-list-item(@click.stop='rejectBot(bot); settingsNav = false;' v-if='bot.administrated')
+                  v-list-item-title.red--text {{ $t("bot.delete") }}
+                v-list-item(
+                  @click.stop='rejectBot(bot); settingsNav = false',
+                  v-if='bot.administrated'
+                )
                   v-list-item-icon
                     v-icon mdi-delete
-                  v-list-item-title.red--text {{$t('bot.reject')}}
-              v-list-item(@click='openTab(invite, "invite")' no-action v-for='invite in $store.state.invites' :key='invite.inviteID')
+                  v-list-item-title.red--text {{ $t("bot.reject") }}
+              v-list-item(
+                @click='openTab(invite, "invite"); settingsNav = false',
+                no-action,
+                v-for='invite in $store.state.invites',
+                :key='invite.inviteID'
+              )
                 v-list-item-icon
                   v-icon mdi-alert-decagram
                 v-list-item-content
-                  v-list-item-title {{invite.bot}}
-              v-list-item(@click='addBotDialog = true;'  v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"' :disabled="loading")
-                v-list-item-icon(
-                :loading='loading')                
+                  v-list-item-title {{ invite.bot }}
+              v-list-item(
+                @click='addBotDialog = true; settingsNav = false',
+                v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"',
+                :disabled='loading'
+              )
+                v-list-item-icon(:loading='loading') 
                   v-icon add
-                v-list-item-title.blue--text {{$t('addBot.title')}}
-          v-col(cols='0' sm='4' md="3" v-else-if='mobile').border__right.border__top
-            v-navigation-drawer(v-model="settingsNav" absolute temporary v-if="mobile" :style="listStyle")
-              v-list(dense)
-                v-list-group(no-action v-for='bot in $store.state.bots' :key='bot._id' v-if="bot.botType !== 'feed'")
-                  template(v-slot:activator)
-                      v-list-item-icon 
-                        v-icon {{getIcon(bot.botType)}}
-                      v-list-item-content
-                        v-list-item-title  {{bot.name}}
-                  v-list-item(@click='openTab(bot, "about"); settingsNav = false;' :disabled="loading")
-                    v-list-item-icon
-                      v-icon mdi-information
-                    v-list-item-title {{$t('bot.about')}}
-                  v-list-item(@click='openTab(bot, "admins"); settingsNav = false;' v-if='!bot.administrated' :disabled="loading")
-                    v-list-item-icon
-                      v-icon mdi-account
-                    v-list-item-title {{$t('admin.admins')}}
-                  v-list-item(@click='openTab(bot, "greeting"); settingsNav = false;' v-if='!bot.administrated' :disabled="loading")
-                    v-list-item-icon
-                      v-icon mdi-human-greeting
-                    v-list-item-title {{$t('bot.greetings')}}
-                  v-list-item(@click.stop='updateBot(bot); settingsNav = false;' v-if='!bot.administrated' :disabled="loading")
-                    v-list-item-icon 
-                      v-icon refresh
-                    v-list-item-title {{$t('bot.update')}}
-                  v-list-item(@click.stop='deleteBot(bot); settingsNav = false;' v-if='!bot.administrated' :disabled="loading")
-                    v-list-item-icon 
-                      v-icon mdi-delete
-                    v-list-item-title.red--text {{$t('bot.delete')}}
-                  v-list-item(@click.stop='rejectBot(bot); settingsNav = false;' v-if='bot.administrated')
-                    v-list-item-icon
-                      v-icon mdi-delete
-                    v-list-item-title.red--text {{$t('bot.reject')}}
-                v-list-item(@click='openTab(invite, "invite"); settingsNav = false;' no-action v-for='invite in $store.state.invites' :key='invite.inviteID')
-                  v-list-item-icon
-                    v-icon mdi-alert-decagram
-                  v-list-item-content
-                    v-list-item-title {{invite.bot}}
-                v-list-item(@click='addBotDialog = true; settingsNav = false;' v-if='$store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter"' :disabled="loading")
-                  v-list-item-icon(
-                  :loading='loading')                
-                    v-icon add
-                  v-list-item-title.blue--text {{$t('addBot.title')}}
-          v-col(cols='12' sm="8" md="9" v-if='tab && (bot || invite)')
-            v-card(outlined tile)           
-              v-card-text(v-if="curbot")
-                // About tab
-                v-card(v-if='tab === "about"').botCard 
-                  v-card-title 
-                    v-icon {{getIcon(curbot.botType)}} 
-                    |{{curbot.name}}
-                  v-card-text
-                    p FeedrID: {{curbot._id}}
-                    p Username: @{{curbot.username}}
-                    div(v-if="curbot.botType === 'telegram'")
-                      p TelegramID: {{curbot.telegramId}}
-                    div(v-if="curbot.botType === 'vk'")
-                      p VKontakteID: {{curbot.vkId}}
-                    p {{$t('type')}}: {{curbot.botType}}
-                    div(v-if="curbot.botType === 'viber'")
-                      p {{$t('avatar')}}: {{curbot.viberAvatar}}
-                    p {{$t('bot.status')}}: {{curbot.status}}
-                    p {{$t('bot.greetings')}}: {{curbot.greetingMessage}}
-                    p {{$t('bot.owner')}}: {{ownershipStatus(curbot)}}
-                // Admins invite
-                AddAdminTab(:botId="curbot._id" v-else-if='tab === "admins"')
-                // Bot edit
-                EditBotTab(:botId="curbot._id" :greetingMessage="curbot.greetingMessage" v-else-if='tab === "greeting"')
-              // Invite accept tab
-              v-card-text(v-else-if="invite")
-                v-card(v-if='tab === "invite"').botCard
-                  v-card-title {{$t('InviteMessage', { inviter: invite.inviter, bot: invite.bot })}} 
-                  v-card-actions
-                    v-spacer
-                    v-btn(color="red" text @click='RejectInvite(invite.inviteID); openedBot = null; openedTab = null; invite = null;') {{$t('reject')}} 
-                    v-btn(color='blue' text @click='AcceptInvite(invite.inviteID); openedBot = null; openedTab = null; invite = null;') {{$t('accept')}} 
-          v-col(cols='12' sm='8' md='9' v-else)
-            v-card.botCard
-              v-card-title(v-if='$store.state.bots.length < 2 && ($store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter")')
-                .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.noBotsText')}}
-              v-card-title(v-else-if='$store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"')
-                .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.noSubText')}}
-              v-card-title(v-else)
-                .headline.pa-4.text-center(style='word-break: break-word;') {{$t('botList.select')}}
-                  
+                v-list-item-title.blue--text {{ $t("addBot.title") }}
+        v-col(cols='12', sm='8', md='9', v-if='tab && (bot || invite)')
+          v-card(outlined, tile) 
+            v-card-text(v-if='curbot')
+              // About tab
+              v-card.botCard(v-if='tab === "about"') 
+                v-card-title 
+                  v-icon {{ getIcon(curbot.botType) }}
+                  | {{ curbot.name }}
+                v-card-text
+                  p FeedrID: {{ curbot._id }}
+                  p Username: @{{ curbot.username }}
+                  div(v-if='curbot.botType === "telegram"')
+                    p TelegramID: {{ curbot.telegramId }}
+                  div(v-if='curbot.botType === "vk"')
+                    p VKontakteID: {{ curbot.vkId }}
+                  p {{ $t("type") }}: {{ curbot.botType }}
+                  div(v-if='curbot.botType === "viber"')
+                    p {{ $t("avatar") }}: {{ curbot.viberAvatar }}
+                  p {{ $t("bot.status") }}: {{ curbot.status }}
+                  p {{ $t("bot.greetings") }}: {{ curbot.greetingMessage }}
+                  p {{ $t("bot.owner") }}: {{ ownershipStatus(curbot) }}
+              // Admins invite
+              AddAdminTab(:botId='curbot._id', v-else-if='tab === "admins"')
+              // Bot edit
+              EditBotTab(
+                :botId='curbot._id',
+                :greetingMessage='curbot.greetingMessage',
+                v-else-if='tab === "greeting"'
+              )
+            // Invite accept tab
+            v-card-text(v-else-if='invite')
+              v-card.botCard(v-if='tab === "invite"')
+                v-card-title {{ $t("InviteMessage", { inviter: invite.inviter, bot: invite.bot }) }}
+                v-card-actions
+                  v-spacer
+                  v-btn(
+                    color='red',
+                    text,
+                    @click='RejectInvite(invite.inviteID); openedBot = null; openedTab = null; invite = null'
+                  ) {{ $t("reject") }}
+                  v-btn(
+                    color='blue',
+                    text,
+                    @click='AcceptInvite(invite.inviteID); openedBot = null; openedTab = null; invite = null'
+                  ) {{ $t("accept") }}
+        v-col(cols='12', sm='8', md='9', v-else)
+          v-card.botCard
+            v-card-title(
+              v-if='$store.state.bots.length < 2 && ($store.state.user.subscriptionStatus === "active" || $store.state.user.subscriptionStatus === "earlyAdopter")'
+            )
+              .headline.pa-4.text-center(style='word-break: break-word;') {{ $t("botList.noBotsText") }}
+            v-card-title(
+              v-else-if='$store.state.user.subscriptionStatus !== "active" && $store.state.user.subscriptionStatus !== "earlyAdopter"'
+            )
+              .headline.pa-4.text-center(style='word-break: break-word;') {{ $t("botList.noSubText") }}
+            v-card-title(v-else)
+              .headline.pa-4.text-center(style='word-break: break-word;') {{ $t("botList.select") }}
 </template>
 
 <script lang="ts">

@@ -35,6 +35,10 @@ export async function loginTelegram(loginInfo: any) {
   return (await axios.post(`${base}/login/telegram`, loginInfo)).data as User
 }
 
+export async function loginToken(token: string) {
+  return (await axios.post(`${base}/login/token`, { token })).data as User
+}
+
 export async function mergeTelegram(loginInfo: any) {
   return (
     await axios.post(`${base}/merge/telegram`, loginInfo, {
@@ -52,7 +56,7 @@ export async function mergeFacebook(accessToken: string) {
       },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as User
 }
@@ -66,7 +70,7 @@ export async function mergeGoogle(accessToken: string) {
       },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as User
 }
@@ -80,13 +84,13 @@ export async function postBot(token: string, type: string) {
 export async function BotInviteAdmin(
   bot: string,
   userid: string,
-  usertype: string,
+  usertype: string
 ) {
   return (
     await axios.post(
       `${base}/invite/${bot}`,
       { userid, usertype },
-      { headers: getHeaders() },
+      { headers: getHeaders() }
     )
   ).data
 }
@@ -113,7 +117,7 @@ export async function RejectAdmin(admin: string, bot: string, type: string) {
     await axios.put(
       `${base}/admin/${admin}`,
       { bot, type },
-      { headers: getHeaders() },
+      { headers: getHeaders() }
     )
   ).data
 }
@@ -153,7 +157,7 @@ export async function updateBot(bot: Bot) {
       { action: 'update' },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as Bot[]
 }
@@ -165,7 +169,7 @@ export async function BotChangeGreetings(botId: string, greetings: string) {
       { action: 'changeGreetings', greetingMessage: greetings },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as Bot[]
 }
@@ -185,7 +189,7 @@ export async function banChat(chat: Chat) {
       { action: 'ban' },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as Bot[]
 }
@@ -203,7 +207,7 @@ export async function getFilesLink(message: Message) {
         `${base}/message/${message._id}/${(message as any).editIndex}`,
         {
           headers: getHeaders(),
-        },
+        }
       )
     ).data as any
 }
@@ -215,7 +219,7 @@ export async function unbanChat(chat: Chat) {
       { action: 'unban' },
       {
         headers: getHeaders(),
-      },
+      }
     )
   ).data as Bot[]
 }

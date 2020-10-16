@@ -1,22 +1,36 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    div(v-if="message.raw.caption") {{message.raw.caption}}
-    br(v-if='message.raw.caption')
-    div(v-if="message.raw.audio && message.raw.audio.title") {{title}}
-    v-container(fluid)
-        v-row(v-if="!loaded" :justify="mobile").row_nowrap
-          v-col
-            v-btn(outlined color="indigo" :loading="loading" @click="loadAudio") {{$t('media.play')}}
-              v-icon(right) mdi-music
-        v-row(dense)
-          v-col(md="auto").col_nogrow
-            v-btn(outlined color="indigo" v-if="loaded" @click="changeAudio" icon)
-              v-icon(v-if="paused") mdi-play
-              v-icon(v-else) mdi-pause
-          v-col(md="8")
-            v-slider(v-model="currtime" v-if="loaded" :min="0" inverse-label @change="setPosition" :label="label" :max="totalDuration")
-          audio(ref="audioController")
-              source(:src="link" v-if="loaded"  :type="types()")
+  div(v-if='message.raw.caption') {{ message.raw.caption }}
+  br(v-if='message.raw.caption')
+  div(v-if='message.raw.audio && message.raw.audio.title') {{ title }}
+  v-container(fluid)
+    v-row.row_nowrap(v-if='!loaded', :justify='mobile')
+      v-col
+        v-btn(outlined, color='indigo', :loading='loading', @click='loadAudio') {{ $t("media.play") }}
+          v-icon(right) mdi-music
+    v-row(dense)
+      v-col.col_nogrow(md='auto')
+        v-btn(
+          outlined,
+          color='indigo',
+          v-if='loaded',
+          @click='changeAudio',
+          icon
+        )
+          v-icon(v-if='paused') mdi-play
+          v-icon(v-else) mdi-pause
+      v-col(md='8')
+        v-slider(
+          v-model='currtime',
+          v-if='loaded',
+          :min='0',
+          inverse-label,
+          @change='setPosition',
+          :label='label',
+          :max='totalDuration'
+        )
+      audio(ref='audioController')
+        source(:src='link', v-if='loaded', :type='types()')
 </template>
 
 <script lang="ts">
@@ -127,15 +141,15 @@ export default class TelegramAudioMessage extends Vue {
     this.$refs.audioController.addEventListener('pause', this._handlePlayPause)
     this.$refs.audioController.addEventListener(
       'playing',
-      this._handlePlayPause,
+      this._handlePlayPause
     )
     this.$refs.audioController.addEventListener(
       'timeupdate',
-      this._handlePlayingUI,
+      this._handlePlayingUI
     )
     this.$refs.audioController.addEventListener(
       'loadeddata',
-      this._handleLoaded,
+      this._handleLoaded
     )
   }
 

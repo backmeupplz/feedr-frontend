@@ -1,24 +1,25 @@
 <template lang="pug">
-v-form(v-model="validgreeting" onSubmit="return false;")
+v-form(v-model='validgreeting', onSubmit='return false;')
   v-card
-    v-card-title {{$t('editBot.title')}}
+    v-card-title {{ $t("editBot.title") }}
     v-card-text
-        .body-1 {{$t('currentMessage')}}: {{greetingMessage}}
-        v-textarea(:label='$t("editBot.greeting")' 
-        :rules="greetingRules"
-        multiline
-        v-model='newGreetings')
+      .body-1 {{ $t("currentMessage") }}: {{ greetingMessage }}
+      v-textarea(
+        :label='$t("editBot.greeting")',
+        :rules='greetingRules',
+        multiline,
+        v-model='newGreetings'
+      )
     v-card-actions
       v-spacer
-      v-btn(text 
-      @click='close'
-      :loading='loading'
-      color='error') {{$t('cancel')}}
-      v-btn(text
-      @click='save'
-      :loading='loading'
-      :disabled="!validgreeting"
-      color='blue') {{$t('save')}}
+      v-btn(text, @click='close', :loading='loading', color='error') {{ $t("cancel") }}
+      v-btn(
+        text,
+        @click='save',
+        :loading='loading',
+        :disabled='!validgreeting',
+        color='blue'
+      ) {{ $t("save") }}
 </template>
 
 <script lang="ts">
@@ -34,7 +35,7 @@ import { i18n } from '../../plugins/i18n'
     botId: String,
   },
   watch: {
-    dialog: function(val) {
+    dialog: function (val) {
       if ((this as any).greetingMessage) {
         ;(this as any).newGreetings = (this as any).greetingMessage
       }

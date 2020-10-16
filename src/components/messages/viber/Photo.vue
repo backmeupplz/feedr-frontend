@@ -1,13 +1,17 @@
 <template lang="pug">
 v-list-item-title.message-text 
-    handledText(:message="message")
-    v-container
-        v-row(justify="start")
-            v-btn(outlined color="indigo" @click="loadPhoto" v-if="!hided") {{$t("media.load")}}
-              v-icon(right) mdi-file-image-outline
-            div(v-else)
-              |{{$t('oldlink')}}
-    vue-easy-lightbox(:visible="opened && !expired", :imgs="[message.raw.media]" @hide="hide")
+  handledText(:message='message')
+  v-container
+    v-row(justify='start')
+      v-btn(outlined, color='indigo', @click='loadPhoto', v-if='!hided') {{ $t("media.load") }}
+        v-icon(right) mdi-file-image-outline
+      div(v-else)
+        | {{ $t("oldlink") }}
+  vue-easy-lightbox(
+    :visible='opened && !expired',
+    :imgs='[message.raw.media]',
+    @hide='hide'
+  )
 </template>
 
 <script lang="ts">
