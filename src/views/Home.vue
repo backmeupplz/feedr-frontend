@@ -90,7 +90,6 @@ export default class Home extends Vue {
     try {
       console.log(this.debugToken)
       const user = await loginToken(this.debugToken)
-      console.log(user)
       store.setUser(user)
       sockets.send('authorization', user.token)
     } catch (error) {

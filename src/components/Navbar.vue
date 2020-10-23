@@ -1,5 +1,5 @@
 <template lang="pug">
-nav
+nav(v-if='mobileChatOpened')
   BotsDialog(:dialog='botsDialog', :close='closeBotsDialog')
   Checkout(:dialog='subscriptionDialog', :close='closeSubscription')
   Merge(:dialog='mergeDialog', :close='closeMerge')
@@ -62,6 +62,7 @@ import * as api from '../utils/api'
 import BotsDialog from './BotsDialog.vue'
 import Checkout from './Checkout.vue'
 import Merge from './Merge.vue'
+import { Watch } from 'vue-property-decorator'
 
 @Component({
   components: {
@@ -74,6 +75,13 @@ export default class Navbar extends Vue {
   botsDialog = false
   subscriptionDialog = false
   mergeDialog = false
+
+  get mobileChatOpened() {
+    if (!this.$vuetify.breakpoint.smAndDown) {
+      return true
+    }
+    return !store.activeChat()
+  }
 
   get locales() {
     return [
@@ -94,6 +102,10 @@ export default class Navbar extends Vue {
       return `${i18n.t('themes.dark')}: ${i18n.t('themes.on')}`
     }
     return `${i18n.t('themes.dark')}: ${i18n.t('themes.off')}`
+  }
+
+  get sdfdsfds() {
+    return store.activeChat()
   }
 
   mounted() {
@@ -126,6 +138,13 @@ export default class Navbar extends Vue {
 </script>
 
 <style>
+@media screen and (max-width: 900px) {
+  nav {
+    margin-top: -6px !important;
+    margin-bottom: 6px !important;
+  }
+}
+
 nav {
   margin-top: -24px;
   margin-bottom: 24px;

@@ -24,6 +24,7 @@ export interface State {
     botsloading: Boolean
   }
   botTab: Number
+  activeChat: boolean
 }
 
 interface Invite {
@@ -61,6 +62,7 @@ const storeOptions = {
       botsloading: false,
     },
     botTab: 0,
+    activeChat: false,
   },
   mutations: {
     setUser(state: State, user: User) {
@@ -278,6 +280,9 @@ const storeOptions = {
     setBotTab(state: State, tab: Number) {
       state.botTab = tab
     },
+    setActiveChat(state: State, active: boolean) {
+      state.activeChat = active
+    },
   },
   getters: {
     user: (state: State) => state.user,
@@ -290,6 +295,7 @@ const storeOptions = {
     invites: (state: State) => state.invites,
     nomoremessages: (state: State) => state.nomoremessages,
     bottab: (state: State) => state.botTab,
+    activeChat: (state: State) => state.activeChat,
   },
   plugins: [
     createPersistedState({
@@ -316,6 +322,7 @@ export const bots = () => getters.bots as Bot[]
 export const invites = () => getters.invites as Invite[]
 export const nomoremessages = () => getters.nomoremessages as boolean
 export const botTab = () => getters.bottab as number
+export const activeChat = () => getters.activeChat as boolean
 
 // Mutations
 export const setUser = (user: User) => {
@@ -358,6 +365,10 @@ export const setNoMoreMessages = (nomoremessages: Boolean) => {
 
 export const setBotTab = (tab: Number) => {
   store.commit('setBotTab', tab)
+}
+
+export const setActiveChat = (active: boolean) => {
+  store.commit('setActiveChat', active)
 }
 
 export const addChat = (chat: any) => {

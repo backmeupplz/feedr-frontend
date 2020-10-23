@@ -234,6 +234,7 @@ export const messages = {
       forwarded_from: 'Переслано от:',
     },
     feed: 'Лента',
+    goBack: 'Назад',
   },
   en: {
     feedback: {
@@ -468,5 +469,6 @@ export const messages = {
     },
     feed: 'Feed',
     messageInvite: 'Write a message...',
+    goBack: 'Go back',
   },
 }

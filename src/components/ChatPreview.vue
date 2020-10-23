@@ -2,21 +2,26 @@
 .d-flex.flex-column.chat-preview-main-container.chat-preview-limit-message-size(
   v-if='chat && chat.messages'
 )
-  .d-flex.chat-preview-userbar
-    .chat-preview-avatar-circle
-    .d-flex.chat-preview-username
-      .app-view-bot-container-text.mr-2 {{ chat.raw.first_name }}
-      .app-view-bot-container-text {{ chat.raw.last_name }}
-  .app-view-bot-divier
+  .d-flex.flex-column
+    .d-flex.align-self-start.chat-preview-goback-container(
+      v-if='$vuetify.breakpoint.smAndDown',
+      @click='goBack()'
+    )
+      img(src='icons/goback.svg')
+      .chat-preview-goback {{ $t("goBack") }}
+    .d-flex.chat-preview-userbar
+      .chat-preview-avatar-circle
+      .d-flex.chat-preview-username
+        .app-view-bot-container-text {{ chat.raw.first_name }} {{ chat.raw.last_name }}
+  .app-view-bot-divier(v-if='!$vuetify.breakpoint.smAndDown')
   .chat-preview-message-area.d-flex.flex-column
     .d-flex.flex-column.chat-preview-messagebox(
-      v-for='message in chat.messages'
+      v-for='message in messageInCorrectOrder'
     ) 
       .d-flex.app-view-bot-container-text.chat-preview-message-name(
         :class='isUser(message) ? "align-self-start" : "align-self-end"'
       )
-        .app-view-bot-container-text.mr-2 {{ name(message.raw.from.first_name) }}
-        .app-view-bot-container-text {{ name(message.raw.from.last_name) }}
+        .app-view-bot-container-text {{ name(message.raw.from.first_name) }} {{ name(message.raw.from.last_name) }}
       .d-flex(:class='isUser(message) ? "align-self-start" : "align-self-end"')
         .d-flex.chat-preview-user-messagebox.align-self-end(
           v-if='message && message.raw.text',
@@ -31,7 +36,7 @@
           :class='isUser(message) ? "" : "order-first"'
         ) {{ beautifylDate(message.raw.date) }}
   .chat-preview-send-message-container
-    .app-view-bot-divier
+    .app-view-bot-divier(v-if='!$vuetify.breakpoint.smAndDown')
     .d-flex.chat-preview-send-message.justify-space-between.align-center
       input.chat-preview-input-field(
         :placeholder='translate("messageInvite")',
@@ -63,11 +68,19 @@ declare const sockets: any
   components: { MessageComponent },
 })
 export default class ChatPreview extends Vue {
-  @Prop({ required: true }) chat!: Chat
+  @Prop({ required: true }) chat!: Chat | undefined
   text = ''
 
   typingCooldown = false
   messageUpdating = false
+
+  get messageInCorrectOrder() {
+    return this.chat?.messages?.reverse()
+  }
+
+  goBack() {
+    store.setActiveChat(false)
+  }
 
   handleText(e: InputEvent) {
     this.text = (e.target as HTMLTextAreaElement).value
@@ -82,7 +95,7 @@ export default class ChatPreview extends Vue {
   }
 
   isUser(message: Message) {
-    return message.raw.from.id === this.chat.raw.id
+    return message.raw.from.id === this.chat?.raw.id
   }
 
   name(name: string) {
@@ -139,6 +152,28 @@ export default class ChatPreview extends Vue {
 </script>
 
 <style>
+@media screen and (max-width: 900px) {
+  .chat-preview-main-container {
+    width: 100% !important;
+    margin-left: 0px !important;
+    max-height: 100%;
+    min-height: 100%;
+    background: none !important;
+  }
+  .chat-preview-userbar {
+    padding: 0px !important;
+  }
+  .chat-preview-username {
+    margin-left: 8px !important;
+  }
+  .chat-preview-messagebox {
+    padding: 16px 0px 16px 0px !important;
+  }
+  .chat-preview-send-message {
+    background: #0f0f22;
+  }
+}
+
 .chat-preview-main-container {
   background: #0f0f22;
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
@@ -258,6 +293,10 @@ export default class ChatPreview extends Vue {
   margin: 0px 18px 0px 18px;
 }
 
+.chat-preview-input-field:focus {
+  border: none !important;
+}
+
 .chat-preview-input-field::placeholder {
   opacity: 0.3;
 }
@@ -284,5 +323,21 @@ export default class ChatPreview extends Vue {
 
 .chat-preview-user-messagebox {
   overflow-wrap: anywhere;
+}
+
+.chat-preview-goback {
+  margin-left: 8px;
+  font-size: 15px;
+  line-height: 22px;
+
+  /* identical to box height, or 147% */
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.4px;
+}
+
+.chat-preview-goback-container {
+  opacity: 0.4;
+  margin-bottom: 28px;
 }
 </style>

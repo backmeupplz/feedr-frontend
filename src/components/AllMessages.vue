@@ -13,8 +13,7 @@
     .d-flex.flex-column.app-view-bot-container-text.app-view-max-width
       .d-flex.justify-space-between
         .d-flex.justify-space-between.app-view-bot-container-text
-          .app-view-bot-container-text.app-view-bot-container-text.mr-2 {{ chat.raw.first_name }}
-          .app-view-bot-container-text {{ chat.raw.last_name }}
+          .app-view-bot-container-text.app-view-bot-container-text {{ chat.raw.first_name }} {{ chat.raw.last_name }}
         .app-view-bot-container-timestamp.ml-2 {{ date(chat.lastMessage.raw.date) }}
       .app-view-bot-message-text.app-view-bot-container-text {{ chat.lastMessage.raw.text }}
 </template>

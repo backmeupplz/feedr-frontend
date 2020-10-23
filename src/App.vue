@@ -24,6 +24,15 @@ export default {
 </script>
 
 <style>
+@media screen and (max-width: 900px) {
+  .max-height-s {
+    padding: 16px !important;
+  }
+  .app-container-max-height {
+    padding-bottom: 0px !important;
+  }
+}
+
 * {
   font-family: DM Sans, Source Sans Pro;
   font-style: normal;
