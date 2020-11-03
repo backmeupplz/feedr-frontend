@@ -177,6 +177,8 @@ export default class Home extends Vue {
 }
 
 .signin-button {
+  text-align: center !important;
+  align-items: center !important;
   margin: 10px;
   cursor: pointer;
   display: block;

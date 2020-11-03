@@ -68,6 +68,8 @@ export default class AllBots extends Vue {
   width: 100%;
   min-height: 100%;
   margin-right: 8px;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .allbots-bot-container {

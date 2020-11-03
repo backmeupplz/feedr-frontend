@@ -71,6 +71,8 @@ export default class ChatList extends Vue {
 }
 
 .app-view-bots-messages-container {
+  max-height: 100%;
+  overflow-y: auto;
   box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
 }

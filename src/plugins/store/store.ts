@@ -299,7 +299,7 @@ const storeOptions = {
   },
   plugins: [
     createPersistedState({
-      paths: ['user', 'language', 'dark'],
+      paths: ['user', 'language'],
     }),
   ],
   modules: {
