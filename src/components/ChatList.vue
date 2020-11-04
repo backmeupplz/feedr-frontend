@@ -17,13 +17,15 @@
       .d-flex.justify-space-between
         .d-flex.app-view-bot-container-text
           .app-view-bot-container-text.app-view-bot-container-text {{ chat.raw.first_name }} {{ chat.raw.last_name }}
-        .app-view-bot-container-timestamp.ml-2 {{ beautifylDate(chat.lastMessage.raw.date) }}
+        .app-view-bot-container-timestamp.ml-2(v-if='chat.lastMessage') {{ beautifylDate(chat.lastMessage.raw.date) }}
       .d-flex.justify-space-between
         .d-flex
           .app-view-bot-message-text.app-view-bot-container-text.mr-1.chat-list-you(
-            v-if='chat.raw.id !== chat.lastMessage.raw.from.id'
+            v-if='chat.lastMessage && chat.raw.id !== chat.lastMessage.raw.from.id'
           ) {{ $t("you") }}:
-          .app-view-bot-message-text.app-view-bot-container-text {{ chat.lastMessage.raw.text }}
+          .app-view-bot-message-text.app-view-bot-container-text(
+            v-if='chat.lastMessage'
+          ) {{ chat.lastMessage.raw.text }}
         .app-view-bot-container-person-unread(v-if='chat.unread > 0') {{ chat.unread > 99 ? "99+" : chat.unread }}
 </template>
 
