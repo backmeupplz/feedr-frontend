@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "distribute": "vue-cli-service serve --mode development"
+    "distribute": "vue-cli-service serve --mode development",
+    "update": "yarn build && rm -rf docs && cp -r dist/ docs && git add . && git commit -m 'update' && git push"
   },
   "dependencies": {
     "@types/linkify-it": "^2.1.0",
