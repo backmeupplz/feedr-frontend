@@ -1,0 +1,57 @@
+{
+  "name": "feedr-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "distribute": "vue-cli-service serve --mode development"
+  },
+  "dependencies": {
+    "@types/linkify-it": "^2.1.0",
+    "@types/node": "^14.11.8",
+    "@types/socket.io-client": "^1.4.34",
+    "axios": "^0.20.0",
+    "firebase": "^7.23.0",
+    "linkify-it": "^3.0.2",
+    "moment": "^2.29.1",
+    "pug": "^3.0.0",
+    "pug-plain-loader": "^1.0.0",
+    "tlds": "^1.211.0",
+    "url": "^0.11.0",
+    "vue": "^2.6.10",
+    "vue-class-component": "^7.2.6",
+    "vue-cookie-law": "^1.13.3",
+    "vue-easy-lightbox": "^0.7.0",
+    "vue-i18n": "^8.22.0",
+    "vue-observe-visibility": "^0.4.6",
+    "vue-poll": "^0.1.8",
+    "vue-property-decorator": "^9.0.2",
+    "vue-router": "^3.4.6",
+    "vue-socket.io": "^3.0.10",
+    "vue-telegram-login": "^2.1.0",
+    "vuetify": "^2.3.13",
+    "vuex": "^3.5.1",
+    "vuex-persistedstate": "^4.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@prettier/plugin-pug": "^1.8.1",
+    "@vue/cli-plugin-typescript": "^4.5.7",
+    "@vue/cli-service": "^4.5.7",
+    "prettier": "^2.1.2",
+    "sass": "^1.27.0",
+    "sass-loader": "^10.0.3",
+    "typescript": "^4.0.3",
+    "vue-template-compiler": "^2.6.12"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
